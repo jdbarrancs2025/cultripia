@@ -1,0 +1,73 @@
+{
+  "common": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "confirm": "Confirm"
+  },
+  "home": {
+    "title": "Welcome to Cultripia",
+    "subtitle": "Authentic cultural experiences await",
+    "searchPlaceholder": "Where do you want to explore?",
+    "datePickerPlaceholder": "When are you traveling?",
+    "searchButton": "Search experiences",
+    "featuredExperiences": "Featured Experiences",
+    "howItWorks": "How It Works",
+    "becomeHost": "Become a Host"
+  },
+  "experiences": {
+    "title": "Experiences",
+    "pricePerPerson": "per person",
+    "duration": "Duration",
+    "maxGuests": "Max guests",
+    "bookNow": "Book Now",
+    "notAvailable": "Not available",
+    "viewDetails": "View Details"
+  },
+  "host": {
+    "dashboard": "Host Dashboard",
+    "myExperiences": "My Experiences",
+    "createExperience": "Create Experience",
+    "earnings": "Earnings",
+    "calendar": "Calendar",
+    "bookings": "Bookings",
+    "applicationPending": "Your host application is pending approval",
+    "applicationApproved": "Your host application has been approved",
+    "applicationRejected": "Your host application has been rejected"
+  },
+  "booking": {
+    "selectDate": "Select a date",
+    "numberOfGuests": "Number of guests",
+    "totalPrice": "Total price",
+    "bookingConfirmation": "Booking Confirmation",
+    "paymentDetails": "Payment Details",
+    "bookingSuccess": "Booking successful!",
+    "bookingError": "Booking error"
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "users": "Users",
+    "hosts": "Hosts",
+    "experiences": "Experiences",
+    "bookings": "Bookings",
+    "revenue": "Revenue",
+    "pendingApprovals": "Pending Approvals",
+    "approve": "Approve",
+    "reject": "Reject"
+  }
+}

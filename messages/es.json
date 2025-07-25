@@ -1,0 +1,73 @@
+{
+  "common": {
+    "signIn": "Iniciar sesión",
+    "signUp": "Registrarse",
+    "signOut": "Cerrar sesión",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "confirm": "Confirmar"
+  },
+  "home": {
+    "title": "Bienvenido a Cultripia",
+    "subtitle": "Te esperan experiencias culturales auténticas",
+    "searchPlaceholder": "¿Dónde quieres explorar?",
+    "datePickerPlaceholder": "¿Cuándo viajas?",
+    "searchButton": "Buscar experiencias",
+    "featuredExperiences": "Experiencias Destacadas",
+    "howItWorks": "Cómo Funciona",
+    "becomeHost": "Conviértete en Anfitrión"
+  },
+  "experiences": {
+    "title": "Experiencias",
+    "pricePerPerson": "por persona",
+    "duration": "Duración",
+    "maxGuests": "Máx. huéspedes",
+    "bookNow": "Reservar Ahora",
+    "notAvailable": "No disponible",
+    "viewDetails": "Ver Detalles"
+  },
+  "host": {
+    "dashboard": "Panel de Anfitrión",
+    "myExperiences": "Mis Experiencias",
+    "createExperience": "Crear Experiencia",
+    "earnings": "Ganancias",
+    "calendar": "Calendario",
+    "bookings": "Reservas",
+    "applicationPending": "Tu solicitud de anfitrión está pendiente de aprobación",
+    "applicationApproved": "Tu solicitud de anfitrión ha sido aprobada",
+    "applicationRejected": "Tu solicitud de anfitrión ha sido rechazada"
+  },
+  "booking": {
+    "selectDate": "Selecciona una fecha",
+    "numberOfGuests": "Número de huéspedes",
+    "totalPrice": "Precio total",
+    "bookingConfirmation": "Confirmación de Reserva",
+    "paymentDetails": "Detalles de Pago",
+    "bookingSuccess": "¡Reserva exitosa!",
+    "bookingError": "Error en la reserva"
+  },
+  "admin": {
+    "dashboard": "Panel de Administración",
+    "users": "Usuarios",
+    "hosts": "Anfitriones",
+    "experiences": "Experiencias",
+    "bookings": "Reservas",
+    "revenue": "Ingresos",
+    "pendingApprovals": "Aprobaciones Pendientes",
+    "approve": "Aprobar",
+    "reject": "Rechazar"
+  }
+}
