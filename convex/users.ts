@@ -93,3 +93,12 @@ export const updateUserRole = mutation({
     await ctx.db.patch(args.userId, { role: args.role })
   },
 })
+
+export const getAdminUsers = query({
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("role"), "admin"))
+      .collect()
+  },
+})

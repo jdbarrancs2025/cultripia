@@ -15,13 +15,18 @@ export default defineSchema({
     userId: v.id("users"),
     status: v.union(v.literal("pending"), v.literal("approved"), v.literal("rejected")),
     applicationData: v.object({
+      name: v.string(),
+      email: v.string(),
       phone: v.string(),
       location: v.string(),
       languages: v.array(v.string()),
       experienceType: v.string(),
+      experienceTitle: v.string(),
       description: v.string(),
+      maxGuests: v.number(),
       pricing: v.number(),
       availability: v.string(),
+      specialRequirements: v.optional(v.string()),
     }),
     createdAt: v.number(),
   })
