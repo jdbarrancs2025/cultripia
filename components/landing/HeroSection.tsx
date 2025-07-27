@@ -13,11 +13,13 @@ import { es } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 
 const destinations = [
-  { value: "mexico-city", label: "Ciudad de México" },
-  { value: "oaxaca", label: "Oaxaca" },
-  { value: "puerto-vallarta", label: "Puerto Vallarta" },
-  { value: "playa-del-carmen", label: "Playa del Carmen" },
-  { value: "guadalajara", label: "Guadalajara" },
+  { value: "antigua", label: "Antigua Guatemala" },
+  { value: "lake-atitlan", label: "Lago de Atitlán" },
+  { value: "tikal", label: "Tikal" },
+  { value: "quetzaltenango", label: "Quetzaltenango" },
+  { value: "chichicastenango", label: "Chichicastenango" },
+  { value: "semuc-champey", label: "Semuc Champey" },
+  { value: "flores", label: "Flores" },
 ]
 
 export function HeroSection() {
@@ -50,11 +52,11 @@ export function HeroSection() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             // TODO: Add hero-background.jpg to /public/images/
-            backgroundImage: "url('/images/hero-background.jpg')",
+            backgroundImage: "linear-gradient(135deg, #009D9B 0%, #007A79 100%), url('/images/hero-background.jpg')",
             backgroundColor: "#009D9B", // Fallback color
           }}
         >
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-black/20" />
         </div>
         
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center text-white">

@@ -39,3 +39,7 @@ next-env.d.ts
 # convex
 .env.local
 .env.production.local
+
+# development logs
+convex.log
+nextjs.log
