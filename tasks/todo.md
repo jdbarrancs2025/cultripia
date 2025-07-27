@@ -50,29 +50,29 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 
 ---
 
-## STEP 3: Database Schema
+## STEP 3: Database Schema ✅
 
-### [ ] Create Convex schema file
+### [COMPLETED] Create Convex schema file
 **Reference:** `/docs/implementation-plan.md` database schema
 **Acceptance criteria:**
 - Create convex/schema.ts with all table definitions
 - Define exact types as specified in implementation plan
 
-### [ ] Create users table mutations
+### [COMPLETED] Create users table mutations
 **Reference:** `/docs/implementation-plan.md` users schema
 **Acceptance criteria:**
 - createUser mutation that syncs with Clerk
 - getUserByClerkId query
 - updateUserRole mutation for admin use
 
-### [ ] Create host applications table and functions
+### [COMPLETED] Create host applications table and functions
 **Reference:** `/docs/implementation-plan.md` hostApplications schema
 **Acceptance criteria:**
 - createApplication mutation
 - getApplicationsByStatus query
 - updateApplicationStatus mutation for admin
 
-### [ ] Create experiences table and basic CRUD
+### [COMPLETED] Create experiences table and basic CRUD
 **Reference:** `/docs/implementation-plan.md` experiences schema
 **Acceptance criteria:**
 - createExperience mutation
@@ -80,7 +80,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - updateExperience mutation
 - Include bilingual fields (titleEn, titleEs, etc.)
 
-### [ ] Create availability table and functions
+### [COMPLETED] Create availability table and functions
 **Reference:** `/docs/implementation-plan.md` availability schema
 **Acceptance criteria:**
 - createAvailability mutation
@@ -88,7 +88,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - updateAvailabilityStatus mutation
 - Date stored as YYYY-MM-DD string format
 
-### [ ] Create bookings table and functions
+### [COMPLETED] Create bookings table and functions
 **Reference:** `/docs/implementation-plan.md` bookings schema
 **Acceptance criteria:**
 - createBooking mutation
@@ -98,37 +98,37 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 
 ---
 
-## STEP 4: Landing Page with Search
+## STEP 4: Landing Page with Search ✅
 
-### [ ] Create hero section component
+### [COMPLETED] Create hero section component
 **Reference:** `/docs/design-guidelines.md` landing page
 **Acceptance criteria:**
 - Full-width hero image with overlay
 - Centered headline and subheadline
 - Responsive design (desktop-first)
 
-### [ ] Build location dropdown component
+### [COMPLETED] Build location dropdown component
 **Reference:** `/docs/implementation-plan.md` landing search form
 **Acceptance criteria:**
 - shadcn Select component
 - Predefined destination list from docs
 - Stores selected value in state
 
-### [ ] Build date picker component
+### [COMPLETED] Build date picker component
 **Reference:** `/docs/implementation-plan.md` landing search form
 **Acceptance criteria:**
 - shadcn Calendar component
 - Single date selection
 - Mobile-responsive
 
-### [ ] Build guest count selector
+### [COMPLETED] Build guest count selector
 **Reference:** `/docs/implementation-plan.md` landing search form
 **Acceptance criteria:**
 - shadcn Input with +/- Button controls
 - Min 1, max based on experience capacity
 - Number validation
 
-### [ ] Integrate search form and navigation
+### [COMPLETED] Integrate search form and navigation
 **Reference:** `/docs/implementation-plan.md` landing search form
 **Acceptance criteria:**
 - Form submission creates URL params

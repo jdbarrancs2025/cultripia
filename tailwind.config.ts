@@ -10,6 +10,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        turquesa: "#009D9B",
+        dorado: "#B59A32",
+        "dorado-dark": "#8C7626",
+        "gris-80": "#4F4F4F",
+        "gris-90": "#333333",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

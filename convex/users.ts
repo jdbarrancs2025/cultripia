@@ -1,6 +1,35 @@
 import { v } from "convex/values"
 import { mutation, query } from "./_generated/server"
 
+// @deprecated Use createOrUpdateUser instead
+export const createUser = mutation({
+  args: {
+    clerkId: v.string(),
+    name: v.string(),
+    email: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .first()
+    
+    if (existing) {
+      return existing._id
+    }
+
+    const userId = await ctx.db.insert("users", {
+      clerkId: args.clerkId,
+      name: args.name,
+      email: args.email,
+      role: "traveler",
+      createdAt: Date.now(),
+    })
+    
+    return userId
+  },
+})
+
 export const createOrUpdateUser = mutation({
   args: {
     clerkId: v.string(),
