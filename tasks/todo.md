@@ -220,9 +220,9 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 
 ---
 
-## STEP 7: Experiences Grid Page
+## STEP 7: Experiences Grid Page ✅
 
-### [ ] Create experiences page layout
+### [COMPLETED] Create experiences page layout
 **Reference:** `/docs/design-guidelines.md` experiences page
 **Acceptance criteria:**
 - Route at /experiences
@@ -230,7 +230,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - 1-column on mobile
 - Accepts URL params for filters
 
-### [ ] Build experience card component
+### [COMPLETED] Build experience card component
 **Reference:** `/docs/implementation-plan.md` experience card
 **Acceptance criteria:**
 - shadcn Card with sections
@@ -241,14 +241,14 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Price formatting
 - "Book Now" button
 
-### [ ] Implement grid pagination
+### [COMPLETED] Implement grid pagination
 **Reference:** `/docs/design-guidelines.md` experiences grid
 **Acceptance criteria:**
 - Load 12 experiences per page
 - shadcn Pagination component
 - Smooth scroll to top on page change
 
-### [ ] Connect to Convex queries
+### [COMPLETED] Connect to Convex queries
 **Reference:** `/docs/implementation-plan.md` step 7
 **Acceptance criteria:**
 - Fetch experiences based on filters

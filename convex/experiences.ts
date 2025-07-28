@@ -121,6 +121,73 @@ export const getAll = query({
   },
 })
 
+export const getExperiencesPaginated = query({
+  args: {
+    location: v.optional(v.string()),
+    status: v.optional(v.union(v.literal("draft"), v.literal("active"), v.literal("inactive"))),
+    page: v.number(),
+    pageSize: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const pageSize = args.pageSize || 12
+    const offset = (args.page - 1) * pageSize
+    
+    // Build query based on filters
+    let allExperiences
+    
+    if (args.location && args.status) {
+      // Both filters: need to fetch all and filter manually
+      allExperiences = await ctx.db
+        .query("experiences")
+        .withIndex("by_location", (q) => q.eq("location", args.location!))
+        .collect()
+      allExperiences = allExperiences.filter(exp => exp.status === args.status)
+    } else if (args.location) {
+      // Location filter only
+      allExperiences = await ctx.db
+        .query("experiences")
+        .withIndex("by_location", (q) => q.eq("location", args.location!))
+        .collect()
+    } else if (args.status) {
+      // Status filter only
+      allExperiences = await ctx.db
+        .query("experiences")
+        .withIndex("by_status", (q) => q.eq("status", args.status!))
+        .collect()
+    } else {
+      // No filters
+      allExperiences = await ctx.db
+        .query("experiences")
+        .collect()
+    }
+    
+    const totalCount = allExperiences.length
+    const totalPages = Math.ceil(totalCount / pageSize)
+    
+    // Get paginated results
+    const paginatedExperiences = allExperiences.slice(offset, offset + pageSize)
+    
+    // Fetch host details
+    const experiencesWithHosts = await Promise.all(
+      paginatedExperiences.map(async (exp) => {
+        const host = await ctx.db.get(exp.hostId)
+        return {
+          ...exp,
+          host,
+        }
+      })
+    )
+    
+    return {
+      experiences: experiencesWithHosts,
+      totalCount,
+      totalPages,
+      currentPage: args.page,
+      pageSize,
+    }
+  },
+})
+
 export const updateExperience = mutation({
   args: {
     experienceId: v.id("experiences"),

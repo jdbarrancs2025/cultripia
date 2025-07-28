@@ -8,6 +8,7 @@ import {
   Calendar,
   FileText,
   Settings,
+  TestTube,
 } from "lucide-react";
 
 export default async function AdminLayout({
@@ -84,6 +85,15 @@ export default async function AdminLayout({
             >
               <Settings className="mr-3 h-4 w-4" />
               Settings
+            </Button>
+          </Link>
+          <Link href="/admin/test-data">
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-gray-700 hover:text-gray-900"
+            >
+              <TestTube className="mr-3 h-4 w-4" />
+              Test Data
             </Button>
           </Link>
         </nav>
