@@ -13,13 +13,16 @@ import { es } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 
 const destinations = [
-  { value: "antigua", label: "Antigua Guatemala" },
-  { value: "lake-atitlan", label: "Lago de Atitlán" },
-  { value: "tikal", label: "Tikal" },
-  { value: "quetzaltenango", label: "Quetzaltenango" },
-  { value: "chichicastenango", label: "Chichicastenango" },
-  { value: "semuc-champey", label: "Semuc Champey" },
-  { value: "flores", label: "Flores" },
+  "Antigua Guatemala",
+  "Lago de Atitlán",
+  "Chichicastenango",
+  "Quetzaltenango",
+  "Semuc Champey",
+  "Tikal",
+  "Río Dulce",
+  "Monterrico",
+  "Cobán",
+  "Panajachel"
 ]
 
 export function HeroSection() {
@@ -92,8 +95,8 @@ export function HeroSection() {
                 </SelectTrigger>
                 <SelectContent>
                   {destinations.map((dest) => (
-                    <SelectItem key={dest.value} value={dest.value}>
-                      {dest.label}
+                    <SelectItem key={dest} value={dest}>
+                      {dest}
                     </SelectItem>
                   ))}
                 </SelectContent>

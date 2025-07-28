@@ -257,23 +257,23 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 
 ---
 
-## STEP 8: Location-based Filtering
+## STEP 8: Location-based Filtering ✅
 
-### [ ] Create filter dropdown component
+### [COMPLETED] Create filter dropdown component
 **Reference:** `/docs/implementation-plan.md` step 8
 **Acceptance criteria:**
 - shadcn Select for location
 - Updates URL params on change
 - Shows current filter state
 
-### [ ] Implement filter logic in queries
+### [COMPLETED] Implement filter logic in queries
 **Reference:** `/docs/masterplan.md` search functionality
 **Acceptance criteria:**
 - Filter by exact location match
 - Combine with other filters (guests, date)
 - Maintain filter state on refresh
 
-### [ ] Add clear filters functionality
+### [COMPLETED] Add clear filters functionality
 **Reference:** `/docs/design-guidelines.md` UX patterns
 **Acceptance criteria:**
 - Clear button visible when filters active

@@ -13,7 +13,7 @@ interface ExperienceCardProps {
   location: string
   maxGuests: number
   hostName: string
-  priceUSD: number
+  priceUsd: number
   imageUrl: string
 }
 
@@ -24,7 +24,7 @@ export function ExperienceCard({
   location,
   maxGuests,
   hostName,
-  priceUSD,
+  priceUsd,
   imageUrl,
 }: ExperienceCardProps) {
   return (
@@ -62,7 +62,7 @@ export function ExperienceCard({
         </div>
         
         <div className="pt-2">
-          <span className="text-2xl font-bold text-turquesa">${priceUSD}</span>
+          <span className="text-2xl font-bold text-turquesa">${priceUsd}</span>
           <span className="text-sm text-gris-80"> por persona</span>
         </div>
       </CardContent>

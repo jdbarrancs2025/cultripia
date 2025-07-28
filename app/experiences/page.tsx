@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useQuery } from "convex/react"
 import { api } from "@/convex/_generated/api"
@@ -25,7 +25,7 @@ const destinations = [
   "Panajachel"
 ]
 
-export default function ExperiencesPage() {
+function ExperiencesContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [currentPage, setCurrentPage] = useState(1)
@@ -220,7 +220,7 @@ export default function ExperiencesPage() {
                   location={experience.location}
                   maxGuests={experience.maxGuests}
                   hostName={experience.host?.name || "Anfitrión"}
-                  priceUSD={experience.priceUsd}
+                  priceUsd={experience.priceUsd}
                   imageUrl={experience.imageUrl}
                 />
               ))}
@@ -251,5 +251,20 @@ export default function ExperiencesPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function ExperiencesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-turquesa mx-auto"></div>
+          <p className="mt-4 text-gray-600">Cargando experiencias...</p>
+        </div>
+      </div>
+    }>
+      <ExperiencesContent />
+    </Suspense>
   )
 }

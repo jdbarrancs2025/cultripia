@@ -35,15 +35,15 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="flex flex-col items-center justify-center min-h-[400px] p-4">
-          <h2 className="text-xl font-semibold text-[#333333] mb-2">
+          <h2 className="text-xl font-semibold text-gris-90 mb-2">
             Algo salió mal
           </h2>
-          <p className="text-[#4F4F4F] mb-4 text-center">
+          <p className="text-gris-80 mb-4 text-center">
             Ha ocurrido un error inesperado. Por favor, intenta recargar la página.
           </p>
           <Button
             onClick={() => window.location.reload()}
-            className="bg-[#009D9B] hover:bg-[#008C8A]"
+            className="bg-turquesa hover:bg-turquesa/90"
           >
             Recargar página
           </Button>

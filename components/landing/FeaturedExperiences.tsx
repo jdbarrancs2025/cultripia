@@ -63,7 +63,7 @@ export function FeaturedExperiences() {
                 location={experience.location}
                 maxGuests={experience.maxGuests}
                 hostName={experience.host?.name || "Anfitrión"}
-                priceUSD={experience.priceUsd}
+                priceUsd={experience.priceUsd}
                 imageUrl={experience.imageUrl}
               />
             ))}
