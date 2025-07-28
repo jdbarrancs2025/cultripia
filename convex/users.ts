@@ -102,3 +102,9 @@ export const getAdminUsers = query({
       .collect()
   },
 })
+
+export const getAll = query({
+  handler: async (ctx) => {
+    return await ctx.db.query("users").collect()
+  },
+})

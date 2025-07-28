@@ -115,6 +115,12 @@ export const getExperiences = query({
   },
 })
 
+export const getAll = query({
+  handler: async (ctx) => {
+    return await ctx.db.query("experiences").collect()
+  },
+})
+
 export const updateExperience = mutation({
   args: {
     experienceId: v.id("experiences"),

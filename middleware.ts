@@ -27,8 +27,22 @@ const isAuthenticatedRoute = createRouteMatcher([
 ])
 
 export default clerkMiddleware(async (auth, req) => {
-  const { userId, sessionClaims } = await auth()
-  const role = sessionClaims?.metadata?.role || "traveler"
+  const { userId, sessionClaims, getToken } = await auth()
+  
+  // Get the Convex token which includes publicMetadata
+  let role = "traveler"
+  try {
+    const token = await getToken({ template: "convex" })
+    if (token) {
+      // Decode the JWT to get publicMetadata
+      const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
+      role = payload.publicMetadata?.role || "traveler"
+    }
+  } catch (error) {
+    // Fallback to sessionClaims if token fetch fails
+    const publicMetadata = sessionClaims?.publicMetadata as { role?: string } | undefined
+    role = publicMetadata?.role || "traveler"
+  }
 
   // Allow public routes
   if (isPublicRoute(req)) return NextResponse.next()

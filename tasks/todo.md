@@ -177,16 +177,16 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 
 ---
 
-## STEP 6: Admin Dashboard
+## STEP 6: Admin Dashboard ✅
 
-### [ ] Create admin dashboard layout
+### [COMPLETED] Create admin dashboard layout
 **Reference:** `/docs/flow-pages.md` admin dashboard
 **Acceptance criteria:**
 - Route at /admin (protected)
 - Only accessible to admin role
 - Sidebar navigation
 
-### [ ] Build metrics widget components
+### [COMPLETED] Build metrics widget components
 **Reference:** `/docs/design-guidelines.md` admin dashboard
 **Acceptance criteria:**
 - Total hosts card
@@ -195,7 +195,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Revenue card
 - Uses shadcn Card components
 
-### [ ] Create application queue table
+### [COMPLETED] Create application queue table
 **Reference:** `/docs/implementation-plan.md` step 6
 **Acceptance criteria:**
 - shadcn Table component
@@ -203,7 +203,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Applicant details visible
 - Sorting by date
 
-### [ ] Build application review modal
+### [COMPLETED] Build application review modal
 **Reference:** `/docs/flow-pages.md` admin actions
 **Acceptance criteria:**
 - View full application details
@@ -211,7 +211,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Optional feedback textarea
 - Updates application status
 
-### [ ] Implement approval workflow
+### [COMPLETED] Implement approval workflow
 **Reference:** `/docs/masterplan.md` host approval
 **Acceptance criteria:**
 - Approval updates user role to "host"

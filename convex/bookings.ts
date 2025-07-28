@@ -153,6 +153,12 @@ export const getBookingsByExperience = query({
   },
 })
 
+export const getAll = query({
+  handler: async (ctx) => {
+    return await ctx.db.query("bookings").collect()
+  },
+})
+
 export const updateBookingPaymentStatus = mutation({
   args: {
     stripeSessionId: v.string(),

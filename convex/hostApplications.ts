@@ -161,7 +161,7 @@ export const getApplicationsByStatus = query({
   },
 })
 
-export const updateApplicationStatus = mutation({
+export const updateStatus = mutation({
   args: {
     applicationId: v.id("hostApplications"),
     status: v.union(v.literal("approved"), v.literal("rejected")),
@@ -192,9 +192,7 @@ export const updateApplicationStatus = mutation({
     })
 
     if (args.status === "approved") {
-      await ctx.db.patch(application.userId, {
-        role: "host",
-      })
+      // Role update will be handled separately via updateUserRole
     }
   },
 })
@@ -207,5 +205,16 @@ export const getPendingApplicationsCount = query({
       .collect()
     
     return pendingApplications.length
+  },
+})
+
+export const getAll = query({
+  handler: async (ctx) => {
+    const applications = await ctx.db
+      .query("hostApplications")
+      .order("desc")
+      .collect()
+    
+    return applications
   },
 })
