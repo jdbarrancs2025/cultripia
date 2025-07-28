@@ -65,7 +65,7 @@ export function TravelerDatePicker({
     unavailable: (date: Date) => {
       const dateStr = date.toISOString().split('T')[0]
       const dateInfo = monthAvailability?.dates.find(d => d.date === dateStr)
-      return dateInfo && (dateInfo.status === "blocked" || dateInfo.status === "booked")
+      return !!(dateInfo && (dateInfo.status === "blocked" || dateInfo.status === "booked"))
     },
     past: (date: Date) => {
       const today = new Date()
