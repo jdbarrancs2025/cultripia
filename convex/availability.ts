@@ -143,3 +143,145 @@ export const updateAvailabilityStatus = mutation({
     await ctx.db.patch(availability._id, { status: args.status })
   },
 })
+
+export const bulkUpdateAvailability = mutation({
+  args: {
+    experienceId: v.id("experiences"),
+    startDate: v.string(),
+    endDate: v.string(),
+    status: v.union(v.literal("available"), v.literal("blocked")),
+  },
+  handler: async (ctx, args) => {
+    // Validate date format
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+    if (!dateRegex.test(args.startDate) || !dateRegex.test(args.endDate)) {
+      throw new Error("Invalid date format. Please use YYYY-MM-DD")
+    }
+
+    // Validate date range
+    if (args.startDate > args.endDate) {
+      throw new Error("Start date must be before end date")
+    }
+
+    // Validate future dates only
+    const today = new Date().toISOString().split('T')[0]
+    if (args.startDate < today) {
+      throw new Error("Cannot modify past dates")
+    }
+
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      throw new Error("Unauthorized: User not authenticated")
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first()
+    
+    if (!user) {
+      throw new Error("User not found")
+    }
+
+    const experience = await ctx.db.get(args.experienceId)
+    if (!experience) {
+      throw new Error("Experience not found")
+    }
+
+    if (experience.hostId !== user._id) {
+      throw new Error("Unauthorized: You can only manage availability for your own experiences")
+    }
+
+    // Generate all dates in range
+    const dates: string[] = []
+    const currentDate = new Date(args.startDate)
+    const endDate = new Date(args.endDate)
+    
+    while (currentDate <= endDate) {
+      dates.push(currentDate.toISOString().split('T')[0])
+      currentDate.setDate(currentDate.getDate() + 1)
+    }
+
+    // Update each date
+    const results = []
+    for (const date of dates) {
+      const existing = await ctx.db
+        .query("availability")
+        .withIndex("by_experience_date", (q) => 
+          q.eq("experienceId", args.experienceId).eq("date", date)
+        )
+        .first()
+
+      if (existing) {
+        // Don't update if it's already booked
+        if (existing.status !== "booked") {
+          await ctx.db.patch(existing._id, { status: args.status })
+          results.push(existing._id)
+        }
+      } else {
+        const id = await ctx.db.insert("availability", {
+          experienceId: args.experienceId,
+          date,
+          status: args.status,
+        })
+        results.push(id)
+      }
+    }
+
+    return { updated: results.length, dates }
+  },
+})
+
+export const getAvailabilityForMonth = query({
+  args: {
+    experienceId: v.id("experiences"),
+    year: v.number(),
+    month: v.number(), // 1-12
+  },
+  handler: async (ctx, args) => {
+    // Calculate start and end dates for the month
+    const startDate = new Date(args.year, args.month - 1, 1)
+    const endDate = new Date(args.year, args.month, 0) // Last day of month
+    
+    const startDateStr = startDate.toISOString().split('T')[0]
+    const endDateStr = endDate.toISOString().split('T')[0]
+
+    // Get all availability records for the date range
+    const availabilityRecords = await ctx.db
+      .query("availability")
+      .withIndex("by_experience", (q) => q.eq("experienceId", args.experienceId))
+      .collect()
+
+    // Filter to month range
+    const monthRecords = availabilityRecords.filter(
+      (record) => record.date >= startDateStr && record.date <= endDateStr
+    )
+
+    // Create a map of date to status
+    const availabilityMap: Record<string, "available" | "blocked" | "booked"> = {}
+    monthRecords.forEach((record) => {
+      availabilityMap[record.date] = record.status
+    })
+
+    // Generate all dates in the month with their status
+    const dates = []
+    const currentDate = new Date(startDate)
+    
+    while (currentDate <= endDate) {
+      const dateStr = currentDate.toISOString().split('T')[0]
+      dates.push({
+        date: dateStr,
+        status: availabilityMap[dateStr] || "available",
+        dayOfWeek: currentDate.getDay(),
+        dayOfMonth: currentDate.getDate(),
+      })
+      currentDate.setDate(currentDate.getDate() + 1)
+    }
+
+    return {
+      year: args.year,
+      month: args.month,
+      dates,
+    }
+  },
+})

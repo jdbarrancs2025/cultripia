@@ -282,9 +282,9 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 
 ---
 
-## STEP 9: Calendar System
+## STEP 9: Calendar System ✅
 
-### [ ] Create host calendar component
+### [COMPLETED] Create host calendar component
 **Reference:** `/docs/implementation-plan.md` calendar components
 **Acceptance criteria:**
 - shadcn Calendar with custom styling
@@ -292,7 +292,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Click to toggle availability
 - Mobile-responsive
 
-### [ ] Build availability management functions
+### [COMPLETED] Build availability management functions
 **Reference:** `/docs/implementation-plan.md` step 9
 **Acceptance criteria:**
 - Create/update availability records
@@ -300,7 +300,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Prevent editing past dates
 - Sync with bookings
 
-### [ ] Create traveler date picker
+### [COMPLETED] Create traveler date picker
 **Reference:** `/docs/implementation-plan.md` calendar components
 **Acceptance criteria:**
 - shadcn Calendar component
@@ -308,7 +308,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Show visual states clearly
 - Single date selection only
 
-### [ ] Implement calendar data fetching
+### [COMPLETED] Implement calendar data fetching
 **Reference:** `/docs/masterplan.md` availability system
 **Acceptance criteria:**
 - Efficient query for date ranges

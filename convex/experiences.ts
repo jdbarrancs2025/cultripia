@@ -260,3 +260,20 @@ export const updateExperience = mutation({
     await ctx.db.patch(experienceId, updates)
   },
 })
+
+export const getExperience = query({
+  args: { id: v.id("experiences") },
+  handler: async (ctx, args) => {
+    const experience = await ctx.db.get(args.id)
+    if (!experience) {
+      return null
+    }
+
+    const host = await ctx.db.get(experience.hostId)
+    
+    return {
+      ...experience,
+      host,
+    }
+  },
+})
