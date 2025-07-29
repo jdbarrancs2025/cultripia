@@ -361,23 +361,23 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 
 ---
 
-## STEP 11: DeepL Translation Integration
+## STEP 11: DeepL Translation Integration ✅
 
-### [ ] Setup DeepL API configuration
+### [COMPLETED] Setup DeepL API configuration
 **Reference:** `/docs/implementation-plan.md` step 11
 **Acceptance criteria:**
 - Environment variable for API key
 - API client configuration
 - Error handling setup
 
-### [ ] Create translation utility function
+### [COMPLETED] Create translation utility function
 **Reference:** `/docs/implementation-plan.md` translation workflow
 **Acceptance criteria:**
 - Accepts text and target language
 - Handles API errors gracefully
 - Returns translated text
 
-### [ ] Integrate with experience form
+### [COMPLETED] Integrate with experience form
 **Reference:** `/docs/implementation-plan.md` step 11
 **Acceptance criteria:**
 - Detect host's primary language
@@ -385,7 +385,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Show translation preview
 - Allow manual editing
 
-### [ ] Update experience mutations
+### [COMPLETED] Update experience mutations
 **Reference:** `/docs/masterplan.md` bilingual content
 **Acceptance criteria:**
 - Save both language versions

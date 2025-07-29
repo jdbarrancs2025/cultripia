@@ -44,6 +44,7 @@ export default defineSchema({
     priceUsd: v.number(),
     imageUrl: v.string(),
     status: v.union(v.literal("draft"), v.literal("active"), v.literal("inactive")),
+    originalLanguage: v.optional(v.union(v.literal("EN"), v.literal("ES"))),
     createdAt: v.number(),
   })
     .index("by_host", ["hostId"])

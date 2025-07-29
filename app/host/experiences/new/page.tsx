@@ -11,7 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner"
 import { useMutation } from "convex/react"
 import { api } from "@/convex/_generated/api"
-import { Upload, Image as ImageIcon } from "lucide-react"
+import { Upload, Image as ImageIcon, Languages } from "lucide-react"
+import { useAction } from "convex/react"
 
 const destinations = [
   "Antigua Guatemala",
@@ -31,11 +32,14 @@ export default function NewExperiencePage() {
   const createExperience = useMutation(api.experiences.createExperience)
   const generateUploadUrl = useMutation(api.files.generateUploadUrl)
   const getImageUrl = useMutation(api.files.getUrl)
+  const translateContent = useAction(api.deepl.translateExperienceContent)
   
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string>("")
+  const [primaryLanguage, setPrimaryLanguage] = useState<"EN" | "ES">("EN")
+  const [isTranslating, setIsTranslating] = useState(false)
   const [formData, setFormData] = useState({
     titleEn: "",
     titleEs: "",
@@ -51,6 +55,7 @@ export default function NewExperiencePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setIsTranslating(true)
 
     try {
       let imageUrl = formData.imageUrl
@@ -70,9 +75,49 @@ export default function NewExperiencePage() {
         throw new Error("Please provide an image for your experience")
       }
 
+      // Prepare the data with translations
+      let finalData = { ...formData, imageUrl }
+
+      // Get the primary language content
+      const title = primaryLanguage === "EN" ? formData.titleEn : formData.titleEs
+      const description = primaryLanguage === "EN" ? formData.descEn : formData.descEs
+
+      // Only translate if we have content in the primary language
+      if (title && description) {
+        try {
+          toast.info("Translating your content...", {
+            description: "This may take a moment",
+          })
+
+          const translation = await translateContent({
+            title,
+            description,
+            sourceLang: primaryLanguage,
+          })
+
+          // Update the translated fields
+          if (primaryLanguage === "EN") {
+            finalData.titleEs = translation.translatedTitle
+            finalData.descEs = translation.translatedDescription
+          } else {
+            finalData.titleEn = translation.translatedTitle
+            finalData.descEn = translation.translatedDescription
+          }
+
+          toast.success("Content translated successfully")
+        } catch (translationError) {
+          console.error("Translation error:", translationError)
+          toast.warning("Translation failed", {
+            description: "You can add translations manually later.",
+          })
+        }
+      }
+
+      setIsTranslating(false)
+
       const experienceId = await createExperience({
-        ...formData,
-        imageUrl
+        ...finalData,
+        originalLanguage: primaryLanguage
       })
       
       toast.success("Experience created successfully", {
@@ -87,6 +132,7 @@ export default function NewExperiencePage() {
       })
     } finally {
       setIsSubmitting(false)
+      setIsTranslating(false)
     }
   }
 
@@ -181,54 +227,106 @@ export default function NewExperiencePage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="titleEn">Title (English)</Label>
-                <Input
-                  id="titleEn"
-                  placeholder="e.g., Traditional Cooking Class in Antigua"
-                  value={formData.titleEn}
-                  onChange={(e) => handleInputChange("titleEn", e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="titleEs">Title (Spanish)</Label>
-                <Input
-                  id="titleEs"
-                  placeholder="e.g., Clase de Cocina Tradicional en Antigua"
-                  value={formData.titleEs}
-                  onChange={(e) => handleInputChange("titleEs", e.target.value)}
-                  required
-                />
-              </div>
+            {/* Language Selector */}
+            <div className="space-y-2">
+              <Label htmlFor="language">Primary Language</Label>
+              <Select 
+                value={primaryLanguage} 
+                onValueChange={(value) => setPrimaryLanguage(value as "EN" | "ES")}
+              >
+                <SelectTrigger id="language" className="w-full md:w-[200px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="EN">English</SelectItem>
+                  <SelectItem value="ES">Español</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-muted-foreground">
+                Write in your preferred language. We&apos;ll automatically translate to the other language.
+              </p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
+            {/* Title Fields */}
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="descEn">Description (English)</Label>
-                <Textarea
-                  id="descEn"
-                  placeholder="Describe your experience in detail..."
-                  rows={4}
-                  value={formData.descEn}
-                  onChange={(e) => handleInputChange("descEn", e.target.value)}
+                <Label htmlFor="title">
+                  Title {primaryLanguage === "EN" ? "(English)" : "(Español)"}
+                </Label>
+                <Input
+                  id="title"
+                  placeholder={primaryLanguage === "EN" 
+                    ? "e.g., Traditional Cooking Class in Antigua" 
+                    : "e.g., Clase de Cocina Tradicional en Antigua"}
+                  value={primaryLanguage === "EN" ? formData.titleEn : formData.titleEs}
+                  onChange={(e) => handleInputChange(
+                    primaryLanguage === "EN" ? "titleEn" : "titleEs", 
+                    e.target.value
+                  )}
                   required
                 />
               </div>
-              
+
+              {/* Show translated title if available */}
+              {((primaryLanguage === "EN" && formData.titleEs) || 
+                (primaryLanguage === "ES" && formData.titleEn)) && (
+                <div className="space-y-2">
+                  <Label htmlFor="titleTranslated">
+                    Title {primaryLanguage === "EN" ? "(Spanish - Auto-translated)" : "(English - Auto-translated)"}
+                  </Label>
+                  <Input
+                    id="titleTranslated"
+                    value={primaryLanguage === "EN" ? formData.titleEs : formData.titleEn}
+                    onChange={(e) => handleInputChange(
+                      primaryLanguage === "EN" ? "titleEs" : "titleEn", 
+                      e.target.value
+                    )}
+                    className="bg-muted/50"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Description Fields */}
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="descEs">Description (Spanish)</Label>
+                <Label htmlFor="description">
+                  Description {primaryLanguage === "EN" ? "(English)" : "(Español)"}
+                </Label>
                 <Textarea
-                  id="descEs"
-                  placeholder="Describe tu experiencia en detalle..."
+                  id="description"
+                  placeholder={primaryLanguage === "EN"
+                    ? "Describe your experience in detail..."
+                    : "Describe tu experiencia en detalle..."}
                   rows={4}
-                  value={formData.descEs}
-                  onChange={(e) => handleInputChange("descEs", e.target.value)}
+                  value={primaryLanguage === "EN" ? formData.descEn : formData.descEs}
+                  onChange={(e) => handleInputChange(
+                    primaryLanguage === "EN" ? "descEn" : "descEs", 
+                    e.target.value
+                  )}
                   required
                 />
               </div>
+
+              {/* Show translated description if available */}
+              {((primaryLanguage === "EN" && formData.descEs) || 
+                (primaryLanguage === "ES" && formData.descEn)) && (
+                <div className="space-y-2">
+                  <Label htmlFor="descriptionTranslated">
+                    Description {primaryLanguage === "EN" ? "(Spanish - Auto-translated)" : "(English - Auto-translated)"}
+                  </Label>
+                  <Textarea
+                    id="descriptionTranslated"
+                    rows={4}
+                    value={primaryLanguage === "EN" ? formData.descEs : formData.descEn}
+                    onChange={(e) => handleInputChange(
+                      primaryLanguage === "EN" ? "descEs" : "descEn", 
+                      e.target.value
+                    )}
+                    className="bg-muted/50"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -373,10 +471,10 @@ export default function NewExperiencePage() {
           
           <Button
             type="submit"
-            disabled={isSubmitting || isUploading}
+            disabled={isSubmitting || isUploading || isTranslating}
             className="md:w-auto w-full"
           >
-            {isSubmitting ? "Creating..." : "Save as Draft"}
+            {isTranslating ? "Translating..." : isSubmitting ? "Creating..." : "Save as Draft"}
           </Button>
           
           <Button
@@ -386,10 +484,10 @@ export default function NewExperiencePage() {
               const form = document.querySelector('form') as HTMLFormElement
               form?.requestSubmit()
             }}
-            disabled={isSubmitting || isUploading}
+            disabled={isSubmitting || isUploading || isTranslating}
             className="bg-turquesa hover:bg-turquesa/90 md:w-auto w-full"
           >
-            {isSubmitting ? "Publishing..." : "Save & Publish"}
+            {isTranslating ? "Translating..." : isSubmitting ? "Publishing..." : "Save & Publish"}
           </Button>
         </div>
       </form>

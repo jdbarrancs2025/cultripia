@@ -12,6 +12,7 @@ export const createExperience = mutation({
     priceUsd: v.number(),
     imageUrl: v.string(),
     status: v.optional(v.union(v.literal("draft"), v.literal("active"), v.literal("inactive"))),
+    originalLanguage: v.optional(v.union(v.literal("EN"), v.literal("ES"))),
   },
   handler: async (ctx, args) => {
     // Validate inputs
@@ -61,6 +62,7 @@ export const createExperience = mutation({
       priceUsd: args.priceUsd,
       imageUrl: args.imageUrl,
       status: args.status || "draft",
+      originalLanguage: args.originalLanguage,
       createdAt: Date.now(),
     })
     
@@ -200,6 +202,7 @@ export const updateExperience = mutation({
     priceUsd: v.optional(v.number()),
     imageUrl: v.optional(v.string()),
     status: v.optional(v.union(v.literal("draft"), v.literal("active"), v.literal("inactive"))),
+    originalLanguage: v.optional(v.union(v.literal("EN"), v.literal("ES"))),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity()

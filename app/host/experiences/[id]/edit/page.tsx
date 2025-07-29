@@ -11,7 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner"
 import { useMutation, useQuery } from "convex/react"
 import { api } from "@/convex/_generated/api"
-import { Upload, Image as ImageIcon, Loader2 } from "lucide-react"
+import { Upload, Image as ImageIcon, Loader2, Languages } from "lucide-react"
+import { useAction } from "convex/react"
 import { Id } from "@/convex/_generated/dataModel"
 
 const destinations = [
@@ -36,11 +37,14 @@ export default function EditExperiencePage() {
   const updateExperience = useMutation(api.experiences.updateExperience)
   const generateUploadUrl = useMutation(api.files.generateUploadUrl)
   const getImageUrl = useMutation(api.files.getUrl)
+  const translateContent = useAction(api.deepl.translateExperienceContent)
   
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string>("")
+  const [primaryLanguage, setPrimaryLanguage] = useState<"EN" | "ES">("EN")
+  const [isTranslating, setIsTranslating] = useState(false)
   const [formData, setFormData] = useState({
     titleEn: "",
     titleEs: "",

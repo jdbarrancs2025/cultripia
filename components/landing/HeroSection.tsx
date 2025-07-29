@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -51,16 +52,21 @@ export function HeroSection() {
   return (
     <section className="relative w-full">
       <div className="relative h-[600px] w-full overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            // TODO: Add hero-background.jpg to /public/images/
-            backgroundImage: "linear-gradient(135deg, #009D9B 0%, #007A79 100%), url('/images/hero-background.jpg')",
-            backgroundColor: "#009D9B", // Fallback color
-          }}
-        >
-          <div className="absolute inset-0 bg-black/20" />
-        </div>
+        {/* Hero Background Image with Next.js Image Optimization */}
+        <Image
+          src="/images/hero-background.PNG"
+          alt="Guatemala cultural experience"
+          fill
+          priority
+          className="object-cover"
+          quality={90}
+        />
+        
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-black/30" />
+        
+        {/* Additional Color Overlay for brand consistency */}
+        <div className="absolute inset-0 bg-turquesa/20" />
         
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center text-white">
           <h1 className="mb-6 text-4xl font-bold md:text-6xl">
