@@ -317,16 +317,16 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 
 ---
 
-## STEP 10: Experience CRUD
+## STEP 10: Experience CRUD ✅
 
-### [ ] Create experience form layout
+### [COMPLETED] Create experience form layout
 **Reference:** `/docs/flow-pages.md` host dashboard
 **Acceptance criteria:**
 - Route at /host/experiences/new
 - Multi-section form
 - Clear labels and help text
 
-### [ ] Build basic info form section
+### [COMPLETED] Build basic info form section
 **Reference:** `/docs/implementation-plan.md` step 10
 **Acceptance criteria:**
 - Title input (primary language)
@@ -335,7 +335,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Max guests number input
 - Price in USD
 
-### [ ] Implement image upload
+### [COMPLETED] Implement image upload
 **Reference:** `/docs/implementation-plan.md` step 10
 **Acceptance criteria:**
 - Single image upload via Convex
@@ -343,7 +343,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Size validation
 - Loading states
 
-### [ ] Create save and publish flow
+### [COMPLETED] Create save and publish flow
 **Reference:** `/docs/masterplan.md` experience lifecycle
 **Acceptance criteria:**
 - Save as draft functionality
@@ -351,7 +351,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Success confirmation
 - Redirect to experience list
 
-### [ ] Build edit experience functionality
+### [COMPLETED] Build edit experience functionality
 **Reference:** `/docs/flow-pages.md` host actions
 **Acceptance criteria:**
 - Pre-populate form with existing data
