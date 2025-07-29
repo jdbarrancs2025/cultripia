@@ -4,9 +4,11 @@
 This document contains important information for the project handoff, including setup instructions, API configurations, and key implementation notes.
 
 ## Development Progress
-- **Completed Steps**: 1-11 (Repository setup through DeepL Translation Integration)
-- **Next Step**: Step 12 (Experience Detail Page)
+- **Completed Steps**: 1-12 (Repository setup through Experience Detail Page)
+- **Current Step**: Step 13 (Stripe Checkout Integration)
 - **Total Steps**: 19
+
+⚠️ **IMPORTANT**: See "CRITICAL REQUIREMENTS FOR STEP 13" section below for Stripe implementation details
 
 ## Environment Setup
 
@@ -116,7 +118,7 @@ npm start
 
 ## Upcoming Features (Not Yet Implemented)
 
-### Step 12: Experience Detail Page
+### Step 12: Experience Detail Page ✅
 - Individual experience view
 - Booking form integration
 - Calendar integration for date selection
@@ -125,6 +127,40 @@ npm start
 - Payment processing
 - Webhook handling
 - Booking confirmation
+
+#### CRITICAL REQUIREMENTS FOR STEP 13:
+1. **Bookings can ONLY be confirmed after payment confirmation**
+   - Do NOT mark booking as paid until Stripe webhook confirms payment
+   - Implement proper webhook signature verification
+   
+2. **Pricing Structure:**
+   - Each experience has a `pricePerPerson` (already in database)
+   - Total price = `pricePerPerson × guestCount`
+   - Calculate total dynamically at checkout time
+   
+3. **Testing in Panama (No Production Stripe Account):**
+   - Use Stripe TEST MODE for all development
+   - Test API keys format: `pk_test_...` and `sk_test_...`
+   - Test card numbers:
+     * Success: `4242 4242 4242 4242`
+     * Requires auth: `4000 0025 0000 3155`
+     * Declined: `4000 0000 0000 9995`
+   - Test mode is FULLY SUFFICIENT for:
+     * Complete payment flow testing
+     * Webhook event testing
+     * Success/failure scenarios
+     * Demonstrating to clients
+   
+4. **Implementation Notes:**
+   - Store test keys in `.env.local`:
+     ```
+     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+     STRIPE_SECRET_KEY=sk_test_...
+     STRIPE_WEBHOOK_SECRET=whsec_...
+     ```
+   - Create webhook endpoint at `/api/webhooks/stripe`
+   - Use Stripe CLI for local webhook testing
+   - Clients can later replace with their production keys
 
 ### Step 14-15: Dashboard Pages
 - Host dashboard with metrics
