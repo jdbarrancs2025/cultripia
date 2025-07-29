@@ -59,11 +59,7 @@ const nextConfig = {
   // Disable source maps in development to reduce memory usage
   productionBrowserSourceMaps: false,
   // Reduce build memory usage
-  swcMinify: true,
-  // Ignore specific files from triggering rebuilds
-  watchOptions: {
-    ignored: ['**/node_modules', '**/.git', '**/.next', '**/convex/_generated/**']
-  }
+  swcMinify: true
 }
 
 module.exports = withNextIntl(nextConfig)

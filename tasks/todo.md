@@ -394,9 +394,9 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 
 ---
 
-## STEP 12: Experience Detail Page
+## STEP 12: Experience Detail Page ✅
 
-### [ ] Create detail page layout
+### [COMPLETED] Create detail page layout
 **Reference:** `/docs/design-guidelines.md` detail page
 **Acceptance criteria:**
 - Route at /experiences/[id]
@@ -404,7 +404,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Info and booking sections
 - Mobile-responsive
 
-### [ ] Build experience info display
+### [COMPLETED] Build experience info display
 **Reference:** `/docs/flow-pages.md` experience details
 **Acceptance criteria:**
 - Title and description (user's language)
@@ -413,14 +413,14 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Guest capacity
 - What's included section
 
-### [ ] Integrate calendar for date selection
+### [COMPLETED] Integrate calendar for date selection
 **Reference:** `/docs/implementation-plan.md` step 12
 **Acceptance criteria:**
 - Show available dates only
 - Selected date highlighted
 - Updates booking form
 
-### [ ] Create booking form component
+### [COMPLETED] Create booking form component
 **Reference:** `/docs/design-guidelines.md` booking flow
 **Acceptance criteria:**
 - Guest count selector
