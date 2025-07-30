@@ -223,6 +223,80 @@ export const getHostBookings = query({
   },
 })
 
+export const getTravelerBookings = query({
+  args: { travelerId: v.id("users") },
+  handler: async (ctx, args) => {
+    const bookings = await ctx.db
+      .query("bookings")
+      .withIndex("by_traveler", (q) => q.eq("travelerId", args.travelerId))
+      .collect()
+    
+    const bookingsWithDetails = await Promise.all(
+      bookings.map(async (booking) => {
+        const experience = await ctx.db.get(booking.experienceId)
+        const host = experience ? await ctx.db.get(experience.hostId) : null
+        return {
+          ...booking,
+          experience,
+          host,
+          guestCount: booking.qtyPersons, // Add alias for consistency
+        }
+      })
+    )
+    
+    // Sort by date (newest first)
+    return bookingsWithDetails.sort((a, b) => {
+      const dateA = new Date(a.selectedDate).getTime()
+      const dateB = new Date(b.selectedDate).getTime()
+      return dateB - dateA
+    })
+  },
+})
+
+export const getBookingById = query({
+  args: { bookingId: v.id("bookings") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      throw new Error("Unauthorized: User not authenticated")
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first()
+    
+    if (!user) {
+      throw new Error("User not found")
+    }
+
+    const booking = await ctx.db.get(args.bookingId)
+    if (!booking) {
+      throw new Error("Booking not found")
+    }
+
+    // Check if user has access to this booking
+    if (booking.travelerId !== user._id && user.role !== "admin") {
+      const experience = await ctx.db.get(booking.experienceId)
+      if (!experience || experience.hostId !== user._id) {
+        throw new Error("Unauthorized: You don't have access to this booking")
+      }
+    }
+
+    const experience = await ctx.db.get(booking.experienceId)
+    const host = experience ? await ctx.db.get(experience.hostId) : null
+    const traveler = await ctx.db.get(booking.travelerId)
+
+    return {
+      ...booking,
+      experience,
+      host,
+      traveler,
+      guestCount: booking.qtyPersons,
+    }
+  },
+})
+
 export const updateBookingPaymentStatus = mutation({
   args: {
     stripeSessionId: v.string(),

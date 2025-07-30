@@ -47,6 +47,16 @@ export default clerkMiddleware(async (auth, req) => {
   // Allow public routes
   if (isPublicRoute(req)) return NextResponse.next()
 
+  // Handle dashboard redirect based on role
+  if (req.nextUrl.pathname === '/dashboard' && userId) {
+    if (role === 'admin') {
+      return NextResponse.redirect(new URL('/admin/dashboard', req.url))
+    } else if (role === 'host') {
+      return NextResponse.redirect(new URL('/host/dashboard', req.url))
+    }
+    // Travelers stay on /dashboard (which maps to /(main)/dashboard)
+  }
+
   // Redirect unauthenticated users to sign-in
   if (!userId) {
     const signInUrl = new URL("/sign-in", req.url)
