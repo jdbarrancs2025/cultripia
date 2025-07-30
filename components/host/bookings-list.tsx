@@ -1,0 +1,144 @@
+"use client"
+
+import { useState } from "react"
+import { Doc } from "@/convex/_generated/dataModel"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { formatCurrency } from "@/lib/utils"
+import { Calendar, Users, Mail, Phone } from "lucide-react"
+
+interface BookingsListProps {
+  bookings: Array<Doc<"bookings"> & {
+    experience: Doc<"experiences"> | null
+    traveler: Doc<"users"> | null
+  }>
+}
+
+export function BookingsList({ bookings }: BookingsListProps) {
+  const [filter, setFilter] = useState<"all" | "upcoming" | "past">("all")
+
+  const filteredBookings = bookings.filter((booking) => {
+    const bookingDate = new Date(booking.selectedDate)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    if (filter === "upcoming") {
+      return bookingDate >= today
+    } else if (filter === "past") {
+      return bookingDate < today
+    }
+    return true
+  })
+
+  if (bookings.length === 0) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <p className="text-gray-500">No tienes reservas aún.</p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle>Reservas</CardTitle>
+            <CardDescription>
+              Gestiona las reservas de tus experiencias
+            </CardDescription>
+          </div>
+          <Select value={filter} onValueChange={(value: any) => setFilter(value)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filtrar reservas" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas</SelectItem>
+              <SelectItem value="upcoming">Próximas</SelectItem>
+              <SelectItem value="past">Pasadas</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Experiencia</TableHead>
+              <TableHead>Fecha</TableHead>
+              <TableHead>Viajero</TableHead>
+              <TableHead>Personas</TableHead>
+              <TableHead>Total</TableHead>
+              <TableHead>Estado</TableHead>
+              <TableHead>Contacto</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredBookings.map((booking) => (
+              <TableRow key={booking._id}>
+                <TableCell className="font-medium">
+                  {booking.experience?.titleEs || booking.experience?.titleEn || "N/A"}
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-gray-400" />
+                    {new Date(booking.selectedDate).toLocaleDateString('es-ES', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </div>
+                </TableCell>
+                <TableCell>{booking.traveler?.name || "N/A"}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-gray-400" />
+                    {booking.qtyPersons}
+                  </div>
+                </TableCell>
+                <TableCell>{formatCurrency(booking.totalAmount)}</TableCell>
+                <TableCell>
+                  <Badge
+                    variant={booking.paid ? "default" : "secondary"}
+                    className={
+                      booking.paid 
+                        ? "bg-green-100 text-green-800 hover:bg-green-200" 
+                        : "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                    }
+                  >
+                    {booking.paid ? "Pagado" : "Pendiente"}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  {booking.traveler?.email && (
+                    <div className="flex items-center gap-3">
+                      <a
+                        href={`mailto:${booking.traveler.email}`}
+                        className="text-[#009D9B] hover:text-[#008C8A]"
+                        title={booking.traveler.email}
+                      >
+                        <Mail className="h-4 w-4" />
+                      </a>
+                    </div>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  )
+}

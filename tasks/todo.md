@@ -473,14 +473,14 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 
 ## STEP 14: Host Dashboard
 
-### [ ] Create host dashboard layout
+### [COMPLETED] Create host dashboard layout
 **Reference:** `/docs/flow-pages.md` host dashboard
 **Acceptance criteria:**
 - Route at /host/dashboard
 - Navigation tabs
 - Overview section
 
-### [ ] Build calendar view for availability
+### [COMPLETED] Build calendar view for availability
 **Reference:** `/docs/implementation-plan.md` step 14
 **Acceptance criteria:**
 - Monthly calendar display
@@ -488,7 +488,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Quick actions (block/unblock)
 - Save changes functionality
 
-### [ ] Create experiences list view
+### [COMPLETED] Create experiences list view
 **Reference:** `/docs/design-guidelines.md` host dashboard
 **Acceptance criteria:**
 - shadcn Table component
@@ -496,7 +496,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Status badges (active/inactive)
 - Edit/view actions
 
-### [ ] Build bookings management section
+### [COMPLETED] Build bookings management section
 **Reference:** `/docs/implementation-plan.md` step 14
 **Acceptance criteria:**
 - List of upcoming bookings
@@ -504,7 +504,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Contact guest functionality
 - Filter by date range
 
-### [ ] Add dashboard metrics
+### [COMPLETED] Add dashboard metrics
 **Reference:** `/docs/masterplan.md` host features
 **Acceptance criteria:**
 - Total bookings count

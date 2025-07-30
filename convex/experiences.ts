@@ -281,6 +281,18 @@ export const updateExperience = mutation({
   },
 })
 
+export const getByHost = query({
+  args: { hostId: v.id("users") },
+  handler: async (ctx, args) => {
+    const experiences = await ctx.db
+      .query("experiences")
+      .filter((q) => q.eq(q.field("hostId"), args.hostId))
+      .collect()
+    
+    return experiences
+  },
+})
+
 export const getExperience = query({
   args: { id: v.id("experiences") },
   handler: async (ctx, args) => {

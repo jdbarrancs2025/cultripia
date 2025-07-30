@@ -184,6 +184,45 @@ export const getBySessionId = query({
   },
 })
 
+export const getHostBookings = query({
+  args: { hostId: v.id("users") },
+  handler: async (ctx, args) => {
+    // Get all experiences by this host
+    const experiences = await ctx.db
+      .query("experiences")
+      .filter((q) => q.eq(q.field("hostId"), args.hostId))
+      .collect()
+
+    // Get all bookings for host's experiences
+    const experienceIds = experiences.map(exp => exp._id)
+    const allBookings = []
+    
+    for (const expId of experienceIds) {
+      const expBookings = await ctx.db
+        .query("bookings")
+        .withIndex("by_experience", (q) => q.eq("experienceId", expId))
+        .collect()
+      allBookings.push(...expBookings)
+    }
+
+    // Add experience and traveler details
+    const bookingsWithDetails = await Promise.all(
+      allBookings.map(async (booking) => {
+        const experience = await ctx.db.get(booking.experienceId)
+        const traveler = await ctx.db.get(booking.travelerId)
+        return {
+          ...booking,
+          experience,
+          traveler,
+        }
+      })
+    )
+    
+    // Sort by date (newest first)
+    return bookingsWithDetails.sort((a, b) => b.createdAt - a.createdAt)
+  },
+})
+
 export const updateBookingPaymentStatus = mutation({
   args: {
     stripeSessionId: v.string(),

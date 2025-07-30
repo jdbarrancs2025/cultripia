@@ -19,6 +19,7 @@ import type * as deepl from "../deepl.js";
 import type * as experiences from "../experiences.js";
 import type * as files from "../files.js";
 import type * as hostApplications from "../hostApplications.js";
+import type * as hosts from "../hosts.js";
 import type * as stripe from "../stripe.js";
 import type * as users from "../users.js";
 
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   experiences: typeof experiences;
   files: typeof files;
   hostApplications: typeof hostApplications;
+  hosts: typeof hosts;
   stripe: typeof stripe;
   users: typeof users;
 }>;
