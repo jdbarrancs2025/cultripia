@@ -10,6 +10,10 @@ import { TravelerDatePicker } from "@/components/booking/TravelerDatePicker"
 import { Id } from "@/convex/_generated/dataModel"
 import { Minus, Plus, Users } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { useAction, useQuery } from "convex/react"
+import { api } from "@/convex/_generated/api"
+import { useUser } from "@clerk/nextjs"
+import { stripePromise } from "@/lib/stripe"
 
 interface BookingCardProps {
   experienceId: Id<"experiences">
@@ -20,6 +24,8 @@ interface BookingCardProps {
   guestCount: number
   onGuestCountChange: (count: number) => void
   totalAmount: number
+  experienceTitle: string
+  hostName: string
 }
 
 export function BookingCard({
@@ -31,10 +37,17 @@ export function BookingCard({
   guestCount,
   onGuestCountChange,
   totalAmount,
+  experienceTitle,
+  hostName,
 }: BookingCardProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
+  const { user, isSignedIn } = useUser()
+  const createCheckoutSession = useAction(api.stripe.createCheckoutSession)
+  
+  // Get current user from Convex
+  const currentUser = useQuery(api.users.getCurrentUser)
   
   const handleGuestIncrement = () => {
     if (guestCount < maxGuests) {
@@ -58,33 +71,61 @@ export function BookingCard({
       return
     }
     
-    setIsLoading(true)
-    
-    // Store booking data in sessionStorage for Step 13 (Stripe integration)
-    const bookingData = {
-      experienceId,
-      selectedDate: selectedDate.toISOString().split('T')[0],
-      guestCount,
-      totalAmount,
-      pricePerPerson,
+    if (!isSignedIn) {
+      toast({
+        title: "Inicia sesión",
+        description: "Debes iniciar sesión para hacer una reserva.",
+        variant: "destructive",
+      })
+      router.push("/sign-in")
+      return
     }
     
-    sessionStorage.setItem('pendingBooking', JSON.stringify(bookingData))
-    
-    // For now, just show a message since Stripe is not implemented yet
-    toast({
-      title: "Procesando reserva",
-      description: "Redirigiendo al proceso de pago...",
-    })
-    
-    // Simulate delay then redirect to a placeholder
-    setTimeout(() => {
-      setIsLoading(false)
+    if (!currentUser) {
       toast({
-        title: "Próximamente",
-        description: "La integración con Stripe se completará en el siguiente paso.",
+        title: "Error",
+        description: "No se pudo obtener la información del usuario.",
+        variant: "destructive",
       })
-    }, 1500)
+      return
+    }
+    
+    setIsLoading(true)
+    
+    try {
+      // Create Stripe checkout session
+      const result = await createCheckoutSession({
+        experienceId,
+        travelerId: currentUser._id,
+        guestCount,
+        selectedDate: selectedDate.toISOString().split('T')[0],
+        experienceTitle,
+        pricePerPerson,
+        hostName,
+      })
+      
+      // Redirect to Stripe Checkout
+      const stripe = await stripePromise
+      if (!stripe) {
+        throw new Error("Stripe no se pudo cargar")
+      }
+      
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: result.sessionId,
+      })
+      
+      if (error) {
+        throw error
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error)
+      toast({
+        title: "Error",
+        description: "No se pudo procesar el pago. Por favor intenta de nuevo.",
+        variant: "destructive",
+      })
+      setIsLoading(false)
+    }
   }
   
   return (

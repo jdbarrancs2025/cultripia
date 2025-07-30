@@ -57,6 +57,8 @@ export function ExperienceDetailContent({ experience }: ExperienceDetailContentP
                 guestCount={guestCount}
                 onGuestCountChange={setGuestCount}
                 totalAmount={totalAmount}
+                experienceTitle={experience.titleEs}
+                hostName={experience.host?.name || "Host"}
               />
             </div>
           </div>

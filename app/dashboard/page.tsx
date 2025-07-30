@@ -63,7 +63,7 @@ function DashboardContent() {
           </Card>
         )}
         
-        {currentUser.role === "host" && (
+        {(currentUser.role === "host" || currentUser.role === "admin") && (
           <Card>
             <CardHeader>
               <CardTitle>Host Dashboard</CardTitle>

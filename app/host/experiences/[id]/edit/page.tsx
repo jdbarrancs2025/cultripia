@@ -14,6 +14,7 @@ import { api } from "@/convex/_generated/api"
 import { Upload, Image as ImageIcon, Loader2, Languages } from "lucide-react"
 import { useAction } from "convex/react"
 import { Id } from "@/convex/_generated/dataModel"
+import { useUser } from "@clerk/nextjs"
 
 const destinations = [
   "Antigua Guatemala",
@@ -31,9 +32,13 @@ const destinations = [
 export default function EditExperiencePage() {
   const router = useRouter()
   const params = useParams()
+  const { user } = useUser()
   const experienceId = params.id as Id<"experiences">
   
   const experience = useQuery(api.experiences.getExperience, { id: experienceId })
+  const currentUser = useQuery(api.users.getUserByClerkId, {
+    clerkId: user?.id || "",
+  })
   const updateExperience = useMutation(api.experiences.updateExperience)
   const generateUploadUrl = useMutation(api.files.generateUploadUrl)
   const getImageUrl = useMutation(api.files.getUrl)
@@ -189,13 +194,39 @@ export default function EditExperiencePage() {
     }
   }
 
-  if (!experience) {
+  if (!experience || !user || !currentUser) {
     return (
       <div className="container max-w-4xl mx-auto py-8 px-4">
         <Card>
           <CardContent className="py-16">
             <div className="flex justify-center">
               <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Check if user is the host or admin
+  const isAuthorized = currentUser._id === experience.hostId || currentUser.role === "admin"
+
+  if (!isAuthorized) {
+    return (
+      <div className="container max-w-4xl mx-auto py-8 px-4">
+        <Card>
+          <CardContent className="py-16">
+            <div className="text-center">
+              <h2 className="text-xl font-semibold text-red-900">Access Denied</h2>
+              <p className="mt-2 text-red-700">
+                You don&apos;t have permission to edit this experience.
+              </p>
+              <Button
+                onClick={() => router.push("/host/experiences")}
+                className="mt-4"
+              >
+                Back to My Experiences
+              </Button>
             </div>
           </CardContent>
         </Card>

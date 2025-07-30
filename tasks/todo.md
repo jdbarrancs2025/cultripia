@@ -430,16 +430,16 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 
 ---
 
-## STEP 13: Stripe Checkout Integration
+## STEP 13: Stripe Checkout Integration ✅
 
-### [ ] Setup Stripe configuration
+### [COMPLETED] Setup Stripe configuration
 **Reference:** `/docs/masterplan.md` payment integration
 **Acceptance criteria:**
 - Environment variables for keys
 - Stripe SDK installation
 - Webhook endpoint setup
 
-### [ ] Create checkout session endpoint
+### [COMPLETED] Create checkout session endpoint
 **Reference:** `/docs/implementation-plan.md` step 13
 **Acceptance criteria:**
 - Convex function for session creation
@@ -447,14 +447,14 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Set success/cancel URLs
 - Return session ID
 
-### [ ] Build checkout redirect flow
+### [COMPLETED] Build checkout redirect flow
 **Reference:** `/docs/flow-pages.md` booking flow
 **Acceptance criteria:**
 - Create booking record (unpaid)
 - Redirect to Stripe Checkout
 - Handle loading states
 
-### [ ] Implement webhook handler
+### [COMPLETED] Implement webhook handler
 **Reference:** `/docs/implementation-plan.md` step 13
 **Acceptance criteria:**
 - Verify webhook signature
@@ -462,7 +462,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Send confirmation email
 - Handle errors gracefully
 
-### [ ] Create success/cancel pages
+### [COMPLETED] Create success/cancel pages
 **Reference:** `/docs/design-guidelines.md` payment flow
 **Acceptance criteria:**
 - Success page with booking details

@@ -44,6 +44,8 @@ export function Navigation() {
       items.push(
         { label: "Admin Dashboard", href: "/admin", show: true },
         { label: "Panel de Control", href: "/host/dashboard", show: true },
+        { label: "Mis Experiencias", href: "/host/experiences", show: true },
+        { label: "Calendario", href: "/host/calendar", show: true },
         { label: "Mis Reservas", href: "/dashboard", show: true }
       )
     }

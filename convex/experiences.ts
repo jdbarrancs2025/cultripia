@@ -13,6 +13,7 @@ export const createExperience = mutation({
     imageUrl: v.string(),
     status: v.optional(v.union(v.literal("draft"), v.literal("active"), v.literal("inactive"))),
     originalLanguage: v.optional(v.union(v.literal("EN"), v.literal("ES"))),
+    hostId: v.optional(v.id("users")), // Optional: for admins to specify the host
   },
   handler: async (ctx, args) => {
     // Validate inputs
@@ -47,12 +48,28 @@ export const createExperience = mutation({
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
       .first()
     
-    if (!user || user.role !== "host") {
-      throw new Error("Unauthorized: Only hosts can create experiences")
+    if (!user || (user.role !== "host" && user.role !== "admin")) {
+      throw new Error("Unauthorized: Only hosts and admins can create experiences")
+    }
+
+    // If hostId is provided, validate it (admin feature)
+    let finalHostId = user._id
+    if (args.hostId) {
+      if (user.role !== "admin") {
+        throw new Error("Unauthorized: Only admins can specify a different host")
+      }
+      const targetHost = await ctx.db.get(args.hostId)
+      if (!targetHost) {
+        throw new Error("Specified host not found")
+      }
+      if (targetHost.role !== "host" && targetHost.role !== "admin") {
+        throw new Error("Specified user is not a host")
+      }
+      finalHostId = args.hostId
     }
 
     const experienceId = await ctx.db.insert("experiences", {
-      hostId: user._id,
+      hostId: finalHostId,
       titleEn: args.titleEn,
       titleEs: args.titleEs,
       descEn: args.descEn,
@@ -224,7 +241,7 @@ export const updateExperience = mutation({
       throw new Error("Experience not found")
     }
 
-    if (experience.hostId !== user._id) {
+    if (experience.hostId !== user._id && user.role !== "admin") {
       throw new Error("Unauthorized: You can only update your own experiences")
     }
 

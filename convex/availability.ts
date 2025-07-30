@@ -33,7 +33,7 @@ export const createAvailability = mutation({
       throw new Error("Experience not found")
     }
 
-    if (experience.hostId !== user._id) {
+    if (experience.hostId !== user._id && user.role !== "admin") {
       throw new Error("Unauthorized: You can only manage availability for your own experiences")
     }
 
@@ -121,7 +121,7 @@ export const updateAvailabilityStatus = mutation({
       .first()
 
     if (!availability) {
-      if (args.status === "booked" || experience.hostId !== user._id) {
+      if (args.status === "booked" || (experience.hostId !== user._id && user.role !== "admin")) {
         throw new Error("Unauthorized: Cannot update availability")
       }
       
@@ -136,7 +136,7 @@ export const updateAvailabilityStatus = mutation({
       return
     }
 
-    if (experience.hostId !== user._id) {
+    if (experience.hostId !== user._id && user.role !== "admin") {
       throw new Error("Unauthorized: You can only manage availability for your own experiences")
     }
 
@@ -188,7 +188,7 @@ export const bulkUpdateAvailability = mutation({
       throw new Error("Experience not found")
     }
 
-    if (experience.hostId !== user._id) {
+    if (experience.hostId !== user._id && user.role !== "admin") {
       throw new Error("Unauthorized: You can only manage availability for your own experiences")
     }
 

@@ -26,8 +26,8 @@ export default function ExperienceAvailabilityPage() {
     id: experienceId,
   })
 
-  // Check if user is the host
-  const isHost = currentUser && experience && currentUser._id === experience.hostId
+  // Check if user is the host or admin
+  const isAuthorized = currentUser && experience && (currentUser._id === experience.hostId || currentUser.role === "admin")
 
   if (!user || !currentUser) {
     return (
@@ -51,7 +51,7 @@ export default function ExperienceAvailabilityPage() {
     )
   }
 
-  if (!isHost) {
+  if (!isAuthorized) {
     return (
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <div className="rounded-lg bg-red-50 p-6 text-center">

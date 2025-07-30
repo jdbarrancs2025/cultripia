@@ -20,9 +20,9 @@ export default function HostExperiencesPage() {
     user?.id ? { clerkId: user.id } : "skip"
   )
   
-  // Get experiences for this host
+  // Get experiences - all experiences for admin, host's experiences for hosts
   const experiences = useQuery(api.experiences.getExperiences, 
-    convexUser?._id ? { hostId: convexUser._id } : "skip"
+    convexUser?._id ? (convexUser.role === "admin" ? {} : { hostId: convexUser._id }) : "skip"
   )
 
   if (!user || !convexUser) {
@@ -37,7 +37,7 @@ export default function HostExperiencesPage() {
     )
   }
 
-  if (convexUser.role !== "host") {
+  if (convexUser.role !== "host" && convexUser.role !== "admin") {
     return (
       <div className="container mx-auto py-8 px-4">
         <Card>

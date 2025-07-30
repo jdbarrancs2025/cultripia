@@ -14,8 +14,8 @@ export const generateUploadUrl = mutation({
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
       .first()
     
-    if (!user || user.role !== "host") {
-      throw new Error("Unauthorized: Only hosts can upload files")
+    if (!user || (user.role !== "host" && user.role !== "admin")) {
+      throw new Error("Unauthorized: Only hosts and admins can upload files")
     }
 
     // Generate a short-lived upload URL

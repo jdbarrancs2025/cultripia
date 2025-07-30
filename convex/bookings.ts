@@ -159,6 +159,31 @@ export const getAll = query({
   },
 })
 
+export const getBySessionId = query({
+  args: {
+    sessionId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const booking = await ctx.db
+      .query("bookings")
+      .withIndex("by_stripe_session", (q) => q.eq("stripeSessionId", args.sessionId))
+      .first()
+    
+    if (!booking) return null
+    
+    const experience = await ctx.db.get(booking.experienceId)
+    const traveler = await ctx.db.get(booking.travelerId)
+    const host = experience ? await ctx.db.get(experience.hostId) : null
+    
+    return {
+      ...booking,
+      experience,
+      traveler,
+      host,
+    }
+  },
+})
+
 export const updateBookingPaymentStatus = mutation({
   args: {
     stripeSessionId: v.string(),
