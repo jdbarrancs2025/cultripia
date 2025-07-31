@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useTranslations, useLocale } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -16,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Users, DollarSign, Loader2 } from "lucide-react";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -24,6 +25,8 @@ import { BookingWithDetails } from "@/types/booking";
 
 export default function TravelerDashboard() {
   const { user } = useUser();
+  const t = useTranslations("dashboard");
+  const locale = useLocale();
   const [selectedTab, setSelectedTab] = useState("upcoming");
 
   // Redirect if not authenticated
@@ -81,7 +84,7 @@ export default function TravelerDashboard() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="flex items-center gap-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Cargando...</span>
+          <span>{t("loading")}</span>
         </div>
       </div>
     );
@@ -90,9 +93,9 @@ export default function TravelerDashboard() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Mi Dashboard</h1>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
         <p className="text-muted-foreground mt-2">
-          Administra tus reservas y experiencias
+          {t("subtitle")}
         </p>
       </div>
 
@@ -103,13 +106,13 @@ export default function TravelerDashboard() {
       >
         <TabsList
           className="grid w-full max-w-md grid-cols-2"
-          aria-label="Filtrar reservas"
+          aria-label={t("filterBookings")}
         >
           <TabsTrigger value="upcoming">
-            Próximas ({upcomingBookings.length})
+            {t("upcomingTab")} ({upcomingBookings.length})
           </TabsTrigger>
           <TabsTrigger value="past">
-            Pasadas ({pastBookings.length})
+            {t("pastTab")} ({pastBookings.length})
           </TabsTrigger>
         </TabsList>
 
@@ -118,10 +121,10 @@ export default function TravelerDashboard() {
             <Card>
               <CardContent className="text-center py-12">
                 <p className="text-muted-foreground mb-4">
-                  No tienes reservas próximas
+                  {t("noUpcomingBookings")}
                 </p>
                 <Button asChild>
-                  <Link href="/experiences">Explorar Experiencias</Link>
+                  <Link href="/experiences">{t("exploreExperiences")}</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -143,7 +146,7 @@ export default function TravelerDashboard() {
             <Card>
               <CardContent className="text-center py-12">
                 <p className="text-muted-foreground">
-                  No tienes reservas pasadas
+                  {t("noPastBookings")}
                 </p>
               </CardContent>
             </Card>
@@ -174,6 +177,8 @@ function BookingCard({
 }) {
   const experience = booking.experience;
   const host = booking.host;
+  const t = useTranslations("dashboard");
+  const locale = useLocale();
 
   if (!experience || !host) {
     return null;
@@ -191,21 +196,21 @@ function BookingCard({
         />
         {isUpcoming && booking.paid && (
           <Badge className="absolute top-2 right-2 bg-green-600">
-            Confirmada
+            {t("confirmed")}
           </Badge>
         )}
         {isUpcoming && !booking.paid && (
           <Badge className="absolute top-2 right-2 bg-yellow-600">
-            Pendiente de pago
+            {t("pendingPayment")}
           </Badge>
         )}
       </div>
 
       <CardHeader>
-        <CardTitle className="line-clamp-2" title={experience.titleEs}>
-          {experience.titleEs}
+        <CardTitle className="line-clamp-2" title={locale === "es" ? experience.titleEs : experience.titleEn}>
+          {locale === "es" ? experience.titleEs : experience.titleEn}
         </CardTitle>
-        <CardDescription>Anfitrión: {host.name}</CardDescription>
+        <CardDescription>{t("host")}: {host.name}</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-3">
@@ -213,7 +218,7 @@ function BookingCard({
           <Calendar className="h-4 w-4" aria-hidden="true" />
           <span>
             {format(new Date(booking.selectedDate), "dd MMM yyyy", {
-              locale: es,
+              locale: locale === "es" ? es : enUS,
             })}
           </span>
         </div>
@@ -227,7 +232,7 @@ function BookingCard({
           <Users className="h-4 w-4" aria-hidden="true" />
           <span>
             {booking.guestCount}{" "}
-            {booking.guestCount === 1 ? "persona" : "personas"}
+            {booking.guestCount === 1 ? t("person") : t("people")}
           </span>
         </div>
 
@@ -241,16 +246,16 @@ function BookingCard({
             <>
               <Button className="w-full" variant="outline" asChild>
                 <Link href={`/dashboard/bookings/${booking._id}`}>
-                  Ver Detalles
+                  {t("viewDetails")}
                 </Link>
               </Button>
               {host.email && (
                 <Button className="w-full" variant="secondary" asChild>
                   <a
                     href={`mailto:${host.email}`}
-                    aria-label={`Enviar email a ${host.name}`}
+                    aria-label={`${t("sendEmailTo")}${host.name}`}
                   >
-                    Contactar Anfitrión
+                    {t("contactHost")}
                   </a>
                 </Button>
               )}
@@ -259,12 +264,12 @@ function BookingCard({
             <>
               <Button className="w-full" asChild>
                 <Link href={`/experiences/${experience._id}`}>
-                  Reservar de Nuevo
+                  {t("bookAgain")}
                 </Link>
               </Button>
               <Button className="w-full" variant="outline" asChild>
                 <Link href={`/dashboard/bookings/${booking._id}`}>
-                  Ver Detalles
+                  {t("viewDetails")}
                 </Link>
               </Button>
             </>

@@ -14,6 +14,9 @@ const nextConfig = {
       },
     ],
   },
+  // Disable static export due to internationalization issues
+  output: undefined,
+  trailingSlash: false,
   // Disable webpack cache to prevent chunk loading errors
   webpack: (config, { isServer }) => {
     // Disable persistent caching

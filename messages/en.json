@@ -18,7 +18,18 @@
     "next": "Next",
     "previous": "Previous",
     "submit": "Submit",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "navigation": {
+    "explore": "Explore",
+    "myBookings": "My Bookings",
+    "becomeHost": "Become a Host",
+    "dashboard": "Dashboard",
+    "myExperiences": "My Experiences",
+    "calendar": "Calendar",
+    "adminDashboard": "Admin Dashboard"
   },
   "home": {
     "title": "Welcome to Cultripia",
@@ -27,17 +38,43 @@
     "datePickerPlaceholder": "When are you traveling?",
     "searchButton": "Search experiences",
     "featuredExperiences": "Featured Experiences",
+    "featuredExperiencesSubtitle": "Discover our most popular experiences",
+    "noExperiencesAvailable": "No experiences available at this moment.",
     "howItWorks": "How It Works",
-    "becomeHost": "Become a Host"
+    "becomeHost": "Become a Host",
+    "host": "Host",
+    "hero": {
+      "title": "Discover authentic culture",
+      "subtitle": "Connect with local communities through purposeful cultural and ecological experiences.",
+      "cta": "Start your journey",
+      "searchTitle": "Find your next adventure",
+      "whereLabel": "Where?",
+      "whenLabel": "When",
+      "whoLabel": "Who",
+      "wherePlaceholder": "Explore destinations",
+      "numberOfGuests": "Number of guests",
+      "search": "Search"
+    }
   },
   "experiences": {
     "title": "Experiences",
+    "pageTitle": "Cultripia Experiences",
     "pricePerPerson": "per person",
     "duration": "Duration",
     "maxGuests": "Max guests",
     "bookNow": "Book Now",
     "notAvailable": "Not available",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "allDestinations": "All destinations",
+    "clearFilters": "Clear filters",
+    "activeFilters": "Active filters:",
+    "destination": "Destination",
+    "date": "Date",
+    "guests": "Guests",
+    "noExperiencesFound": "No experiences available",
+    "noExperiencesInLocation": "No experiences available in ",
+    "clearFiltersViewAll": "Clear filters and view all",
+    "loadingExperiences": "Loading experiences..."
   },
   "host": {
     "dashboard": "Host Dashboard",
@@ -58,6 +95,26 @@
     "paymentDetails": "Payment Details",
     "bookingSuccess": "Booking successful!",
     "bookingError": "Booking error"
+  },
+  "dashboard": {
+    "title": "My Dashboard",
+    "subtitle": "Manage your bookings and experiences",
+    "loading": "Loading...",
+    "filterBookings": "Filter bookings",
+    "upcomingTab": "Upcoming",
+    "pastTab": "Past",
+    "noUpcomingBookings": "You have no upcoming bookings",
+    "exploreExperiences": "Explore Experiences",
+    "noPastBookings": "You have no past bookings",
+    "confirmed": "Confirmed",
+    "pendingPayment": "Pending payment",
+    "host": "Host",
+    "person": "person",
+    "people": "people",
+    "viewDetails": "View Details",
+    "contactHost": "Contact Host",
+    "bookAgain": "Book Again",
+    "sendEmailTo": "Send email to "
   },
   "admin": {
     "dashboard": "Admin Dashboard",

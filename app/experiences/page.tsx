@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useTranslations, useLocale } from "next-intl";
 import { ExperienceCard } from "@/components/ui/experience-card";
 import {
   Select,
@@ -42,6 +43,9 @@ const destinations = [
 function ExperiencesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const t = useTranslations("experiences");
+  const tHome = useTranslations("home");
+  const locale = useLocale();
   const [currentPage, setCurrentPage] = useState(1);
 
   const location = searchParams.get("location") || undefined;
@@ -144,7 +148,7 @@ function ExperiencesContent() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="mb-6 text-3xl font-bold text-gris-90">
-            Experiencias Cultripia
+            {t("pageTitle")}
           </h1>
 
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -154,10 +158,10 @@ function ExperiencesContent() {
                 onValueChange={handleLocationChange}
               >
                 <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Todos los destinos" />
+                  <SelectValue placeholder={t("allDestinations")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todos los destinos</SelectItem>
+                  <SelectItem value="all">{t("allDestinations")}</SelectItem>
                   {destinations.map((dest) => (
                     <SelectItem key={dest} value={dest}>
                       {dest}
@@ -174,22 +178,22 @@ function ExperiencesContent() {
                   className="flex items-center gap-2"
                 >
                   <X className="h-4 w-4" />
-                  Limpiar filtros
+                  {t("clearFilters")}
                 </Button>
               )}
             </div>
 
             {hasActiveFilters && (
               <div className="text-sm text-gris-80">
-                Filtros activos:
+                {t("activeFilters")}
                 {location && (
-                  <span className="ml-2 font-medium">Destino: {location}</span>
+                  <span className="ml-2 font-medium">{t("destination")}: {location}</span>
                 )}
                 {date && (
-                  <span className="ml-2 font-medium">Fecha: {date}</span>
+                  <span className="ml-2 font-medium">{t("date")}: {date}</span>
                 )}
                 {guests && (
-                  <span className="ml-2 font-medium">Huéspedes: {guests}</span>
+                  <span className="ml-2 font-medium">{t("guests")}: {guests}</span>
                 )}
               </div>
             )}
@@ -220,12 +224,11 @@ function ExperiencesContent() {
         ) : data.experiences.length === 0 ? (
           <div className="rounded-lg bg-white p-12 text-center shadow">
             <p className="text-lg text-gris-80">
-              No se encontraron experiencias disponibles
-              {location && ` en ${location}`}.
+              {location ? `${t("noExperiencesInLocation")}${location}` : t("noExperiencesFound")}
             </p>
             {hasActiveFilters && (
               <Button variant="outline" className="mt-4" onClick={clearFilters}>
-                Limpiar filtros y ver todas
+                {t("clearFiltersViewAll")}
               </Button>
             )}
           </div>
@@ -236,11 +239,11 @@ function ExperiencesContent() {
                 <ExperienceCard
                   key={experience._id}
                   id={experience._id}
-                  title={experience.titleEs}
-                  description={experience.descEs}
+                  title={locale === "es" ? experience.titleEs : experience.titleEn}
+                  description={locale === "es" ? experience.descEs : experience.descEn}
                   location={experience.location}
                   maxGuests={experience.maxGuests}
-                  hostName={experience.host?.name || "Anfitrión"}
+                  hostName={experience.host?.name || tHome("host")}
                   priceUsd={experience.priceUsd}
                   imageUrl={experience.imageUrl}
                 />
@@ -296,7 +299,7 @@ export default function ExperiencesPage() {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-turquesa mx-auto"></div>
-            <p className="mt-4 text-gray-600">Cargando experiencias...</p>
+            <p className="mt-4 text-gray-600">Loading experiences...</p>
           </div>
         </div>
       }

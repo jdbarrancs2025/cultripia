@@ -2,11 +2,14 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useTranslations, useLocale } from "next-intl";
 import { ExperienceCard } from "@/components/ui/experience-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 export function FeaturedExperiences() {
+  const t = useTranslations("home");
+  const locale = useLocale();
   const experiences = useQuery(api.experiences.getExperiences, {
     status: "active",
   });
@@ -24,10 +27,10 @@ export function FeaturedExperiences() {
             id="featured-experiences-title"
             className="mb-4 text-3xl font-bold text-gris-90"
           >
-            Experiencias Destacadas
+            {t("featuredExperiences")}
           </h2>
           <p className="text-lg text-gris-80">
-            Descubre nuestras experiencias más populares
+            {t("featuredExperiencesSubtitle")}
           </p>
         </div>
 
@@ -55,7 +58,7 @@ export function FeaturedExperiences() {
         ) : featuredExperiences.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-lg text-gris-80">
-              No hay experiencias disponibles en este momento.
+              {t("noExperiencesAvailable")}
             </p>
           </div>
         ) : (
@@ -64,11 +67,11 @@ export function FeaturedExperiences() {
               <ExperienceCard
                 key={experience._id}
                 id={experience._id}
-                title={experience.titleEs}
-                description={experience.descEs}
+                title={locale === "es" ? experience.titleEs : experience.titleEn}
+                description={locale === "es" ? experience.descEs : experience.descEn}
                 location={experience.location}
                 maxGuests={experience.maxGuests}
-                hostName={experience.host?.name || "Anfitrión"}
+                hostName={experience.host?.name || t("host")}
                 priceUsd={experience.priceUsd}
                 imageUrl={experience.imageUrl}
               />

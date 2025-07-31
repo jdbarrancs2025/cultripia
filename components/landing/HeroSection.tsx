@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon, Minus, Plus } from "lucide-react";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
 const destinations = [
@@ -38,6 +39,8 @@ const destinations = [
 
 export function HeroSection() {
   const router = useRouter();
+  const t = useTranslations("home.hero");
+  const locale = useLocale();
   const [location, setLocation] = useState("");
   const [date, setDate] = useState<Date>();
   const [guests, setGuests] = useState(1);
@@ -80,11 +83,10 @@ export function HeroSection() {
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center text-white">
           <h1 className="mb-6 text-4xl font-bold md:text-6xl">
-            Descubre la cultura auténtica
+            {t("title")}
           </h1>
           <p className="mb-10 max-w-2xl text-lg md:text-xl">
-            Conéctate con comunidades locales a través de experiencias
-            culturales y ecológicas con propósito.
+            {t("subtitle")}
           </p>
           <Button
             size="lg"
@@ -95,7 +97,7 @@ export function HeroSection() {
                 ?.scrollIntoView({ behavior: "smooth" })
             }
           >
-            Comienza tu viaje
+            {t("cta")}
           </Button>
         </div>
       </div>
@@ -106,17 +108,17 @@ export function HeroSection() {
       >
         <div className="rounded-2xl bg-white p-8 shadow-xl">
           <h2 className="mb-8 text-center text-2xl font-bold text-gray-900">
-            Encuentra tu próxima aventura
+            {t("searchTitle")}
           </h2>
 
           <div className="grid gap-4 md:grid-cols-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">
-                ¿Dónde?
+                {t("whereLabel")}
               </label>
               <Select value={location} onValueChange={setLocation}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Explora destinos" />
+                  <SelectValue placeholder={t("wherePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
                   {destinations.map((dest) => (
@@ -130,7 +132,7 @@ export function HeroSection() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">
-                Cuándo
+                {t("whenLabel")}
               </label>
               <Popover>
                 <PopoverTrigger asChild>
@@ -150,7 +152,7 @@ export function HeroSection() {
                     mode="single"
                     selected={date}
                     onSelect={setDate}
-                    locale={es}
+                    locale={locale === "es" ? es : enUS}
                     disabled={(date) => date < new Date()}
                     initialFocus
                   />
@@ -159,7 +161,7 @@ export function HeroSection() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Quién</label>
+              <label className="text-sm font-medium text-gray-700">{t("whoLabel")}</label>
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
@@ -179,7 +181,7 @@ export function HeroSection() {
                     )
                   }
                   className="text-center"
-                  placeholder="Número de huéspedes"
+                  placeholder={t("numberOfGuests")}
                   min={1}
                   max={20}
                 />
@@ -201,7 +203,7 @@ export function HeroSection() {
                 onClick={handleSearch}
                 disabled={!location}
               >
-                Buscar
+                {t("search")}
               </Button>
             </div>
           </div>

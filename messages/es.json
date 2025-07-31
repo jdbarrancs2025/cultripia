@@ -18,7 +18,18 @@
     "next": "Siguiente",
     "previous": "Anterior",
     "submit": "Enviar",
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú"
+  },
+  "navigation": {
+    "explore": "Explorar",
+    "myBookings": "Mis Reservas",
+    "becomeHost": "Ser Anfitrión",
+    "dashboard": "Panel de Control",
+    "myExperiences": "Mis Experiencias",
+    "calendar": "Calendario",
+    "adminDashboard": "Admin Dashboard"
   },
   "home": {
     "title": "Bienvenido a Cultripia",
@@ -27,17 +38,43 @@
     "datePickerPlaceholder": "¿Cuándo viajas?",
     "searchButton": "Buscar experiencias",
     "featuredExperiences": "Experiencias Destacadas",
+    "featuredExperiencesSubtitle": "Descubre nuestras experiencias más populares",
+    "noExperiencesAvailable": "No hay experiencias disponibles en este momento.",
     "howItWorks": "Cómo Funciona",
-    "becomeHost": "Conviértete en Anfitrión"
+    "becomeHost": "Conviértete en Anfitrión",
+    "host": "Anfitrión",
+    "hero": {
+      "title": "Descubre la cultura auténtica",
+      "subtitle": "Conéctate con comunidades locales a través de experiencias culturales y ecológicas con propósito.",
+      "cta": "Comienza tu viaje",
+      "searchTitle": "Encuentra tu próxima aventura",
+      "whereLabel": "¿Dónde?",
+      "whenLabel": "Cuándo",
+      "whoLabel": "Quién",
+      "wherePlaceholder": "Explora destinos",
+      "numberOfGuests": "Número de huéspedes",
+      "search": "Buscar"
+    }
   },
   "experiences": {
     "title": "Experiencias",
+    "pageTitle": "Experiencias Cultripia",
     "pricePerPerson": "por persona",
     "duration": "Duración",
     "maxGuests": "Máx. huéspedes",
     "bookNow": "Reservar Ahora",
     "notAvailable": "No disponible",
-    "viewDetails": "Ver Detalles"
+    "viewDetails": "Ver Detalles",
+    "allDestinations": "Todos los destinos",
+    "clearFilters": "Limpiar filtros",
+    "activeFilters": "Filtros activos:",
+    "destination": "Destino",
+    "date": "Fecha",
+    "guests": "Huéspedes",
+    "noExperiencesFound": "No se encontraron experiencias disponibles",
+    "noExperiencesInLocation": "No se encontraron experiencias disponibles en ",
+    "clearFiltersViewAll": "Limpiar filtros y ver todas",
+    "loadingExperiences": "Cargando experiencias..."
   },
   "host": {
     "dashboard": "Panel de Anfitrión",
@@ -58,6 +95,26 @@
     "paymentDetails": "Detalles de Pago",
     "bookingSuccess": "¡Reserva exitosa!",
     "bookingError": "Error en la reserva"
+  },
+  "dashboard": {
+    "title": "Mi Dashboard",
+    "subtitle": "Administra tus reservas y experiencias",
+    "loading": "Cargando...",
+    "filterBookings": "Filtrar reservas",
+    "upcomingTab": "Próximas",
+    "pastTab": "Pasadas",
+    "noUpcomingBookings": "No tienes reservas próximas",
+    "exploreExperiences": "Explorar Experiencias",
+    "noPastBookings": "No tienes reservas pasadas",
+    "confirmed": "Confirmada",
+    "pendingPayment": "Pendiente de pago",
+    "host": "Anfitrión",
+    "person": "persona",
+    "people": "personas",
+    "viewDetails": "Ver Detalles",
+    "contactHost": "Contactar Anfitrión",
+    "bookAgain": "Reservar de Nuevo",
+    "sendEmailTo": "Enviar email a "
   },
   "admin": {
     "dashboard": "Panel de Administración",

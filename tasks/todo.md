@@ -721,9 +721,9 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 
 ---
 
-## STEP 17: Internationalization
+## STEP 17: Internationalization ✅
 
-### [ ] Complete UI strings extraction
+### [COMPLETED] Complete UI strings extraction
 
 **Reference:** `/docs/implementation-plan.md` step 17
 **Acceptance criteria:**
@@ -732,7 +732,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Consistent key naming
 - Both EN and ES files complete
 
-### [ ] Implement language switcher
+### [COMPLETED] Implement language switcher
 
 **Reference:** `/docs/design-guidelines.md` i18n
 **Acceptance criteria:**
@@ -742,7 +742,7 @@ This document tracks all development tasks for the Cultripia MVP. Each task is a
 - Updates content immediately
 - Works with dynamic routes
 
-### [ ] Test all pages in both languages
+### [COMPLETED] Test all pages in both languages
 
 **Reference:** `/docs/masterplan.md` i18n requirements
 **Acceptance criteria:**

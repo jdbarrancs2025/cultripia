@@ -10,14 +10,18 @@ import Link from "next/link";
 import { useUser } from "@/hooks/useUser";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export function Navigation() {
   const { isSignedIn } = useClerkUser();
   const { user, role } = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const t = useTranslations("navigation");
+  const tCommon = useTranslations("common");
 
   const getNavigationItems = () => {
-    const items = [{ label: "Explorar", href: "/experiences", show: true }];
+    const items = [{ label: t("explore"), href: "/experiences", show: true }];
 
     if (!isSignedIn) {
       return items;
@@ -26,29 +30,29 @@ export function Navigation() {
     // Traveler navigation
     if (role === "traveler") {
       items.push(
-        { label: "Mis Reservas", href: "/dashboard", show: true },
-        { label: "Ser Anfitrión", href: "/become-a-host", show: true },
+        { label: t("myBookings"), href: "/dashboard", show: true },
+        { label: t("becomeHost"), href: "/become-a-host", show: true },
       );
     }
 
     // Host navigation
     if (role === "host") {
       items.push(
-        { label: "Panel de Control", href: "/host/dashboard", show: true },
-        { label: "Mis Experiencias", href: "/host/experiences", show: true },
-        { label: "Calendario", href: "/host/calendar", show: true },
-        { label: "Mis Reservas", href: "/dashboard", show: true },
+        { label: t("dashboard"), href: "/host/dashboard", show: true },
+        { label: t("myExperiences"), href: "/host/experiences", show: true },
+        { label: t("calendar"), href: "/host/calendar", show: true },
+        { label: t("myBookings"), href: "/dashboard", show: true },
       );
     }
 
     // Admin navigation
     if (role === "admin") {
       items.push(
-        { label: "Admin Dashboard", href: "/admin", show: true },
-        { label: "Panel de Control", href: "/host/dashboard", show: true },
-        { label: "Mis Experiencias", href: "/host/experiences", show: true },
-        { label: "Calendario", href: "/host/calendar", show: true },
-        { label: "Mis Reservas", href: "/dashboard", show: true },
+        { label: t("adminDashboard"), href: "/admin", show: true },
+        { label: t("dashboard"), href: "/host/dashboard", show: true },
+        { label: t("myExperiences"), href: "/host/experiences", show: true },
+        { label: t("calendar"), href: "/host/calendar", show: true },
+        { label: t("myBookings"), href: "/dashboard", show: true },
       );
     }
 
@@ -78,6 +82,9 @@ export function Navigation() {
               </Link>
             ))}
 
+            {/* Language Switcher */}
+            <LanguageSwitcher />
+
             {/* Auth Section */}
             <div className="flex items-center space-x-4">
               {isSignedIn ? (
@@ -85,7 +92,7 @@ export function Navigation() {
               ) : (
                 <SignInButton mode="modal">
                   <Button className="bg-[#009D9B] hover:bg-[#008C8A]">
-                    Iniciar Sesión
+                    {tCommon("signIn")}
                   </Button>
                 </SignInButton>
               )}
@@ -97,7 +104,7 @@ export function Navigation() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-[#4F4F4F] hover:text-[#009D9B] p-2"
-              aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-label={mobileMenuOpen ? tCommon("closeMenu") : tCommon("openMenu")}
               aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -120,6 +127,11 @@ export function Navigation() {
                 </Link>
               ))}
 
+              {/* Mobile Language Switcher */}
+              <div className="px-2 py-2">
+                <LanguageSwitcher />
+              </div>
+
               {/* Mobile Auth */}
               <div className="pt-4 border-t">
                 {isSignedIn ? (
@@ -129,7 +141,7 @@ export function Navigation() {
                 ) : (
                   <SignInButton mode="modal">
                     <Button className="bg-[#009D9B] hover:bg-[#008C8A] w-full">
-                      Iniciar Sesión
+                      {tCommon("signIn")}
                     </Button>
                   </SignInButton>
                 )}
