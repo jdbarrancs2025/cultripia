@@ -1,65 +1,65 @@
 /** @type {import('next').NextConfig} */
-const withNextIntl = require('next-intl/plugin')('./i18n.ts')
+const withNextIntl = require("next-intl/plugin")("./i18n.ts");
 
 const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**',
+        protocol: "https",
+        hostname: "**",
       },
       {
-        protocol: 'http',
-        hostname: 'localhost',
+        protocol: "http",
+        hostname: "localhost",
       },
     ],
   },
   // Disable webpack cache to prevent chunk loading errors
   webpack: (config, { isServer }) => {
     // Disable persistent caching
-    config.cache = false
-    
+    config.cache = false;
+
     // Add webpack optimizations to prevent chunk issues
     if (!isServer) {
       config.optimization = {
         ...config.optimization,
-        runtimeChunk: 'single',
+        runtimeChunk: "single",
         splitChunks: {
-          chunks: 'all',
+          chunks: "all",
           cacheGroups: {
             default: false,
             vendors: false,
             vendor: {
-              name: 'vendor',
-              chunks: 'all',
+              name: "vendor",
+              chunks: "all",
               test: /node_modules/,
-              priority: 20
+              priority: 20,
             },
             common: {
-              name: 'common',
+              name: "common",
               minChunks: 2,
-              chunks: 'all',
+              chunks: "all",
               priority: 10,
               reuseExistingChunk: true,
-              enforce: true
-            }
-          }
-        }
-      }
+              enforce: true,
+            },
+          },
+        },
+      };
     }
-    
-    return config
+
+    return config;
   },
   // Increase memory limits
   experimental: {
     // Reduce memory usage by limiting workers
     workerThreads: false,
-    cpus: 1
+    cpus: 1,
   },
   // Disable source maps in development to reduce memory usage
   productionBrowserSourceMaps: false,
   // Reduce build memory usage
-  swcMinify: true
-}
+  swcMinify: true,
+};
 
-module.exports = withNextIntl(nextConfig)
+module.exports = withNextIntl(nextConfig);

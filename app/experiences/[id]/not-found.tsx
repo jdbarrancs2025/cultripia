@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function NotFound() {
   return (
@@ -15,13 +15,11 @@ export default function NotFound() {
           </p>
           <div className="pt-4">
             <Button asChild className="bg-turquesa hover:bg-turquesa/90">
-              <Link href="/experiences">
-                Explorar experiencias
-              </Link>
+              <Link href="/experiences">Explorar experiencias</Link>
             </Button>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

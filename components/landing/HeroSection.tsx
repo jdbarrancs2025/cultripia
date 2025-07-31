@@ -1,17 +1,27 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, Minus, Plus } from "lucide-react"
-import { format } from "date-fns"
-import { es } from "date-fns/locale"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon, Minus, Plus } from "lucide-react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 const destinations = [
   "Antigua Guatemala",
@@ -23,31 +33,31 @@ const destinations = [
   "Río Dulce",
   "Monterrico",
   "Cobán",
-  "Panajachel"
-]
+  "Panajachel",
+];
 
 export function HeroSection() {
-  const router = useRouter()
-  const [location, setLocation] = useState("")
-  const [date, setDate] = useState<Date>()
-  const [guests, setGuests] = useState(1)
+  const router = useRouter();
+  const [location, setLocation] = useState("");
+  const [date, setDate] = useState<Date>();
+  const [guests, setGuests] = useState(1);
 
   const handleSearch = () => {
-    const params = new URLSearchParams()
-    if (location) params.set("location", location)
-    if (date) params.set("date", format(date, "yyyy-MM-dd"))
-    if (guests) params.set("guests", guests.toString())
-    
-    router.push(`/experiences?${params.toString()}`)
-  }
+    const params = new URLSearchParams();
+    if (location) params.set("location", location);
+    if (date) params.set("date", format(date, "yyyy-MM-dd"));
+    if (guests) params.set("guests", guests.toString());
+
+    router.push(`/experiences?${params.toString()}`);
+  };
 
   const incrementGuests = () => {
-    setGuests(prev => Math.min(prev + 1, 20))
-  }
+    setGuests((prev) => Math.min(prev + 1, 20));
+  };
 
   const decrementGuests = () => {
-    setGuests(prev => Math.max(prev - 1, 1))
-  }
+    setGuests((prev) => Math.max(prev - 1, 1));
+  };
 
   return (
     <section className="relative w-full">
@@ -61,40 +71,49 @@ export function HeroSection() {
           className="object-cover"
           quality={90}
         />
-        
+
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-black/30" />
-        
+
         {/* Additional Color Overlay for brand consistency */}
         <div className="absolute inset-0 bg-turquesa/20" />
-        
+
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center text-white">
           <h1 className="mb-6 text-4xl font-bold md:text-6xl">
             Descubre la cultura auténtica
           </h1>
           <p className="mb-10 max-w-2xl text-lg md:text-xl">
-            Conéctate con comunidades locales a través de
-            experiencias culturales y ecológicas con propósito.
+            Conéctate con comunidades locales a través de experiencias
+            culturales y ecológicas con propósito.
           </p>
           <Button
             size="lg"
             className="bg-orange-500 hover:bg-orange-600 text-white"
-            onClick={() => document.getElementById("search-form")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() =>
+              document
+                .getElementById("search-form")
+                ?.scrollIntoView({ behavior: "smooth" })
+            }
           >
             Comienza tu viaje
           </Button>
         </div>
       </div>
 
-      <div id="search-form" className="relative z-20 mx-auto -mt-20 max-w-6xl px-4">
+      <div
+        id="search-form"
+        className="relative z-20 mx-auto -mt-20 max-w-6xl px-4"
+      >
         <div className="rounded-2xl bg-white p-8 shadow-xl">
           <h2 className="mb-8 text-center text-2xl font-bold text-gray-900">
             Encuentra tu próxima aventura
           </h2>
-          
+
           <div className="grid gap-4 md:grid-cols-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">¿Dónde?</label>
+              <label className="text-sm font-medium text-gray-700">
+                ¿Dónde?
+              </label>
               <Select value={location} onValueChange={setLocation}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Explora destinos" />
@@ -110,14 +129,16 @@ export function HeroSection() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Cuándo</label>
+              <label className="text-sm font-medium text-gray-700">
+                Cuándo
+              </label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     className={cn(
                       "w-full justify-start text-left font-normal",
-                      !date && "text-muted-foreground"
+                      !date && "text-muted-foreground",
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -152,7 +173,11 @@ export function HeroSection() {
                 <Input
                   type="number"
                   value={guests}
-                  onChange={(e) => setGuests(Math.max(1, Math.min(20, parseInt(e.target.value) || 1)))}
+                  onChange={(e) =>
+                    setGuests(
+                      Math.max(1, Math.min(20, parseInt(e.target.value) || 1)),
+                    )
+                  }
                   className="text-center"
                   placeholder="Número de huéspedes"
                   min={1}
@@ -183,5 +208,5 @@ export function HeroSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

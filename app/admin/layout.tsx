@@ -17,13 +17,15 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const { getToken } = await auth();
-  
+
   // Get the role from Convex token
   let userRole = "traveler";
   try {
     const token = await getToken({ template: "convex" });
     if (token) {
-      const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+      const payload = JSON.parse(
+        Buffer.from(token.split(".")[1], "base64").toString(),
+      );
       userRole = payload.publicMetadata?.role || "traveler";
     }
   } catch (error) {
@@ -38,9 +40,7 @@ export default async function AdminLayout({
     <div className="flex min-h-screen">
       {/* Sidebar */}
       <div className="w-64 bg-gray-50 border-r border-gray-200 p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">
-          Admin Panel
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-8">Admin Panel</h2>
         <nav className="space-y-2">
           <Link href="/admin">
             <Button

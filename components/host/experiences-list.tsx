@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Doc } from "@/convex/_generated/dataModel"
+import { Doc } from "@/convex/_generated/dataModel";
 import {
   Table,
   TableBody,
@@ -8,29 +8,31 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Edit, Calendar, Eye } from "lucide-react"
-import Link from "next/link"
-import { formatCurrency } from "@/lib/utils"
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Edit, Calendar, Eye } from "lucide-react";
+import Link from "next/link";
+import { formatCurrency } from "@/lib/utils";
 
 interface ExperiencesListProps {
-  experiences: Doc<"experiences">[]
+  experiences: Doc<"experiences">[];
 }
 
 export function ExperiencesList({ experiences }: ExperiencesListProps) {
   if (experiences.length === 0) {
     return (
       <div className="bg-white rounded-lg p-8 text-center">
-        <p className="text-gray-500 mb-4">No tienes experiencias creadas aún.</p>
+        <p className="text-gray-500 mb-4">
+          No tienes experiencias creadas aún.
+        </p>
         <Link href="/host/experiences/new">
           <Button className="bg-[#009D9B] hover:bg-[#008C8A]">
             Crear Primera Experiencia
           </Button>
         </Link>
       </div>
-    )
+    );
   }
 
   return (
@@ -45,7 +47,7 @@ export function ExperiencesList({ experiences }: ExperiencesListProps) {
           </Link>
         </div>
       </div>
-      
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -68,10 +70,12 @@ export function ExperiencesList({ experiences }: ExperiencesListProps) {
               <TableCell>{experience.maxGuests} personas</TableCell>
               <TableCell>
                 <Badge
-                  variant={experience.status === "active" ? "default" : "secondary"}
+                  variant={
+                    experience.status === "active" ? "default" : "secondary"
+                  }
                   className={
-                    experience.status === "active" 
-                      ? "bg-green-100 text-green-800 hover:bg-green-200" 
+                    experience.status === "active"
+                      ? "bg-green-100 text-green-800 hover:bg-green-200"
                       : ""
                   }
                 >
@@ -85,7 +89,9 @@ export function ExperiencesList({ experiences }: ExperiencesListProps) {
                       <Eye className="h-4 w-4" />
                     </Button>
                   </Link>
-                  <Link href={`/host/experiences/${experience._id}/availability`}>
+                  <Link
+                    href={`/host/experiences/${experience._id}/availability`}
+                  >
                     <Button variant="ghost" size="sm">
                       <Calendar className="h-4 w-4" />
                     </Button>
@@ -102,5 +108,5 @@ export function ExperiencesList({ experiences }: ExperiencesListProps) {
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }

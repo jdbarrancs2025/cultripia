@@ -17,27 +17,31 @@ Airbnb-style marketplace for cultural experiences (no lodging).
 ## Getting Started
 
 1. Install dependencies:
+
    ```bash
    npm install
    ```
 
 2. Set up environment variables in `.env.local`:
+
    ```
    # Clerk
    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
    CLERK_SECRET_KEY=
-   
+
    # Convex
    CONVEX_DEPLOYMENT=
    NEXT_PUBLIC_CONVEX_URL=
    ```
 
 3. Run the development server:
+
    ```bash
    npm run dev
    ```
 
 4. In a separate terminal, run Convex:
+
    ```bash
    npm run convex
    ```

@@ -1,33 +1,36 @@
-"use client"
+"use client";
 
-import { useParams, useRouter } from "next/navigation"
-import { useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { Id } from "@/convex/_generated/dataModel"
-import { HostCalendar } from "@/components/host/HostCalendar"
-import { Button } from "@/components/ui/button"
-import { ArrowLeftIcon } from "lucide-react"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useUser } from "@clerk/nextjs"
+import { useParams, useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { HostCalendar } from "@/components/host/HostCalendar";
+import { Button } from "@/components/ui/button";
+import { ArrowLeftIcon } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useUser } from "@clerk/nextjs";
 
 export default function ExperienceAvailabilityPage() {
-  const params = useParams()
-  const router = useRouter()
-  const { user } = useUser()
-  const experienceId = params.id as Id<"experiences">
+  const params = useParams();
+  const router = useRouter();
+  const { user } = useUser();
+  const experienceId = params.id as Id<"experiences">;
 
   // Get current user
   const currentUser = useQuery(api.users.getUserByClerkId, {
     clerkId: user?.id || "",
-  })
+  });
 
   // Get experience details
   const experience = useQuery(api.experiences.getExperience, {
     id: experienceId,
-  })
+  });
 
   // Check if user is the host or admin
-  const isAuthorized = currentUser && experience && (currentUser._id === experience.hostId || currentUser.role === "admin")
+  const isAuthorized =
+    currentUser &&
+    experience &&
+    (currentUser._id === experience.hostId || currentUser.role === "admin");
 
   if (!user || !currentUser) {
     return (
@@ -37,7 +40,7 @@ export default function ExperienceAvailabilityPage() {
           <Skeleton className="h-96 w-full" />
         </div>
       </div>
-    )
+    );
   }
 
   if (!experience) {
@@ -48,16 +51,19 @@ export default function ExperienceAvailabilityPage() {
           <Skeleton className="h-96 w-full" />
         </div>
       </div>
-    )
+    );
   }
 
   if (!isAuthorized) {
     return (
       <div className="container mx-auto max-w-4xl px-4 py-8">
         <div className="rounded-lg bg-red-50 p-6 text-center">
-          <h2 className="text-xl font-semibold text-red-900">Acceso denegado</h2>
+          <h2 className="text-xl font-semibold text-red-900">
+            Acceso denegado
+          </h2>
           <p className="mt-2 text-red-700">
-            No tienes permiso para gestionar la disponibilidad de esta experiencia.
+            No tienes permiso para gestionar la disponibilidad de esta
+            experiencia.
           </p>
           <Button
             onClick={() => router.push("/host/dashboard")}
@@ -67,7 +73,7 @@ export default function ExperienceAvailabilityPage() {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -86,9 +92,7 @@ export default function ExperienceAvailabilityPage() {
           <h1 className="text-2xl font-bold text-gris-90">
             Gestionar disponibilidad
           </h1>
-          <p className="text-gris-80">
-            {experience.titleEs}
-          </p>
+          <p className="text-gris-80">{experience.titleEs}</p>
         </div>
       </div>
 
@@ -105,5 +109,5 @@ export default function ExperienceAvailabilityPage() {
         </ul>
       </div>
     </div>
-  )
+  );
 }

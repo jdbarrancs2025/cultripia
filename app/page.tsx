@@ -1,5 +1,5 @@
-import { HeroSection } from "@/components/landing/HeroSection"
-import { FeaturedExperiences } from "@/components/landing/FeaturedExperiences"
+import { HeroSection } from "@/components/landing/HeroSection";
+import { FeaturedExperiences } from "@/components/landing/FeaturedExperiences";
 
 export default function Home() {
   return (
@@ -7,5 +7,5 @@ export default function Home() {
       <HeroSection />
       <FeaturedExperiences />
     </main>
-  )
+  );
 }

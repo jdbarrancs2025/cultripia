@@ -20,7 +20,11 @@ export default function AdminExperiencesPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge variant="default" className="bg-green-600">Active</Badge>;
+        return (
+          <Badge variant="default" className="bg-green-600">
+            Active
+          </Badge>
+        );
       case "inactive":
         return <Badge variant="secondary">Inactive</Badge>;
       case "draft":
@@ -50,7 +54,9 @@ export default function AdminExperiencesPage() {
             <TableBody>
               {experiences.map((experience) => (
                 <TableRow key={experience._id}>
-                  <TableCell className="font-medium">{experience.titleEn}</TableCell>
+                  <TableCell className="font-medium">
+                    {experience.titleEn}
+                  </TableCell>
                   <TableCell>{experience.location}</TableCell>
                   <TableCell>{experience.maxGuests}</TableCell>
                   <TableCell>${experience.priceUsd}</TableCell>

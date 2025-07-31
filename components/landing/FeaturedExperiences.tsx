@@ -1,23 +1,29 @@
-"use client"
+"use client";
 
-import { useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { ExperienceCard } from "@/components/ui/experience-card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { ExperienceCard } from "@/components/ui/experience-card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 export function FeaturedExperiences() {
   const experiences = useQuery(api.experiences.getExperiences, {
-    status: "active"
-  })
+    status: "active",
+  });
 
-  const featuredExperiences = experiences?.slice(0, 3) || []
+  const featuredExperiences = experiences?.slice(0, 3) || [];
 
   return (
-    <section className="py-16 bg-gray-50" aria-labelledby="featured-experiences-title">
+    <section
+      className="py-16 bg-gray-50"
+      aria-labelledby="featured-experiences-title"
+    >
       <div className="mx-auto max-w-6xl px-4">
         <div className="mb-12 text-center">
-          <h2 id="featured-experiences-title" className="mb-4 text-3xl font-bold text-gris-90">
+          <h2
+            id="featured-experiences-title"
+            className="mb-4 text-3xl font-bold text-gris-90"
+          >
             Experiencias Destacadas
           </h2>
           <p className="text-lg text-gris-80">
@@ -71,5 +77,5 @@ export function FeaturedExperiences() {
         )}
       </div>
     </section>
-  )
+  );
 }

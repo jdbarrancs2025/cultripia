@@ -1,5 +1,5 @@
-import { v } from "convex/values"
-import { mutation, query } from "./_generated/server"
+import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
 
 // @deprecated Use createOrUpdateUser instead
 export const createUser = mutation({
@@ -12,10 +12,10 @@ export const createUser = mutation({
     const existing = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
-      .first()
-    
+      .first();
+
     if (existing) {
-      return existing._id
+      return existing._id;
     }
 
     const userId = await ctx.db.insert("users", {
@@ -24,11 +24,11 @@ export const createUser = mutation({
       email: args.email,
       role: "traveler",
       createdAt: Date.now(),
-    })
-    
-    return userId
+    });
+
+    return userId;
   },
-})
+});
 
 export const createOrUpdateUser = mutation({
   args: {
@@ -40,10 +40,10 @@ export const createOrUpdateUser = mutation({
     const existingUser = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
-      .first()
+      .first();
 
     if (existingUser) {
-      return existingUser._id
+      return existingUser._id;
     }
 
     // Create new user with default traveler role
@@ -53,9 +53,9 @@ export const createOrUpdateUser = mutation({
       email: args.email,
       role: "traveler",
       createdAt: Date.now(),
-    })
+    });
   },
-})
+});
 
 export const getUserByClerkId = query({
   args: { clerkId: v.string() },
@@ -63,9 +63,9 @@ export const getUserByClerkId = query({
     return await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
-      .first()
+      .first();
   },
-})
+});
 
 export const updateUserRole = mutation({
   args: {
@@ -74,53 +74,60 @@ export const updateUserRole = mutation({
   },
   handler: async (ctx, args) => {
     // Get the current user from auth
-    const identity = await ctx.auth.getUserIdentity()
+    const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Unauthorized: User not authenticated")
+      throw new Error("Unauthorized: User not authenticated");
     }
 
     // Get the current user's role
     const currentUser = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .first()
-    
+      .first();
+
     if (!currentUser || currentUser.role !== "admin") {
-      throw new Error("Unauthorized: Only admins can update user roles")
+      throw new Error("Unauthorized: Only admins can update user roles");
     }
 
     // Update the user role
-    await ctx.db.patch(args.userId, { role: args.role })
+    await ctx.db.patch(args.userId, { role: args.role });
   },
-})
+});
 
 export const getAdminUsers = query({
   handler: async (ctx) => {
     return await ctx.db
       .query("users")
       .filter((q) => q.eq(q.field("role"), "admin"))
-      .collect()
+      .collect();
   },
-})
+});
 
 export const getAll = query({
   handler: async (ctx) => {
-    return await ctx.db.query("users").collect()
+    return await ctx.db.query("users").collect();
   },
-})
+});
 
 export const getCurrentUser = query({
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity()
+    const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      return null
+      return null;
     }
 
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .first()
-    
-    return user
+      .first();
+
+    return user;
   },
-})
+});
+
+export const getUserById = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.userId);
+  },
+});

@@ -1,170 +1,180 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Calendar } from "@/components/ui/calendar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useMutation, useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { Id } from "@/convex/_generated/dataModel"
-import { toast } from "sonner"
-import { CalendarIcon, CheckIcon, XIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
+import { CalendarIcon, CheckIcon, XIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface HostCalendarProps {
-  experienceId: Id<"experiences">
+  experienceId: Id<"experiences">;
 }
 
 export function HostCalendar({ experienceId }: HostCalendarProps) {
-  const [selectedDates, setSelectedDates] = useState<Date[]>([])
-  const [rangeStart, setRangeStart] = useState<Date | null>(null)
-  const [currentMonth, setCurrentMonth] = useState(new Date())
-  
-  const year = currentMonth.getFullYear()
-  const month = currentMonth.getMonth() + 1
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const [rangeStart, setRangeStart] = useState<Date | null>(null);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth() + 1;
 
   // Fetch availability for current month
   const monthAvailability = useQuery(api.availability.getAvailabilityForMonth, {
     experienceId,
     year,
     month,
-  })
+  });
 
-  const updateAvailability = useMutation(api.availability.updateAvailabilityStatus)
-  const bulkUpdateAvailability = useMutation(api.availability.bulkUpdateAvailability)
+  const updateAvailability = useMutation(
+    api.availability.updateAvailabilityStatus,
+  );
+  const bulkUpdateAvailability = useMutation(
+    api.availability.bulkUpdateAvailability,
+  );
 
   // Create a map of date status for quick lookup
-  const availabilityMap = new Map<string, "available" | "blocked" | "booked">()
+  const availabilityMap = new Map<string, "available" | "blocked" | "booked">();
   monthAvailability?.dates.forEach((dateInfo) => {
-    availabilityMap.set(dateInfo.date, dateInfo.status)
-  })
+    availabilityMap.set(dateInfo.date, dateInfo.status);
+  });
 
   const handleDateClick = async (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0]
-    const currentStatus = availabilityMap.get(dateStr) || "available"
-    
+    const dateStr = date.toISOString().split("T")[0];
+    const currentStatus = availabilityMap.get(dateStr) || "available";
+
     // Don't allow changing booked dates
     if (currentStatus === "booked") {
-      toast.error("No puedes modificar fechas reservadas")
-      return
+      toast.error("No puedes modificar fechas reservadas");
+      return;
     }
 
     // Don't allow changing past dates
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     if (date < today) {
-      toast.error("No puedes modificar fechas pasadas")
-      return
+      toast.error("No puedes modificar fechas pasadas");
+      return;
     }
 
     // If shift key is held, handle range selection
     if (rangeStart && date > rangeStart) {
-      handleRangeSelection(rangeStart, date)
-      setRangeStart(null)
-      return
+      handleRangeSelection(rangeStart, date);
+      setRangeStart(null);
+      return;
     }
 
     // Toggle status for single date
-    const newStatus = currentStatus === "available" ? "blocked" : "available"
-    
+    const newStatus = currentStatus === "available" ? "blocked" : "available";
+
     try {
       await updateAvailability({
         experienceId,
         date: dateStr,
         status: newStatus,
-      })
-      toast.success(`Fecha ${newStatus === "available" ? "habilitada" : "bloqueada"}`)
+      });
+      toast.success(
+        `Fecha ${newStatus === "available" ? "habilitada" : "bloqueada"}`,
+      );
     } catch (error) {
-      toast.error("Error al actualizar disponibilidad")
+      toast.error("Error al actualizar disponibilidad");
     }
-  }
+  };
 
   const handleRangeSelection = async (start: Date, end: Date) => {
-    const startStr = start.toISOString().split('T')[0]
-    const endStr = end.toISOString().split('T')[0]
-    
+    const startStr = start.toISOString().split("T")[0];
+    const endStr = end.toISOString().split("T")[0];
+
     try {
       const result = await bulkUpdateAvailability({
         experienceId,
         startDate: startStr,
         endDate: endStr,
         status: "blocked",
-      })
-      toast.success(`${result.updated} fechas bloqueadas`)
+      });
+      toast.success(`${result.updated} fechas bloqueadas`);
     } catch (error: any) {
-      toast.error(error.message || "Error al actualizar disponibilidad")
+      toast.error(error.message || "Error al actualizar disponibilidad");
     }
-  }
+  };
 
   const handleBlockSelected = async () => {
     if (selectedDates.length === 0) {
-      toast.error("Selecciona fechas para bloquear")
-      return
+      toast.error("Selecciona fechas para bloquear");
+      return;
     }
 
-    const dates = selectedDates.map(d => d.toISOString().split('T')[0]).sort()
-    const startDate = dates[0]
-    const endDate = dates[dates.length - 1]
-    
+    const dates = selectedDates
+      .map((d) => d.toISOString().split("T")[0])
+      .sort();
+    const startDate = dates[0];
+    const endDate = dates[dates.length - 1];
+
     try {
       const result = await bulkUpdateAvailability({
         experienceId,
         startDate,
         endDate,
         status: "blocked",
-      })
-      toast.success(`${result.updated} fechas bloqueadas`)
-      setSelectedDates([])
+      });
+      toast.success(`${result.updated} fechas bloqueadas`);
+      setSelectedDates([]);
     } catch (error: any) {
-      toast.error(error.message || "Error al bloquear fechas")
+      toast.error(error.message || "Error al bloquear fechas");
     }
-  }
+  };
 
   const handleUnblockSelected = async () => {
     if (selectedDates.length === 0) {
-      toast.error("Selecciona fechas para desbloquear")
-      return
+      toast.error("Selecciona fechas para desbloquear");
+      return;
     }
 
-    const dates = selectedDates.map(d => d.toISOString().split('T')[0]).sort()
-    const startDate = dates[0]
-    const endDate = dates[dates.length - 1]
-    
+    const dates = selectedDates
+      .map((d) => d.toISOString().split("T")[0])
+      .sort();
+    const startDate = dates[0];
+    const endDate = dates[dates.length - 1];
+
     try {
       const result = await bulkUpdateAvailability({
         experienceId,
         startDate,
         endDate,
         status: "available",
-      })
-      toast.success(`${result.updated} fechas habilitadas`)
-      setSelectedDates([])
+      });
+      toast.success(`${result.updated} fechas habilitadas`);
+      setSelectedDates([]);
     } catch (error: any) {
-      toast.error(error.message || "Error al desbloquear fechas")
+      toast.error(error.message || "Error al desbloquear fechas");
     }
-  }
+  };
 
   const modifiers = {
     available: (date: Date) => {
-      const dateStr = date.toISOString().split('T')[0]
-      const status = availabilityMap.get(dateStr)
-      return status === undefined || status === "available"
+      const dateStr = date.toISOString().split("T")[0];
+      const status = availabilityMap.get(dateStr);
+      return status === undefined || status === "available";
     },
     blocked: (date: Date) => {
-      const dateStr = date.toISOString().split('T')[0]
-      return availabilityMap.get(dateStr) === "blocked"
+      const dateStr = date.toISOString().split("T")[0];
+      return availabilityMap.get(dateStr) === "blocked";
     },
     booked: (date: Date) => {
-      const dateStr = date.toISOString().split('T')[0]
-      return availabilityMap.get(dateStr) === "booked"
+      const dateStr = date.toISOString().split("T")[0];
+      return availabilityMap.get(dateStr) === "booked";
     },
     selected: selectedDates,
     past: (date: Date) => {
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-      return date < today
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return date < today;
     },
-  }
+  };
 
   const modifiersClassNames = {
     available: "hover:bg-turquesa/10 cursor-pointer",
@@ -172,7 +182,7 @@ export function HostCalendar({ experienceId }: HostCalendarProps) {
     booked: "bg-red-100 text-red-700 cursor-not-allowed",
     selected: "ring-2 ring-turquesa",
     past: "opacity-50 cursor-not-allowed",
-  }
+  };
 
   return (
     <Card className="w-full">
@@ -213,29 +223,34 @@ export function HostCalendar({ experienceId }: HostCalendarProps) {
             className="rounded-md border"
             components={{
               DayButton: ({ className, day, modifiers, ...props }) => {
-                const dateStr = day.date.toISOString().split('T')[0]
-                const status = availabilityMap.get(dateStr) || "available"
-                const isBooked = status === "booked"
-                const isPast = day.date < new Date(new Date().setHours(0, 0, 0, 0))
-                
+                const dateStr = day.date.toISOString().split("T")[0];
+                const status = availabilityMap.get(dateStr) || "available";
+                const isBooked = status === "booked";
+                const isPast =
+                  day.date < new Date(new Date().setHours(0, 0, 0, 0));
+
                 return (
                   <Button
                     {...props}
                     variant="ghost"
                     size="icon"
                     disabled={isBooked || isPast}
-                    onClick={() => !isBooked && !isPast && handleDateClick(day.date)}
+                    onClick={() =>
+                      !isBooked && !isPast && handleDateClick(day.date)
+                    }
                     className={cn(
                       "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
-                      className
+                      className,
                     )}
                   >
                     <span>{day.date.getDate()}</span>
                     {isBooked && (
-                      <span className="absolute bottom-0 text-[10px] text-red-600">R</span>
+                      <span className="absolute bottom-0 text-[10px] text-red-600">
+                        R
+                      </span>
                     )}
                   </Button>
-                )
+                );
               },
             }}
           />
@@ -264,10 +279,11 @@ export function HostCalendar({ experienceId }: HostCalendarProps) {
         </div>
 
         <p className="text-sm text-gris-80">
-          Haz clic en las fechas para cambiar su disponibilidad. Selecciona múltiples fechas 
-          para acciones en lote. Las fechas reservadas no se pueden modificar.
+          Haz clic en las fechas para cambiar su disponibilidad. Selecciona
+          múltiples fechas para acciones en lote. Las fechas reservadas no se
+          pueden modificar.
         </p>
       </CardContent>
     </Card>
-  )
+  );
 }

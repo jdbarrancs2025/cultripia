@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Doc } from "@/convex/_generated/dataModel"
+import { useState } from "react";
+import { Doc } from "@/convex/_generated/dataModel";
 import {
   Table,
   TableBody,
@@ -9,35 +9,49 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { formatCurrency } from "@/lib/utils"
-import { Calendar, Users, Mail, Phone } from "lucide-react"
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { formatCurrency } from "@/lib/utils";
+import { Calendar, Users, Mail, Phone } from "lucide-react";
 
 interface BookingsListProps {
-  bookings: Array<Doc<"bookings"> & {
-    experience: Doc<"experiences"> | null
-    traveler: Doc<"users"> | null
-  }>
+  bookings: Array<
+    Doc<"bookings"> & {
+      experience: Doc<"experiences"> | null;
+      traveler: Doc<"users"> | null;
+    }
+  >;
 }
 
 export function BookingsList({ bookings }: BookingsListProps) {
-  const [filter, setFilter] = useState<"all" | "upcoming" | "past">("all")
+  const [filter, setFilter] = useState<"all" | "upcoming" | "past">("all");
 
   const filteredBookings = bookings.filter((booking) => {
-    const bookingDate = new Date(booking.selectedDate)
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    const bookingDate = new Date(booking.selectedDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     if (filter === "upcoming") {
-      return bookingDate >= today
+      return bookingDate >= today;
     } else if (filter === "past") {
-      return bookingDate < today
+      return bookingDate < today;
     }
-    return true
-  })
+    return true;
+  });
 
   if (bookings.length === 0) {
     return (
@@ -46,7 +60,7 @@ export function BookingsList({ bookings }: BookingsListProps) {
           <p className="text-gray-500">No tienes reservas aún.</p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -59,7 +73,10 @@ export function BookingsList({ bookings }: BookingsListProps) {
               Gestiona las reservas de tus experiencias
             </CardDescription>
           </div>
-          <Select value={filter} onValueChange={(value: any) => setFilter(value)}>
+          <Select
+            value={filter}
+            onValueChange={(value: any) => setFilter(value)}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filtrar reservas" />
             </SelectTrigger>
@@ -88,17 +105,22 @@ export function BookingsList({ bookings }: BookingsListProps) {
             {filteredBookings.map((booking) => (
               <TableRow key={booking._id}>
                 <TableCell className="font-medium">
-                  {booking.experience?.titleEs || booking.experience?.titleEn || "N/A"}
+                  {booking.experience?.titleEs ||
+                    booking.experience?.titleEn ||
+                    "N/A"}
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-gray-400" />
-                    {new Date(booking.selectedDate).toLocaleDateString('es-ES', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
+                    {new Date(booking.selectedDate).toLocaleDateString(
+                      "es-ES",
+                      {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      },
+                    )}
                   </div>
                 </TableCell>
                 <TableCell>{booking.traveler?.name || "N/A"}</TableCell>
@@ -113,8 +135,8 @@ export function BookingsList({ bookings }: BookingsListProps) {
                   <Badge
                     variant={booking.paid ? "default" : "secondary"}
                     className={
-                      booking.paid 
-                        ? "bg-green-100 text-green-800 hover:bg-green-200" 
+                      booking.paid
+                        ? "bg-green-100 text-green-800 hover:bg-green-200"
                         : "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
                     }
                   >
@@ -140,5 +162,5 @@ export function BookingsList({ bookings }: BookingsListProps) {
         </Table>
       </CardContent>
     </Card>
-  )
+  );
 }

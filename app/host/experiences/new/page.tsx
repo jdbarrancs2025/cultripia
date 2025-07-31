@@ -1,18 +1,30 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { toast } from "sonner"
-import { useMutation } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { Upload, Image as ImageIcon, Languages } from "lucide-react"
-import { useAction } from "convex/react"
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Upload, Image as ImageIcon, Languages } from "lucide-react";
+import { useAction } from "convex/react";
 
 const destinations = [
   "Antigua Guatemala",
@@ -24,22 +36,22 @@ const destinations = [
   "Río Dulce",
   "Monterrico",
   "Cobán",
-  "Panajachel"
-]
+  "Panajachel",
+];
 
 export default function NewExperiencePage() {
-  const router = useRouter()
-  const createExperience = useMutation(api.experiences.createExperience)
-  const generateUploadUrl = useMutation(api.files.generateUploadUrl)
-  const getImageUrl = useMutation(api.files.getUrl)
-  const translateContent = useAction(api.deepl.translateExperienceContent)
-  
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isUploading, setIsUploading] = useState(false)
-  const [selectedImage, setSelectedImage] = useState<File | null>(null)
-  const [imagePreview, setImagePreview] = useState<string>("")
-  const [primaryLanguage, setPrimaryLanguage] = useState<"EN" | "ES">("EN")
-  const [isTranslating, setIsTranslating] = useState(false)
+  const router = useRouter();
+  const createExperience = useMutation(api.experiences.createExperience);
+  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const getImageUrl = useMutation(api.files.getUrl);
+  const translateContent = useAction(api.deepl.translateExperienceContent);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [primaryLanguage, setPrimaryLanguage] = useState<"EN" | "ES">("EN");
+  const [isTranslating, setIsTranslating] = useState(false);
   const [formData, setFormData] = useState({
     titleEn: "",
     titleEs: "",
@@ -49,137 +61,140 @@ export default function NewExperiencePage() {
     maxGuests: 1,
     priceUsd: 0,
     imageUrl: "",
-    status: "draft" as "draft" | "active"
-  })
+    status: "draft" as "draft" | "active",
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setIsTranslating(true)
+    e.preventDefault();
+    setIsSubmitting(true);
+    setIsTranslating(true);
 
     try {
-      let imageUrl = formData.imageUrl
+      let imageUrl = formData.imageUrl;
 
       // Upload image if selected
       if (selectedImage) {
-        const uploadedUrl = await uploadImage()
+        const uploadedUrl = await uploadImage();
         if (uploadedUrl) {
-          imageUrl = uploadedUrl
+          imageUrl = uploadedUrl;
         } else {
-          throw new Error("Failed to upload image")
+          throw new Error("Failed to upload image");
         }
       }
 
       // Validate image URL
       if (!imageUrl) {
-        throw new Error("Please provide an image for your experience")
+        throw new Error("Please provide an image for your experience");
       }
 
       // Prepare the data with translations
-      let finalData = { ...formData, imageUrl }
+      let finalData = { ...formData, imageUrl };
 
       // Get the primary language content
-      const title = primaryLanguage === "EN" ? formData.titleEn : formData.titleEs
-      const description = primaryLanguage === "EN" ? formData.descEn : formData.descEs
+      const title =
+        primaryLanguage === "EN" ? formData.titleEn : formData.titleEs;
+      const description =
+        primaryLanguage === "EN" ? formData.descEn : formData.descEs;
 
       // Only translate if we have content in the primary language
       if (title && description) {
         try {
           toast.info("Translating your content...", {
             description: "This may take a moment",
-          })
+          });
 
           const translation = await translateContent({
             title,
             description,
             sourceLang: primaryLanguage,
-          })
+          });
 
           // Update the translated fields
           if (primaryLanguage === "EN") {
-            finalData.titleEs = translation.translatedTitle
-            finalData.descEs = translation.translatedDescription
+            finalData.titleEs = translation.translatedTitle;
+            finalData.descEs = translation.translatedDescription;
           } else {
-            finalData.titleEn = translation.translatedTitle
-            finalData.descEn = translation.translatedDescription
+            finalData.titleEn = translation.translatedTitle;
+            finalData.descEn = translation.translatedDescription;
           }
 
-          toast.success("Content translated successfully")
+          toast.success("Content translated successfully");
         } catch (translationError) {
-          console.error("Translation error:", translationError)
+          console.error("Translation error:", translationError);
           toast.warning("Translation failed", {
             description: "You can add translations manually later.",
-          })
+          });
         }
       }
 
-      setIsTranslating(false)
+      setIsTranslating(false);
 
       const experienceId = await createExperience({
         ...finalData,
-        originalLanguage: primaryLanguage
-      })
-      
+        originalLanguage: primaryLanguage,
+      });
+
       toast.success("Experience created successfully", {
         description: `Your experience has been saved as a ${formData.status}.`,
-      })
-      
-      router.push("/host/experiences")
+      });
+
+      router.push("/host/experiences");
     } catch (error) {
-      console.error("Error creating experience:", error)
+      console.error("Error creating experience:", error);
       toast.error("Error creating experience", {
-        description: error instanceof Error ? error.message : "Please try again later.",
-      })
+        description:
+          error instanceof Error ? error.message : "Please try again later.",
+      });
     } finally {
-      setIsSubmitting(false)
-      setIsTranslating(false)
+      setIsSubmitting(false);
+      setIsTranslating(false);
     }
-  }
+  };
 
   const handleInputChange = (field: string, value: string | number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
-    }))
-  }
+      [field]: value,
+    }));
+  };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
       toast.error("Invalid file type", {
         description: "Please select an image file.",
-      })
-      return
+      });
+      return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error("File too large", {
         description: "Please select an image smaller than 5MB.",
-      })
-      return
+      });
+      return;
     }
 
-    setSelectedImage(file)
-    
+    setSelectedImage(file);
+
     // Create preview
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onloadend = () => {
-      setImagePreview(reader.result as string)
-    }
-    reader.readAsDataURL(file)
-  }
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const uploadImage = async () => {
-    if (!selectedImage) return null
+    if (!selectedImage) return null;
 
-    setIsUploading(true)
+    setIsUploading(true);
     try {
       // Get upload URL from Convex
-      const uploadUrl = await generateUploadUrl()
+      const uploadUrl = await generateUploadUrl();
 
       // Upload the file
       const result = await fetch(uploadUrl, {
@@ -187,33 +202,38 @@ export default function NewExperiencePage() {
         headers: { "Content-Type": selectedImage.type },
         body: selectedImage,
       }).catch((error) => {
-        console.error("Network error during upload:", error)
-        throw new Error("Network error: Please check your connection and try again")
-      })
+        console.error("Network error during upload:", error);
+        throw new Error(
+          "Network error: Please check your connection and try again",
+        );
+      });
 
       if (!result.ok) {
-        throw new Error(`Upload failed: ${result.statusText || 'Unknown error'}`)
+        throw new Error(
+          `Upload failed: ${result.statusText || "Unknown error"}`,
+        );
       }
 
-      const { storageId } = await result.json()
-      
+      const { storageId } = await result.json();
+
       // Get the public URL for the uploaded image
-      const imageUrl = await getImageUrl({ storageId })
-      return imageUrl
+      const imageUrl = await getImageUrl({ storageId });
+      return imageUrl;
     } catch (error) {
-      console.error("Error uploading image:", error)
-      throw error
+      console.error("Error uploading image:", error);
+      throw error;
     } finally {
-      setIsUploading(false)
+      setIsUploading(false);
     }
-  }
+  };
 
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Create New Experience</h1>
         <p className="text-gray-600 mt-2">
-          Share your unique cultural experience with travelers from around the world.
+          Share your unique cultural experience with travelers from around the
+          world.
         </p>
       </div>
 
@@ -230,9 +250,11 @@ export default function NewExperiencePage() {
             {/* Language Selector */}
             <div className="space-y-2">
               <Label htmlFor="language">Primary Language</Label>
-              <Select 
-                value={primaryLanguage} 
-                onValueChange={(value) => setPrimaryLanguage(value as "EN" | "ES")}
+              <Select
+                value={primaryLanguage}
+                onValueChange={(value) =>
+                  setPrimaryLanguage(value as "EN" | "ES")
+                }
               >
                 <SelectTrigger id="language" className="w-full md:w-[200px]">
                   <SelectValue />
@@ -243,7 +265,8 @@ export default function NewExperiencePage() {
                 </SelectContent>
               </Select>
               <p className="text-sm text-muted-foreground">
-                Write in your preferred language. We&apos;ll automatically translate to the other language.
+                Write in your preferred language. We&apos;ll automatically
+                translate to the other language.
               </p>
             </div>
 
@@ -255,32 +278,49 @@ export default function NewExperiencePage() {
                 </Label>
                 <Input
                   id="title"
-                  placeholder={primaryLanguage === "EN" 
-                    ? "e.g., Traditional Cooking Class in Antigua" 
-                    : "e.g., Clase de Cocina Tradicional en Antigua"}
-                  value={primaryLanguage === "EN" ? formData.titleEn : formData.titleEs}
-                  onChange={(e) => handleInputChange(
-                    primaryLanguage === "EN" ? "titleEn" : "titleEs", 
-                    e.target.value
-                  )}
+                  placeholder={
+                    primaryLanguage === "EN"
+                      ? "e.g., Traditional Cooking Class in Antigua"
+                      : "e.g., Clase de Cocina Tradicional en Antigua"
+                  }
+                  value={
+                    primaryLanguage === "EN"
+                      ? formData.titleEn
+                      : formData.titleEs
+                  }
+                  onChange={(e) =>
+                    handleInputChange(
+                      primaryLanguage === "EN" ? "titleEn" : "titleEs",
+                      e.target.value,
+                    )
+                  }
                   required
                 />
               </div>
 
               {/* Show translated title if available */}
-              {((primaryLanguage === "EN" && formData.titleEs) || 
+              {((primaryLanguage === "EN" && formData.titleEs) ||
                 (primaryLanguage === "ES" && formData.titleEn)) && (
                 <div className="space-y-2">
                   <Label htmlFor="titleTranslated">
-                    Title {primaryLanguage === "EN" ? "(Spanish - Auto-translated)" : "(English - Auto-translated)"}
+                    Title{" "}
+                    {primaryLanguage === "EN"
+                      ? "(Spanish - Auto-translated)"
+                      : "(English - Auto-translated)"}
                   </Label>
                   <Input
                     id="titleTranslated"
-                    value={primaryLanguage === "EN" ? formData.titleEs : formData.titleEn}
-                    onChange={(e) => handleInputChange(
-                      primaryLanguage === "EN" ? "titleEs" : "titleEn", 
-                      e.target.value
-                    )}
+                    value={
+                      primaryLanguage === "EN"
+                        ? formData.titleEs
+                        : formData.titleEn
+                    }
+                    onChange={(e) =>
+                      handleInputChange(
+                        primaryLanguage === "EN" ? "titleEs" : "titleEn",
+                        e.target.value,
+                      )
+                    }
                     className="bg-muted/50"
                   />
                 </div>
@@ -291,38 +331,54 @@ export default function NewExperiencePage() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="description">
-                  Description {primaryLanguage === "EN" ? "(English)" : "(Español)"}
+                  Description{" "}
+                  {primaryLanguage === "EN" ? "(English)" : "(Español)"}
                 </Label>
                 <Textarea
                   id="description"
-                  placeholder={primaryLanguage === "EN"
-                    ? "Describe your experience in detail..."
-                    : "Describe tu experiencia en detalle..."}
+                  placeholder={
+                    primaryLanguage === "EN"
+                      ? "Describe your experience in detail..."
+                      : "Describe tu experiencia en detalle..."
+                  }
                   rows={4}
-                  value={primaryLanguage === "EN" ? formData.descEn : formData.descEs}
-                  onChange={(e) => handleInputChange(
-                    primaryLanguage === "EN" ? "descEn" : "descEs", 
-                    e.target.value
-                  )}
+                  value={
+                    primaryLanguage === "EN" ? formData.descEn : formData.descEs
+                  }
+                  onChange={(e) =>
+                    handleInputChange(
+                      primaryLanguage === "EN" ? "descEn" : "descEs",
+                      e.target.value,
+                    )
+                  }
                   required
                 />
               </div>
 
               {/* Show translated description if available */}
-              {((primaryLanguage === "EN" && formData.descEs) || 
+              {((primaryLanguage === "EN" && formData.descEs) ||
                 (primaryLanguage === "ES" && formData.descEn)) && (
                 <div className="space-y-2">
                   <Label htmlFor="descriptionTranslated">
-                    Description {primaryLanguage === "EN" ? "(Spanish - Auto-translated)" : "(English - Auto-translated)"}
+                    Description{" "}
+                    {primaryLanguage === "EN"
+                      ? "(Spanish - Auto-translated)"
+                      : "(English - Auto-translated)"}
                   </Label>
                   <Textarea
                     id="descriptionTranslated"
                     rows={4}
-                    value={primaryLanguage === "EN" ? formData.descEs : formData.descEn}
-                    onChange={(e) => handleInputChange(
-                      primaryLanguage === "EN" ? "descEs" : "descEn", 
-                      e.target.value
-                    )}
+                    value={
+                      primaryLanguage === "EN"
+                        ? formData.descEs
+                        : formData.descEn
+                    }
+                    onChange={(e) =>
+                      handleInputChange(
+                        primaryLanguage === "EN" ? "descEs" : "descEn",
+                        e.target.value,
+                      )
+                    }
                     className="bg-muted/50"
                   />
                 </div>
@@ -331,8 +387,8 @@ export default function NewExperiencePage() {
 
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
-              <Select 
-                value={formData.location} 
+              <Select
+                value={formData.location}
                 onValueChange={(value) => handleInputChange("location", value)}
                 required
               >
@@ -358,11 +414,16 @@ export default function NewExperiencePage() {
                   min="1"
                   max="20"
                   value={formData.maxGuests}
-                  onChange={(e) => handleInputChange("maxGuests", parseInt(e.target.value) || 1)}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "maxGuests",
+                      parseInt(e.target.value) || 1,
+                    )
+                  }
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="priceUsd">Price per Person (USD)</Label>
                 <Input
@@ -371,7 +432,12 @@ export default function NewExperiencePage() {
                   min="0"
                   step="0.01"
                   value={formData.priceUsd}
-                  onChange={(e) => handleInputChange("priceUsd", parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "priceUsd",
+                      parseFloat(e.target.value) || 0,
+                    )
+                  }
                   required
                 />
               </div>
@@ -394,9 +460,9 @@ export default function NewExperiencePage() {
                       size="sm"
                       className="absolute top-2 right-2"
                       onClick={() => {
-                        setImagePreview("")
-                        setSelectedImage(null)
-                        setFormData(prev => ({ ...prev, imageUrl: "" }))
+                        setImagePreview("");
+                        setSelectedImage(null);
+                        setFormData((prev) => ({ ...prev, imageUrl: "" }));
                       }}
                     >
                       Remove
@@ -407,7 +473,10 @@ export default function NewExperiencePage() {
                     <div className="text-center">
                       <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
                       <div className="mt-4">
-                        <label htmlFor="image-upload" className="cursor-pointer">
+                        <label
+                          htmlFor="image-upload"
+                          className="cursor-pointer"
+                        >
                           <span className="mt-2 block text-sm font-medium text-gray-900">
                             Click to upload or drag and drop
                           </span>
@@ -428,7 +497,7 @@ export default function NewExperiencePage() {
                     </div>
                   </div>
                 )}
-                
+
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
                     <Input
@@ -436,16 +505,21 @@ export default function NewExperiencePage() {
                       placeholder="Or paste an image URL"
                       value={formData.imageUrl}
                       onChange={(e) => {
-                        handleInputChange("imageUrl", e.target.value)
-                        setSelectedImage(null)
-                        setImagePreview("")
+                        handleInputChange("imageUrl", e.target.value);
+                        setSelectedImage(null);
+                        setImagePreview("");
                       }}
                       disabled={!!selectedImage || isUploading}
                     />
                   </div>
                   {!imagePreview && !formData.imageUrl && (
                     <label htmlFor="image-upload">
-                      <Button type="button" variant="outline" disabled={isUploading} asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={isUploading}
+                        asChild
+                      >
                         <span>
                           <Upload className="h-4 w-4 mr-2" />
                           {isUploading ? "Uploading..." : "Choose File"}
@@ -468,29 +542,37 @@ export default function NewExperiencePage() {
           >
             Cancel
           </Button>
-          
+
           <Button
             type="submit"
             disabled={isSubmitting || isUploading || isTranslating}
             className="md:w-auto w-full"
           >
-            {isTranslating ? "Translating..." : isSubmitting ? "Creating..." : "Save as Draft"}
+            {isTranslating
+              ? "Translating..."
+              : isSubmitting
+                ? "Creating..."
+                : "Save as Draft"}
           </Button>
-          
+
           <Button
             type="button"
             onClick={() => {
-              setFormData(prev => ({ ...prev, status: "active" }))
-              const form = document.querySelector('form') as HTMLFormElement
-              form?.requestSubmit()
+              setFormData((prev) => ({ ...prev, status: "active" }));
+              const form = document.querySelector("form") as HTMLFormElement;
+              form?.requestSubmit();
             }}
             disabled={isSubmitting || isUploading || isTranslating}
             className="bg-turquesa hover:bg-turquesa/90 md:w-auto w-full"
           >
-            {isTranslating ? "Translating..." : isSubmitting ? "Publishing..." : "Save & Publish"}
+            {isTranslating
+              ? "Translating..."
+              : isSubmitting
+                ? "Publishing..."
+                : "Save & Publish"}
           </Button>
         </div>
       </form>
     </div>
-  )
+  );
 }

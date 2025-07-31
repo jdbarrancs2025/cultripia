@@ -1,21 +1,24 @@
 # Cultripia – Design Guidelines
 
-## Brand voice & tone  
-- **Adventurous** – evoke exploration.  
-- **Transforming** – underscore personal growth.  
+## Brand voice & tone
+
+- **Adventurous** – evoke exploration.
+- **Transforming** – underscore personal growth.
 - **Purposeful** – clear, action-oriented copy.
 
-## Color palette  
-| Name | Hex | Usage | AA on white? |  
-|------|-----|-------|--------------|  
-| Turquesa | **#009D9B** | Primary buttons, links | ✅ |  
-| Dorado | **#B59A32** | Accent icons, badges | ⚠ (fails body text) |  
-| Dorado-Dark | **#8C7626** | Small text variant | ✅ |  
-| Gris 80 % | **#4F4F4F** | Body copy | ✅ |  
-| Gris 90 % | **#333333** | Headings | ✅ |  
-| Blanco | **#FFFFFF** | Background | — |
+## Color palette
+
+| Name        | Hex         | Usage                  | AA on white?         |
+| ----------- | ----------- | ---------------------- | -------------------- |
+| Turquesa    | **#009D9B** | Primary buttons, links | ✅                   |
+| Dorado      | **#B59A32** | Accent icons, badges   | ⚠ (fails body text) |
+| Dorado-Dark | **#8C7626** | Small text variant     | ✅                   |
+| Gris 80 %   | **#4F4F4F** | Body copy              | ✅                   |
+| Gris 90 %   | **#333333** | Headings               | ✅                   |
+| Blanco      | **#FFFFFF** | Background             | —                    |
 
 ## UI Framework & Components
+
 - **Tailwind CSS** for utility-first styling with custom color palette
 - **shadcn/ui** for accessible, consistent components
 - **Key shadcn components to use**:
@@ -29,19 +32,22 @@
   - `Table` - for admin dashboard, booking lists
 - **Customization**: Override shadcn defaults with Cultripia color palette
 
-## Typography  
-- **Baloo 2** – headings (700), body (400).    
+## Typography
+
+- **Baloo 2** – headings (700), body (400).
 - System UI stack as fallback.
 - Apply via Tailwind CSS font utilities and shadcn component styling
 
-## Layout & breakpoints  
-- **Desktop-first** base at ≥ 1280 px with mobile optimization.    
-- Responsive breakpoints: 1280 px, 1024 px, 768 px, 480 px.    
-- Cards: rounded-2xl, soft shadow, ≥ p-4.    
-- Buttons: bold text, full-width ≤ 768 px.    
+## Layout & breakpoints
+
+- **Desktop-first** base at ≥ 1280 px with mobile optimization.
+- Responsive breakpoints: 1280 px, 1024 px, 768 px, 480 px.
+- Cards: rounded-2xl, soft shadow, ≥ p-4.
+- Buttons: bold text, full-width ≤ 768 px.
 - Touch targets ≥ 44 px; hamburger menu appears ≤ 768 px.
 
 ## Experience cards & grid layout
+
 - **Grid**: 3-column desktop layout, responsive stacking for mobile
 - **Card structure** (top to bottom):
   - Hero image (aspect ratio ~16:9)
@@ -56,15 +62,17 @@
 - **Card spacing**: consistent padding, rounded corners, subtle shadow
 
 ## Landing page search interface
+
 - **Hero section**: Large background image with overlay text
 - **Search form** centered with 4 inputs:
   - "¿Dónde?" - Location dropdown
-  - "Cuándo" - Date picker  
+  - "Cuándo" - Date picker
   - "Quién" - Guest count input
   - "Buscar" - Primary CTA button (Turquesa)
 - **Form styling**: White background, rounded inputs, proper spacing
 
 ## Calendar & date inputs
+
 - **Date picker component**: Consistent with hero search styling
 - **Host calendar view**:
   - Available dates: light background, selectable
@@ -74,17 +82,19 @@
 - **Calendar controls**: Clear navigation, month/year selection
 - **Mobile calendar**: Touch-friendly date selection, proper sizing
 
-## Accessibility must-dos  
-- Visible focus ring (#009D9B, 2 px).    
-- Alt text auto-filled from listing title.    
+## Accessibility must-dos
+
+- Visible focus ring (#009D9B, 2 px).
+- Alt text auto-filled from listing title.
 - Form fields labelled & ARIA where needed.
 - Calendar navigation keyboard accessible.
 - Color contrast meets WCAG AA standards.
 
-## Content style guide  
-- Use H2, short intro, then bullets.    
-- ≤ 20-word sentences; active voice.    
-- Link text describes the action ("View host profile").    
+## Content style guide
+
+- Use H2, short intro, then bullets.
+- ≤ 20-word sentences; active voice.
+- Link text describes the action ("View host profile").
 - UI keys grouped per language; no mixed-language phrases.
 - Experience descriptions: 2-3 lines maximum on cards.
 - CTA buttons: verb + object format ("Reserva ahora", "Ver detalles").

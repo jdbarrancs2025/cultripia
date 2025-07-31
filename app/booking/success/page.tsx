@@ -1,37 +1,37 @@
-"use client"
+"use client";
 
-import { useEffect, useState, Suspense } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
-import { useAction, useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { CheckCircle2, Calendar, Users, MapPin, Mail } from "lucide-react"
-import Link from "next/link"
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useAction, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CheckCircle2, Calendar, Users, MapPin, Mail } from "lucide-react";
+import Link from "next/link";
 
 function BookingSuccessContent() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const sessionId = searchParams.get("session_id")
-  const [isLoading, setIsLoading] = useState(true)
-  
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const sessionId = searchParams.get("session_id");
+  const [isLoading, setIsLoading] = useState(true);
+
   const booking = useQuery(
     api.bookings.getBySessionId,
-    sessionId ? { sessionId } : "skip"
-  )
-  
+    sessionId ? { sessionId } : "skip",
+  );
+
   useEffect(() => {
     if (!sessionId) {
-      router.push("/")
+      router.push("/");
     }
-  }, [sessionId, router])
-  
+  }, [sessionId, router]);
+
   useEffect(() => {
     if (booking !== undefined) {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [booking])
-  
+  }, [booking]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -40,9 +40,9 @@ function BookingSuccessContent() {
           <p className="text-gray-600">Confirmando tu reserva...</p>
         </div>
       </div>
-    )
+    );
   }
-  
+
   if (!booking) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -55,19 +55,19 @@ function BookingSuccessContent() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
-  
+
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString + 'T00:00:00')
-    return date.toLocaleDateString('es', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
-  
+    const date = new Date(dateString + "T00:00:00");
+    return date.toLocaleDateString("es", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-3xl mx-auto px-4">
@@ -81,7 +81,7 @@ function BookingSuccessContent() {
             Tu pago ha sido procesado exitosamente
           </p>
         </div>
-        
+
         {/* Booking Details Card */}
         <Card className="mb-8">
           <CardHeader>
@@ -93,11 +93,9 @@ function BookingSuccessContent() {
               <h3 className="font-semibold text-lg mb-2">
                 {booking.experience?.titleEs}
               </h3>
-              <p className="text-gray-600">
-                {booking.experience?.descEs}
-              </p>
+              <p className="text-gray-600">{booking.experience?.descEs}</p>
             </div>
-            
+
             {/* Booking Details */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex items-start gap-3">
@@ -109,17 +107,18 @@ function BookingSuccessContent() {
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-3">
                 <Users className="h-5 w-5 text-turquesa mt-0.5" />
                 <div>
                   <p className="font-medium">Número de personas</p>
                   <p className="text-gray-600">
-                    {booking.qtyPersons} {booking.qtyPersons === 1 ? 'persona' : 'personas'}
+                    {booking.qtyPersons}{" "}
+                    {booking.qtyPersons === 1 ? "persona" : "personas"}
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-turquesa mt-0.5" />
                 <div>
@@ -129,18 +128,16 @@ function BookingSuccessContent() {
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-3">
                 <Mail className="h-5 w-5 text-turquesa mt-0.5" />
                 <div>
                   <p className="font-medium">Anfitrión</p>
-                  <p className="text-gray-600">
-                    {booking.host?.name}
-                  </p>
+                  <p className="text-gray-600">{booking.host?.name}</p>
                 </div>
               </div>
             </div>
-            
+
             {/* Payment Info */}
             <div className="border-t pt-4">
               <div className="flex justify-between items-center">
@@ -152,7 +149,7 @@ function BookingSuccessContent() {
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Next Steps */}
         <Card>
           <CardHeader>
@@ -166,11 +163,12 @@ function BookingSuccessContent() {
               <div>
                 <p className="font-medium">Revisa tu correo electrónico</p>
                 <p className="text-sm text-gray-600">
-                  Recibirás un correo de confirmación con todos los detalles de tu reserva.
+                  Recibirás un correo de confirmación con todos los detalles de
+                  tu reserva.
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="h-6 w-6 rounded-full bg-turquesa/10 text-turquesa flex items-center justify-center text-sm font-medium">
                 2
@@ -178,11 +176,12 @@ function BookingSuccessContent() {
               <div>
                 <p className="font-medium">Contacta a tu anfitrión</p>
                 <p className="text-sm text-gray-600">
-                  Tu anfitrión se pondrá en contacto contigo para coordinar los detalles de la experiencia.
+                  Tu anfitrión se pondrá en contacto contigo para coordinar los
+                  detalles de la experiencia.
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <div className="h-6 w-6 rounded-full bg-turquesa/10 text-turquesa flex items-center justify-center text-sm font-medium">
                 3
@@ -190,13 +189,14 @@ function BookingSuccessContent() {
               <div>
                 <p className="font-medium">Disfruta tu experiencia</p>
                 <p className="text-sm text-gray-600">
-                  Prepárate para vivir una experiencia cultural única e inolvidable.
+                  Prepárate para vivir una experiencia cultural única e
+                  inolvidable.
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Action Buttons */}
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild size="lg">
@@ -208,20 +208,22 @@ function BookingSuccessContent() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function BookingSuccessPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-turquesa border-t-transparent mx-auto mb-4" />
-          <p className="text-gray-600">Cargando...</p>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-turquesa border-t-transparent mx-auto mb-4" />
+            <p className="text-gray-600">Cargando...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <BookingSuccessContent />
     </Suspense>
-  )
+  );
 }

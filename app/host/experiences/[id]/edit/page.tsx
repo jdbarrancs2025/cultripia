@@ -1,20 +1,32 @@
-"use client"
+"use client";
 
-import { useRouter, useParams } from "next/navigation"
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { toast } from "sonner"
-import { useMutation, useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { Upload, Image as ImageIcon, Loader2, Languages } from "lucide-react"
-import { useAction } from "convex/react"
-import { Id } from "@/convex/_generated/dataModel"
-import { useUser } from "@clerk/nextjs"
+import { useRouter, useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Upload, Image as ImageIcon, Loader2, Languages } from "lucide-react";
+import { useAction } from "convex/react";
+import { Id } from "@/convex/_generated/dataModel";
+import { useUser } from "@clerk/nextjs";
 
 const destinations = [
   "Antigua Guatemala",
@@ -26,30 +38,32 @@ const destinations = [
   "Río Dulce",
   "Monterrico",
   "Cobán",
-  "Panajachel"
-]
+  "Panajachel",
+];
 
 export default function EditExperiencePage() {
-  const router = useRouter()
-  const params = useParams()
-  const { user } = useUser()
-  const experienceId = params.id as Id<"experiences">
-  
-  const experience = useQuery(api.experiences.getExperience, { id: experienceId })
+  const router = useRouter();
+  const params = useParams();
+  const { user } = useUser();
+  const experienceId = params.id as Id<"experiences">;
+
+  const experience = useQuery(api.experiences.getExperience, {
+    id: experienceId,
+  });
   const currentUser = useQuery(api.users.getUserByClerkId, {
     clerkId: user?.id || "",
-  })
-  const updateExperience = useMutation(api.experiences.updateExperience)
-  const generateUploadUrl = useMutation(api.files.generateUploadUrl)
-  const getImageUrl = useMutation(api.files.getUrl)
-  const translateContent = useAction(api.deepl.translateExperienceContent)
-  
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isUploading, setIsUploading] = useState(false)
-  const [selectedImage, setSelectedImage] = useState<File | null>(null)
-  const [imagePreview, setImagePreview] = useState<string>("")
-  const [primaryLanguage, setPrimaryLanguage] = useState<"EN" | "ES">("EN")
-  const [isTranslating, setIsTranslating] = useState(false)
+  });
+  const updateExperience = useMutation(api.experiences.updateExperience);
+  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const getImageUrl = useMutation(api.files.getUrl);
+  const translateContent = useAction(api.deepl.translateExperienceContent);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [primaryLanguage, setPrimaryLanguage] = useState<"EN" | "ES">("EN");
+  const [isTranslating, setIsTranslating] = useState(false);
   const [formData, setFormData] = useState({
     titleEn: "",
     titleEs: "",
@@ -59,8 +73,8 @@ export default function EditExperiencePage() {
     maxGuests: 1,
     priceUsd: 0,
     imageUrl: "",
-    status: "draft" as "draft" | "active" | "inactive"
-  })
+    status: "draft" as "draft" | "active" | "inactive",
+  });
 
   // Load experience data when available
   useEffect(() => {
@@ -75,97 +89,98 @@ export default function EditExperiencePage() {
         priceUsd: experience.priceUsd,
         imageUrl: experience.imageUrl,
         status: experience.status,
-      })
+      });
     }
-  }, [experience])
+  }, [experience]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
 
     try {
-      let imageUrl = formData.imageUrl
+      let imageUrl = formData.imageUrl;
 
       // Upload image if selected
       if (selectedImage) {
-        const uploadedUrl = await uploadImage()
+        const uploadedUrl = await uploadImage();
         if (uploadedUrl) {
-          imageUrl = uploadedUrl
+          imageUrl = uploadedUrl;
         } else {
-          throw new Error("Failed to upload image")
+          throw new Error("Failed to upload image");
         }
       }
 
       // Validate image URL
       if (!imageUrl) {
-        throw new Error("Please provide an image for your experience")
+        throw new Error("Please provide an image for your experience");
       }
 
       await updateExperience({
         experienceId,
         ...formData,
-        imageUrl
-      })
-      
+        imageUrl,
+      });
+
       toast.success("Experience updated successfully", {
         description: "Your changes have been saved.",
-      })
-      
-      router.push("/host/experiences")
+      });
+
+      router.push("/host/experiences");
     } catch (error) {
-      console.error("Error updating experience:", error)
+      console.error("Error updating experience:", error);
       toast.error("Error updating experience", {
-        description: error instanceof Error ? error.message : "Please try again later.",
-      })
+        description:
+          error instanceof Error ? error.message : "Please try again later.",
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleInputChange = (field: string, value: string | number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
-    }))
-  }
+      [field]: value,
+    }));
+  };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
       toast.error("Invalid file type", {
         description: "Please select an image file.",
-      })
-      return
+      });
+      return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error("File too large", {
         description: "Please select an image smaller than 5MB.",
-      })
-      return
+      });
+      return;
     }
 
-    setSelectedImage(file)
-    
+    setSelectedImage(file);
+
     // Create preview
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onloadend = () => {
-      setImagePreview(reader.result as string)
-    }
-    reader.readAsDataURL(file)
-  }
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const uploadImage = async () => {
-    if (!selectedImage) return null
+    if (!selectedImage) return null;
 
-    setIsUploading(true)
+    setIsUploading(true);
     try {
       // Get upload URL from Convex
-      const uploadUrl = await generateUploadUrl()
+      const uploadUrl = await generateUploadUrl();
 
       // Upload the file
       const result = await fetch(uploadUrl, {
@@ -173,26 +188,30 @@ export default function EditExperiencePage() {
         headers: { "Content-Type": selectedImage.type },
         body: selectedImage,
       }).catch((error) => {
-        console.error("Network error during upload:", error)
-        throw new Error("Network error: Please check your connection and try again")
-      })
+        console.error("Network error during upload:", error);
+        throw new Error(
+          "Network error: Please check your connection and try again",
+        );
+      });
 
       if (!result.ok) {
-        throw new Error(`Upload failed: ${result.statusText || 'Unknown error'}`)
+        throw new Error(
+          `Upload failed: ${result.statusText || "Unknown error"}`,
+        );
       }
 
-      const { storageId } = await result.json()
-      
+      const { storageId } = await result.json();
+
       // Get the public URL for the uploaded image
-      const imageUrl = await getImageUrl({ storageId })
-      return imageUrl
+      const imageUrl = await getImageUrl({ storageId });
+      return imageUrl;
     } catch (error) {
-      console.error("Error uploading image:", error)
-      throw error
+      console.error("Error uploading image:", error);
+      throw error;
     } finally {
-      setIsUploading(false)
+      setIsUploading(false);
     }
-  }
+  };
 
   if (!experience || !user || !currentUser) {
     return (
@@ -205,11 +224,12 @@ export default function EditExperiencePage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   // Check if user is the host or admin
-  const isAuthorized = currentUser._id === experience.hostId || currentUser.role === "admin"
+  const isAuthorized =
+    currentUser._id === experience.hostId || currentUser.role === "admin";
 
   if (!isAuthorized) {
     return (
@@ -217,7 +237,9 @@ export default function EditExperiencePage() {
         <Card>
           <CardContent className="py-16">
             <div className="text-center">
-              <h2 className="text-xl font-semibold text-red-900">Access Denied</h2>
+              <h2 className="text-xl font-semibold text-red-900">
+                Access Denied
+              </h2>
               <p className="mt-2 text-red-700">
                 You don&apos;t have permission to edit this experience.
               </p>
@@ -231,7 +253,7 @@ export default function EditExperiencePage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -264,7 +286,7 @@ export default function EditExperiencePage() {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="titleEs">Title (Spanish)</Label>
                 <Input
@@ -289,7 +311,7 @@ export default function EditExperiencePage() {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="descEs">Description (Spanish)</Label>
                 <Textarea
@@ -305,8 +327,8 @@ export default function EditExperiencePage() {
 
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
-              <Select 
-                value={formData.location} 
+              <Select
+                value={formData.location}
                 onValueChange={(value) => handleInputChange("location", value)}
                 required
               >
@@ -332,11 +354,16 @@ export default function EditExperiencePage() {
                   min="1"
                   max="20"
                   value={formData.maxGuests}
-                  onChange={(e) => handleInputChange("maxGuests", parseInt(e.target.value) || 1)}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "maxGuests",
+                      parseInt(e.target.value) || 1,
+                    )
+                  }
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="priceUsd">Price per Person (USD)</Label>
                 <Input
@@ -345,16 +372,23 @@ export default function EditExperiencePage() {
                   min="0"
                   step="0.01"
                   value={formData.priceUsd}
-                  onChange={(e) => handleInputChange("priceUsd", parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "priceUsd",
+                      parseFloat(e.target.value) || 0,
+                    )
+                  }
                   required
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                <Select 
-                  value={formData.status} 
-                  onValueChange={(value: "draft" | "active" | "inactive") => handleInputChange("status", value)}
+                <Select
+                  value={formData.status}
+                  onValueChange={(value: "draft" | "active" | "inactive") =>
+                    handleInputChange("status", value)
+                  }
                 >
                   <SelectTrigger id="status">
                     <SelectValue />
@@ -385,10 +419,13 @@ export default function EditExperiencePage() {
                       size="sm"
                       className="absolute top-2 right-2"
                       onClick={() => {
-                        setImagePreview("")
-                        setSelectedImage(null)
+                        setImagePreview("");
+                        setSelectedImage(null);
                         if (experience.imageUrl !== formData.imageUrl) {
-                          setFormData(prev => ({ ...prev, imageUrl: experience.imageUrl }))
+                          setFormData((prev) => ({
+                            ...prev,
+                            imageUrl: experience.imageUrl,
+                          }));
                         }
                       }}
                     >
@@ -400,7 +437,10 @@ export default function EditExperiencePage() {
                     <div className="text-center">
                       <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
                       <div className="mt-4">
-                        <label htmlFor="image-upload" className="cursor-pointer">
+                        <label
+                          htmlFor="image-upload"
+                          className="cursor-pointer"
+                        >
                           <span className="mt-2 block text-sm font-medium text-gray-900">
                             Click to upload or drag and drop
                           </span>
@@ -421,7 +461,7 @@ export default function EditExperiencePage() {
                     </div>
                   </div>
                 )}
-                
+
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
                     <Input
@@ -429,16 +469,21 @@ export default function EditExperiencePage() {
                       placeholder="Or paste an image URL"
                       value={formData.imageUrl}
                       onChange={(e) => {
-                        handleInputChange("imageUrl", e.target.value)
-                        setSelectedImage(null)
-                        setImagePreview("")
+                        handleInputChange("imageUrl", e.target.value);
+                        setSelectedImage(null);
+                        setImagePreview("");
                       }}
                       disabled={!!selectedImage || isUploading}
                     />
                   </div>
                   {!imagePreview && (
                     <label htmlFor="image-upload">
-                      <Button type="button" variant="outline" disabled={isUploading} asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={isUploading}
+                        asChild
+                      >
                         <span>
                           <Upload className="h-4 w-4 mr-2" />
                           {isUploading ? "Uploading..." : "Choose File"}
@@ -457,11 +502,13 @@ export default function EditExperiencePage() {
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push(`/host/experiences/${experienceId}/availability`)}
+            onClick={() =>
+              router.push(`/host/experiences/${experienceId}/availability`)
+            }
           >
             Manage Availability
           </Button>
-          
+
           <div className="flex gap-4">
             <Button
               type="button"
@@ -470,7 +517,7 @@ export default function EditExperiencePage() {
             >
               Cancel
             </Button>
-            
+
             <Button
               type="submit"
               disabled={isSubmitting || isUploading}
@@ -482,5 +529,5 @@ export default function EditExperiencePage() {
         </div>
       </form>
     </div>
-  )
+  );
 }

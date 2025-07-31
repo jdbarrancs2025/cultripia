@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export function ExperienceDetailSkeleton() {
   return (
@@ -8,7 +8,7 @@ export function ExperienceDetailSkeleton() {
       <div className="relative h-[60vh] max-h-[600px] bg-gray-200">
         <Skeleton className="absolute inset-0" />
       </div>
-      
+
       {/* Content Section */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-3">
@@ -19,14 +19,14 @@ export function ExperienceDetailSkeleton() {
               <Skeleton className="h-10 w-3/4" />
               <Skeleton className="h-6 w-1/3" />
             </div>
-            
+
             {/* Description */}
             <div className="space-y-2">
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-3/4" />
             </div>
-            
+
             {/* Host Info */}
             <Card>
               <CardHeader>
@@ -43,7 +43,7 @@ export function ExperienceDetailSkeleton() {
               </CardContent>
             </Card>
           </div>
-          
+
           {/* Booking Section */}
           <div className="lg:col-span-1">
             <Card className="sticky top-4">
@@ -61,5 +61,5 @@ export function ExperienceDetailSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }

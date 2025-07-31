@@ -1,8 +1,8 @@
-import Image from "next/image"
+import Image from "next/image";
 
 interface ExperienceHeroProps {
-  imageUrl: string
-  title: string
+  imageUrl: string;
+  title: string;
 }
 
 export function ExperienceHero({ imageUrl, title }: ExperienceHeroProps) {
@@ -18,5 +18,5 @@ export function ExperienceHero({ imageUrl, title }: ExperienceHeroProps) {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
     </div>
-  )
+  );
 }

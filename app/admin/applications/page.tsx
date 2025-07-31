@@ -28,10 +28,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminApplicationsPage() {
   const applications = useQuery(api.hostApplications.getAll);
-  const updateApplicationStatus = useMutation(api.hostApplications.updateStatus);
+  const updateApplicationStatus = useMutation(
+    api.hostApplications.updateStatus,
+  );
   const updateUserRole = useMutation(api.users.updateUserRole);
 
-  const [selectedApplication, setSelectedApplication] = useState<Doc<"hostApplications"> | null>(null);
+  const [selectedApplication, setSelectedApplication] =
+    useState<Doc<"hostApplications"> | null>(null);
   const [feedback, setFeedback] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -55,6 +58,28 @@ export default function AdminApplicationsPage() {
         });
       }
 
+      // Send email notification via API route
+      try {
+        const emailResponse = await fetch("/api/emails/application-status", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            applicantName: selectedApplication.applicationData.name,
+            applicantEmail: selectedApplication.applicationData.email,
+            status,
+            feedback: feedback || undefined,
+          }),
+        });
+
+        if (!emailResponse.ok) {
+          console.error("Failed to send status email");
+        }
+      } catch (error) {
+        console.error("Error sending status email:", error);
+      }
+
       // Close modal and reset state
       setSelectedApplication(null);
       setFeedback("");
@@ -70,7 +95,11 @@ export default function AdminApplicationsPage() {
       case "pending":
         return <Badge variant="secondary">Pending</Badge>;
       case "approved":
-        return <Badge variant="default" className="bg-green-600">Approved</Badge>;
+        return (
+          <Badge variant="default" className="bg-green-600">
+            Approved
+          </Badge>
+        );
       case "rejected":
         return <Badge variant="destructive">Rejected</Badge>;
       default:
@@ -104,7 +133,9 @@ export default function AdminApplicationsPage() {
                   </TableCell>
                   <TableCell>{application.applicationData.email}</TableCell>
                   <TableCell>{application.applicationData.phone}</TableCell>
-                  <TableCell>{application.applicationData.experienceType}</TableCell>
+                  <TableCell>
+                    {application.applicationData.experienceType}
+                  </TableCell>
                   <TableCell>{getStatusBadge(application.status)}</TableCell>
                   <TableCell>
                     {formatDistanceToNow(new Date(application.createdAt), {
@@ -149,7 +180,8 @@ export default function AdminApplicationsPage() {
           <DialogHeader>
             <DialogTitle>Review Host Application</DialogTitle>
             <DialogDescription>
-              Review the application details and decide whether to approve or reject.
+              Review the application details and decide whether to approve or
+              reject.
             </DialogDescription>
           </DialogHeader>
 
@@ -158,19 +190,27 @@ export default function AdminApplicationsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-sm font-semibold">Name</Label>
-                  <p className="text-sm">{selectedApplication.applicationData.name}</p>
+                  <p className="text-sm">
+                    {selectedApplication.applicationData.name}
+                  </p>
                 </div>
                 <div>
                   <Label className="text-sm font-semibold">Email</Label>
-                  <p className="text-sm">{selectedApplication.applicationData.email}</p>
+                  <p className="text-sm">
+                    {selectedApplication.applicationData.email}
+                  </p>
                 </div>
                 <div>
                   <Label className="text-sm font-semibold">Phone</Label>
-                  <p className="text-sm">{selectedApplication.applicationData.phone}</p>
+                  <p className="text-sm">
+                    {selectedApplication.applicationData.phone}
+                  </p>
                 </div>
                 <div>
                   <Label className="text-sm font-semibold">Location</Label>
-                  <p className="text-sm">{selectedApplication.applicationData.location}</p>
+                  <p className="text-sm">
+                    {selectedApplication.applicationData.location}
+                  </p>
                 </div>
                 <div>
                   <Label className="text-sm font-semibold">Languages</Label>
@@ -179,7 +219,9 @@ export default function AdminApplicationsPage() {
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-semibold">Experience Type</Label>
+                  <Label className="text-sm font-semibold">
+                    Experience Type
+                  </Label>
                   <p className="text-sm">
                     {selectedApplication.applicationData.experienceType}
                   </p>
@@ -187,12 +229,18 @@ export default function AdminApplicationsPage() {
               </div>
 
               <div>
-                <Label className="text-sm font-semibold">Experience Title</Label>
-                <p className="text-sm">{selectedApplication.applicationData.experienceTitle}</p>
+                <Label className="text-sm font-semibold">
+                  Experience Title
+                </Label>
+                <p className="text-sm">
+                  {selectedApplication.applicationData.experienceTitle}
+                </p>
               </div>
 
               <div>
-                <Label className="text-sm font-semibold">Experience Description</Label>
+                <Label className="text-sm font-semibold">
+                  Experience Description
+                </Label>
                 <p className="text-sm mt-1 whitespace-pre-wrap">
                   {selectedApplication.applicationData.description}
                 </p>
@@ -201,7 +249,10 @@ export default function AdminApplicationsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-sm font-semibold">Pricing</Label>
-                  <p className="text-sm">${selectedApplication.applicationData.pricing} USD per person</p>
+                  <p className="text-sm">
+                    ${selectedApplication.applicationData.pricing} USD per
+                    person
+                  </p>
                 </div>
                 <div>
                   <Label className="text-sm font-semibold">Availability</Label>
@@ -234,7 +285,9 @@ export default function AdminApplicationsPage() {
                 <Button
                   variant="destructive"
                   onClick={() => handleStatusUpdate("rejected")}
-                  disabled={isProcessing || selectedApplication.status !== "pending"}
+                  disabled={
+                    isProcessing || selectedApplication.status !== "pending"
+                  }
                 >
                   Reject
                 </Button>
@@ -242,7 +295,9 @@ export default function AdminApplicationsPage() {
                   variant="default"
                   className="bg-green-600 hover:bg-green-700"
                   onClick={() => handleStatusUpdate("approved")}
-                  disabled={isProcessing || selectedApplication.status !== "pending"}
+                  disabled={
+                    isProcessing || selectedApplication.status !== "pending"
+                  }
                 >
                   Approve
                 </Button>

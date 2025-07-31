@@ -1,32 +1,34 @@
-"use client"
+"use client";
 
-import { UserButton, SignInButton, useUser as useClerkUser } from "@clerk/nextjs"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { useUser } from "@/hooks/useUser"
-import { useState } from "react"
-import { Menu, X } from "lucide-react"
+import {
+  UserButton,
+  SignInButton,
+  useUser as useClerkUser,
+} from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useUser } from "@/hooks/useUser";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
 
 export function Navigation() {
-  const { isSignedIn } = useClerkUser()
-  const { user, role } = useUser()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { isSignedIn } = useClerkUser();
+  const { user, role } = useUser();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const getNavigationItems = () => {
-    const items = [
-      { label: "Explorar", href: "/experiences", show: true },
-    ]
+    const items = [{ label: "Explorar", href: "/experiences", show: true }];
 
     if (!isSignedIn) {
-      return items
+      return items;
     }
 
     // Traveler navigation
     if (role === "traveler") {
       items.push(
         { label: "Mis Reservas", href: "/dashboard", show: true },
-        { label: "Ser Anfitrión", href: "/become-a-host", show: true }
-      )
+        { label: "Ser Anfitrión", href: "/become-a-host", show: true },
+      );
     }
 
     // Host navigation
@@ -35,8 +37,8 @@ export function Navigation() {
         { label: "Panel de Control", href: "/host/dashboard", show: true },
         { label: "Mis Experiencias", href: "/host/experiences", show: true },
         { label: "Calendario", href: "/host/calendar", show: true },
-        { label: "Mis Reservas", href: "/dashboard", show: true }
-      )
+        { label: "Mis Reservas", href: "/dashboard", show: true },
+      );
     }
 
     // Admin navigation
@@ -46,14 +48,14 @@ export function Navigation() {
         { label: "Panel de Control", href: "/host/dashboard", show: true },
         { label: "Mis Experiencias", href: "/host/experiences", show: true },
         { label: "Calendario", href: "/host/calendar", show: true },
-        { label: "Mis Reservas", href: "/dashboard", show: true }
-      )
+        { label: "Mis Reservas", href: "/dashboard", show: true },
+      );
     }
 
-    return items.filter(item => item.show)
-  }
+    return items.filter((item) => item.show);
+  };
 
-  const navItems = getNavigationItems()
+  const navItems = getNavigationItems();
 
   return (
     <nav className="bg-white shadow-sm border-b">
@@ -137,5 +139,5 @@ export function Navigation() {
         )}
       </div>
     </nav>
-  )
+  );
 }

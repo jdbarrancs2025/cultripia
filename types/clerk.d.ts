@@ -1,11 +1,11 @@
-import { UserRole } from "@/lib/auth"
+import { UserRole } from "@/lib/auth";
 
 declare global {
   interface CustomJwtSessionClaims {
     metadata?: {
-      role?: UserRole
-    }
+      role?: UserRole;
+    };
   }
 }
 
-export {}
+export {};

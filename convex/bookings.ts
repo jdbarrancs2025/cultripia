@@ -1,5 +1,5 @@
-import { v } from "convex/values"
-import { mutation, query } from "./_generated/server"
+import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
 
 export const createBooking = mutation({
   args: {
@@ -12,47 +12,47 @@ export const createBooking = mutation({
   handler: async (ctx, args) => {
     // Validate inputs
     if (args.qtyPersons <= 0) {
-      throw new Error("Number of persons must be positive")
+      throw new Error("Number of persons must be positive");
     }
     if (args.totalAmount < 0) {
-      throw new Error("Total amount cannot be negative")
+      throw new Error("Total amount cannot be negative");
     }
-    
+
     // Validate date format (YYYY-MM-DD)
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(args.selectedDate)) {
-      throw new Error("Invalid date format. Please use YYYY-MM-DD")
+      throw new Error("Invalid date format. Please use YYYY-MM-DD");
     }
-    
+
     // Validate date is not in the past
-    const selectedDate = new Date(args.selectedDate)
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    const selectedDate = new Date(args.selectedDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     if (selectedDate < today) {
-      throw new Error("Cannot book for past dates")
+      throw new Error("Cannot book for past dates");
     }
-    
-    const identity = await ctx.auth.getUserIdentity()
+
+    const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Unauthorized: User not authenticated")
+      throw new Error("Unauthorized: User not authenticated");
     }
 
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .first()
-    
+      .first();
+
     if (!user) {
-      throw new Error("User not found")
+      throw new Error("User not found");
     }
 
-    const experience = await ctx.db.get(args.experienceId)
+    const experience = await ctx.db.get(args.experienceId);
     if (!experience) {
-      throw new Error("Experience not found")
+      throw new Error("Experience not found");
     }
 
     if (args.qtyPersons > experience.maxGuests) {
-      throw new Error("Number of guests exceeds maximum capacity")
+      throw new Error("Number of guests exceeds maximum capacity");
     }
 
     const bookingId = await ctx.db.insert("bookings", {
@@ -64,100 +64,104 @@ export const createBooking = mutation({
       paid: false,
       totalAmount: args.totalAmount,
       createdAt: Date.now(),
-    })
-    
-    return bookingId
+    });
+
+    return bookingId;
   },
-})
+});
 
 export const getBookingsByTraveler = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity()
+    const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      return []
+      return [];
     }
 
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .first()
-    
+      .first();
+
     if (!user) {
-      return []
+      return [];
     }
 
     const bookings = await ctx.db
       .query("bookings")
       .withIndex("by_traveler", (q) => q.eq("travelerId", user._id))
-      .collect()
-    
+      .collect();
+
     const bookingsWithDetails = await Promise.all(
       bookings.map(async (booking) => {
-        const experience = await ctx.db.get(booking.experienceId)
-        const host = experience ? await ctx.db.get(experience.hostId) : null
+        const experience = await ctx.db.get(booking.experienceId);
+        const host = experience ? await ctx.db.get(experience.hostId) : null;
         return {
           ...booking,
           experience,
           host,
-        }
-      })
-    )
-    
-    return bookingsWithDetails
+        };
+      }),
+    );
+
+    return bookingsWithDetails;
   },
-})
+});
 
 export const getBookingsByExperience = query({
   args: { experienceId: v.id("experiences") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity()
+    const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Unauthorized: User not authenticated")
+      throw new Error("Unauthorized: User not authenticated");
     }
 
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .first()
-    
+      .first();
+
     if (!user) {
-      throw new Error("User not found")
+      throw new Error("User not found");
     }
 
-    const experience = await ctx.db.get(args.experienceId)
+    const experience = await ctx.db.get(args.experienceId);
     if (!experience) {
-      throw new Error("Experience not found")
+      throw new Error("Experience not found");
     }
 
     if (experience.hostId !== user._id && user.role !== "admin") {
-      throw new Error("Unauthorized: You can only view bookings for your own experiences")
+      throw new Error(
+        "Unauthorized: You can only view bookings for your own experiences",
+      );
     }
 
     const bookings = await ctx.db
       .query("bookings")
-      .withIndex("by_experience", (q) => q.eq("experienceId", args.experienceId))
-      .collect()
-    
+      .withIndex("by_experience", (q) =>
+        q.eq("experienceId", args.experienceId),
+      )
+      .collect();
+
     const bookingsWithTravelers = await Promise.all(
       bookings.map(async (booking) => {
-        const traveler = await ctx.db.get(booking.travelerId)
+        const traveler = await ctx.db.get(booking.travelerId);
         return {
           ...booking,
           traveler, // traveler can be null if deleted
-        }
-      })
-    )
-    
-    return bookingsWithTravelers
+        };
+      }),
+    );
+
+    return bookingsWithTravelers;
   },
-})
+});
 
 export const getAll = query({
   handler: async (ctx) => {
-    return await ctx.db.query("bookings").collect()
+    return await ctx.db.query("bookings").collect();
   },
-})
+});
 
 export const getBySessionId = query({
   args: {
@@ -166,23 +170,25 @@ export const getBySessionId = query({
   handler: async (ctx, args) => {
     const booking = await ctx.db
       .query("bookings")
-      .withIndex("by_stripe_session", (q) => q.eq("stripeSessionId", args.sessionId))
-      .first()
-    
-    if (!booking) return null
-    
-    const experience = await ctx.db.get(booking.experienceId)
-    const traveler = await ctx.db.get(booking.travelerId)
-    const host = experience ? await ctx.db.get(experience.hostId) : null
-    
+      .withIndex("by_stripe_session", (q) =>
+        q.eq("stripeSessionId", args.sessionId),
+      )
+      .first();
+
+    if (!booking) return null;
+
+    const experience = await ctx.db.get(booking.experienceId);
+    const traveler = await ctx.db.get(booking.travelerId);
+    const host = experience ? await ctx.db.get(experience.hostId) : null;
+
     return {
       ...booking,
       experience,
       traveler,
       host,
-    }
+    };
   },
-})
+});
 
 export const getHostBookings = query({
   args: { hostId: v.id("users") },
@@ -191,37 +197,37 @@ export const getHostBookings = query({
     const experiences = await ctx.db
       .query("experiences")
       .filter((q) => q.eq(q.field("hostId"), args.hostId))
-      .collect()
+      .collect();
 
     // Get all bookings for host's experiences
-    const experienceIds = experiences.map(exp => exp._id)
-    const allBookings = []
-    
+    const experienceIds = experiences.map((exp) => exp._id);
+    const allBookings = [];
+
     for (const expId of experienceIds) {
       const expBookings = await ctx.db
         .query("bookings")
         .withIndex("by_experience", (q) => q.eq("experienceId", expId))
-        .collect()
-      allBookings.push(...expBookings)
+        .collect();
+      allBookings.push(...expBookings);
     }
 
     // Add experience and traveler details
     const bookingsWithDetails = await Promise.all(
       allBookings.map(async (booking) => {
-        const experience = await ctx.db.get(booking.experienceId)
-        const traveler = await ctx.db.get(booking.travelerId)
+        const experience = await ctx.db.get(booking.experienceId);
+        const traveler = await ctx.db.get(booking.travelerId);
         return {
           ...booking,
           experience,
           traveler,
-        }
-      })
-    )
-    
+        };
+      }),
+    );
+
     // Sort by date (newest first)
-    return bookingsWithDetails.sort((a, b) => b.createdAt - a.createdAt)
+    return bookingsWithDetails.sort((a, b) => b.createdAt - a.createdAt);
   },
-})
+});
 
 export const getTravelerBookings = query({
   args: { travelerId: v.id("users") },
@@ -229,63 +235,63 @@ export const getTravelerBookings = query({
     const bookings = await ctx.db
       .query("bookings")
       .withIndex("by_traveler", (q) => q.eq("travelerId", args.travelerId))
-      .collect()
-    
+      .collect();
+
     const bookingsWithDetails = await Promise.all(
       bookings.map(async (booking) => {
-        const experience = await ctx.db.get(booking.experienceId)
-        const host = experience ? await ctx.db.get(experience.hostId) : null
+        const experience = await ctx.db.get(booking.experienceId);
+        const host = experience ? await ctx.db.get(experience.hostId) : null;
         return {
           ...booking,
           experience,
           host,
           guestCount: booking.qtyPersons, // Add alias for consistency
-        }
-      })
-    )
-    
+        };
+      }),
+    );
+
     // Sort by date (newest first)
     return bookingsWithDetails.sort((a, b) => {
-      const dateA = new Date(a.selectedDate).getTime()
-      const dateB = new Date(b.selectedDate).getTime()
-      return dateB - dateA
-    })
+      const dateA = new Date(a.selectedDate).getTime();
+      const dateB = new Date(b.selectedDate).getTime();
+      return dateB - dateA;
+    });
   },
-})
+});
 
 export const getBookingById = query({
   args: { bookingId: v.id("bookings") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity()
+    const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Unauthorized: User not authenticated")
+      throw new Error("Unauthorized: User not authenticated");
     }
 
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .first()
-    
+      .first();
+
     if (!user) {
-      throw new Error("User not found")
+      throw new Error("User not found");
     }
 
-    const booking = await ctx.db.get(args.bookingId)
+    const booking = await ctx.db.get(args.bookingId);
     if (!booking) {
-      throw new Error("Booking not found")
+      throw new Error("Booking not found");
     }
 
     // Check if user has access to this booking
     if (booking.travelerId !== user._id && user.role !== "admin") {
-      const experience = await ctx.db.get(booking.experienceId)
+      const experience = await ctx.db.get(booking.experienceId);
       if (!experience || experience.hostId !== user._id) {
-        throw new Error("Unauthorized: You don't have access to this booking")
+        throw new Error("Unauthorized: You don't have access to this booking");
       }
     }
 
-    const experience = await ctx.db.get(booking.experienceId)
-    const host = experience ? await ctx.db.get(experience.hostId) : null
-    const traveler = await ctx.db.get(booking.travelerId)
+    const experience = await ctx.db.get(booking.experienceId);
+    const host = experience ? await ctx.db.get(experience.hostId) : null;
+    const traveler = await ctx.db.get(booking.travelerId);
 
     return {
       ...booking,
@@ -293,9 +299,9 @@ export const getBookingById = query({
       host,
       traveler,
       guestCount: booking.qtyPersons,
-    }
+    };
   },
-})
+});
 
 export const updateBookingPaymentStatus = mutation({
   args: {
@@ -305,34 +311,38 @@ export const updateBookingPaymentStatus = mutation({
   handler: async (ctx, args) => {
     const booking = await ctx.db
       .query("bookings")
-      .withIndex("by_stripe_session", (q) => q.eq("stripeSessionId", args.stripeSessionId))
-      .first()
-    
+      .withIndex("by_stripe_session", (q) =>
+        q.eq("stripeSessionId", args.stripeSessionId),
+      )
+      .first();
+
     if (!booking) {
-      throw new Error("Booking not found")
+      throw new Error("Booking not found");
     }
 
-    await ctx.db.patch(booking._id, { paid: args.paid })
+    await ctx.db.patch(booking._id, { paid: args.paid });
 
     if (args.paid) {
       const availability = await ctx.db
         .query("availability")
-        .withIndex("by_experience_date", (q) => 
-          q.eq("experienceId", booking.experienceId).eq("date", booking.selectedDate)
+        .withIndex("by_experience_date", (q) =>
+          q
+            .eq("experienceId", booking.experienceId)
+            .eq("date", booking.selectedDate),
         )
-        .first()
-      
+        .first();
+
       if (availability) {
-        await ctx.db.patch(availability._id, { status: "booked" })
+        await ctx.db.patch(availability._id, { status: "booked" });
       } else {
         await ctx.db.insert("availability", {
           experienceId: booking.experienceId,
           date: booking.selectedDate,
           status: "booked",
-        })
+        });
       }
     }
-    
-    return booking._id
+
+    return booking._id;
   },
-})
+});

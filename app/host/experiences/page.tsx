@@ -1,29 +1,48 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { useUser } from "@clerk/nextjs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Plus, Edit, Calendar } from "lucide-react"
-import Link from "next/link"
+import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useUser } from "@clerk/nextjs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Plus, Edit, Calendar } from "lucide-react";
+import Link from "next/link";
 
 export default function HostExperiencesPage() {
-  const router = useRouter()
-  const { user } = useUser()
-  
+  const router = useRouter();
+  const { user } = useUser();
+
   // Get the user from Convex
-  const convexUser = useQuery(api.users.getUserByClerkId, 
-    user?.id ? { clerkId: user.id } : "skip"
-  )
-  
+  const convexUser = useQuery(
+    api.users.getUserByClerkId,
+    user?.id ? { clerkId: user.id } : "skip",
+  );
+
   // Get experiences - all experiences for admin, host's experiences for hosts
-  const experiences = useQuery(api.experiences.getExperiences, 
-    convexUser?._id ? (convexUser.role === "admin" ? {} : { hostId: convexUser._id }) : "skip"
-  )
+  const experiences = useQuery(
+    api.experiences.getExperiences,
+    convexUser?._id
+      ? convexUser.role === "admin"
+        ? {}
+        : { hostId: convexUser._id }
+      : "skip",
+  );
 
   if (!user || !convexUser) {
     return (
@@ -34,7 +53,7 @@ export default function HostExperiencesPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (convexUser.role !== "host" && convexUser.role !== "admin") {
@@ -53,7 +72,7 @@ export default function HostExperiencesPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -65,7 +84,7 @@ export default function HostExperiencesPage() {
             Manage your cultural experiences and availability.
           </p>
         </div>
-        
+
         <Button onClick={() => router.push("/host/experiences/new")}>
           <Plus className="h-4 w-4 mr-2" />
           Create New Experience
@@ -104,11 +123,11 @@ export default function HostExperiencesPage() {
                     <TableCell>
                       <Badge
                         variant={
-                          experience.status === "active" 
-                            ? "default" 
+                          experience.status === "active"
+                            ? "default"
                             : experience.status === "draft"
-                            ? "secondary"
-                            : "outline"
+                              ? "secondary"
+                              : "outline"
                         }
                       >
                         {experience.status}
@@ -119,14 +138,22 @@ export default function HostExperiencesPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => router.push(`/host/experiences/${experience._id}/edit`)}
+                          onClick={() =>
+                            router.push(
+                              `/host/experiences/${experience._id}/edit`,
+                            )
+                          }
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => router.push(`/host/experiences/${experience._id}/availability`)}
+                          onClick={() =>
+                            router.push(
+                              `/host/experiences/${experience._id}/availability`,
+                            )
+                          }
                         >
                           <Calendar className="h-4 w-4" />
                         </Button>
@@ -144,7 +171,8 @@ export default function HostExperiencesPage() {
             <div className="text-center">
               <h3 className="text-lg font-semibold mb-2">No experiences yet</h3>
               <p className="text-gray-500 mb-6">
-                Create your first experience to start sharing your culture with travelers.
+                Create your first experience to start sharing your culture with
+                travelers.
               </p>
               <Button onClick={() => router.push("/host/experiences/new")}>
                 <Plus className="h-4 w-4 mr-2" />
@@ -155,5 +183,5 @@ export default function HostExperiencesPage() {
         </Card>
       )}
     </div>
-  )
+  );
 }

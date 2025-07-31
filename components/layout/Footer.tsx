@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { MapPin } from "lucide-react"
+import Link from "next/link";
+import { MapPin } from "lucide-react";
 
 export function Footer() {
   return (
@@ -10,91 +10,131 @@ export function Footer() {
           <div className="col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <MapPin className="h-8 w-8 text-turquesa" />
-              <span className="text-2xl font-bold text-turquesa">Cultripia</span>
+              <span className="text-2xl font-bold text-turquesa">
+                Cultripia
+              </span>
             </div>
             <p className="text-sm leading-relaxed">
-              Conectamos a viajeros conscientes con experiencias auténticas, culturales y ecológicas, mientras empodramos a comunidades locales.
+              Conectamos a viajeros conscientes con experiencias auténticas,
+              culturales y ecológicas, mientras empodramos a comunidades
+              locales.
             </p>
           </div>
-          
+
           {/* Explora */}
           <div className="col-span-1">
             <h3 className="mb-4 text-lg font-semibold text-gris-90">Explora</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/experiences" className="text-sm hover:text-turquesa transition-colors">
+                <Link
+                  href="/experiences"
+                  className="text-sm hover:text-turquesa transition-colors"
+                >
                   Descubre experiencias
                 </Link>
               </li>
               <li>
-                <Link href="/experiences" className="text-sm hover:text-turquesa transition-colors">
+                <Link
+                  href="/experiences"
+                  className="text-sm hover:text-turquesa transition-colors"
+                >
                   Destinos
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-sm hover:text-turquesa transition-colors">
+                <Link
+                  href="/about"
+                  className="text-sm hover:text-turquesa transition-colors"
+                >
                   Cultura y legado
                 </Link>
               </li>
             </ul>
           </div>
-          
+
           {/* Comunidad */}
           <div className="col-span-1">
-            <h3 className="mb-4 text-lg font-semibold text-gris-90">Comunidad</h3>
+            <h3 className="mb-4 text-lg font-semibold text-gris-90">
+              Comunidad
+            </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/become-a-host" className="text-sm hover:text-turquesa transition-colors">
+                <Link
+                  href="/become-a-host"
+                  className="text-sm hover:text-turquesa transition-colors"
+                >
                   Sé un anfitrión
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-sm hover:text-turquesa transition-colors">
+                <Link
+                  href="#"
+                  className="text-sm hover:text-turquesa transition-colors"
+                >
                   Apoya lo local
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-sm hover:text-turquesa transition-colors">
+                <Link
+                  href="#"
+                  className="text-sm hover:text-turquesa transition-colors"
+                >
                   Impacto sostenible
                 </Link>
               </li>
             </ul>
           </div>
-          
+
           {/* Soporte */}
           <div className="col-span-1">
             <h3 className="mb-4 text-lg font-semibold text-gris-90">Soporte</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="#" className="text-sm hover:text-turquesa transition-colors">
+                <Link
+                  href="#"
+                  className="text-sm hover:text-turquesa transition-colors"
+                >
                   Contáctanos
                 </Link>
               </li>
               <li>
-                <Link href="/help" className="text-sm hover:text-turquesa transition-colors">
+                <Link
+                  href="/help"
+                  className="text-sm hover:text-turquesa transition-colors"
+                >
                   Centro de ayuda
                 </Link>
               </li>
               <li>
-                <Link href="/guide" className="text-sm hover:text-turquesa transition-colors">
+                <Link
+                  href="/guide"
+                  className="text-sm hover:text-turquesa transition-colors"
+                >
                   Guía para viajeros
                 </Link>
               </li>
             </ul>
           </div>
         </div>
-        
+
         {/* Bottom section */}
         <div className="mt-8 border-t border-gray-300 pt-8">
           <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
             <p className="text-sm">
-              © 2025 Cultripia. Orgullosamente promoviendo el alma, la herencia y el poder de nuestras culturas.
+              © 2025 Cultripia. Orgullosamente promoviendo el alma, la herencia
+              y el poder de nuestras culturas.
             </p>
             <div className="flex gap-6">
-              <Link href="/privacy" className="text-sm hover:text-turquesa transition-colors">
+              <Link
+                href="/privacy"
+                className="text-sm hover:text-turquesa transition-colors"
+              >
                 Política de privacidad
               </Link>
-              <Link href="/terms" className="text-sm hover:text-turquesa transition-colors">
+              <Link
+                href="/terms"
+                className="text-sm hover:text-turquesa transition-colors"
+              >
                 Condiciones de uso
               </Link>
             </div>
@@ -102,5 +142,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

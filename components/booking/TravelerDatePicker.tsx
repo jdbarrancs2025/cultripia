@@ -1,85 +1,89 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Calendar } from "@/components/ui/calendar"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { Id } from "@/convex/_generated/dataModel"
-import { CalendarIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface TravelerDatePickerProps {
-  experienceId: Id<"experiences">
-  onDateSelect: (date: Date | undefined) => void
-  selectedDate?: Date
+  experienceId: Id<"experiences">;
+  onDateSelect: (date: Date | undefined) => void;
+  selectedDate?: Date;
 }
 
-export function TravelerDatePicker({ 
-  experienceId, 
+export function TravelerDatePicker({
+  experienceId,
   onDateSelect,
-  selectedDate 
+  selectedDate,
 }: TravelerDatePickerProps) {
-  const [currentMonth, setCurrentMonth] = useState(new Date())
-  
-  const year = currentMonth.getFullYear()
-  const month = currentMonth.getMonth() + 1
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth() + 1;
 
   // Fetch availability for current month
   const monthAvailability = useQuery(api.availability.getAvailabilityForMonth, {
     experienceId,
     year,
     month,
-  })
+  });
 
   // Create a set of available dates for quick lookup
-  const availableDates = new Set<string>()
+  const availableDates = new Set<string>();
   monthAvailability?.dates.forEach((dateInfo) => {
     if (dateInfo.status === "available") {
-      availableDates.add(dateInfo.date)
+      availableDates.add(dateInfo.date);
     }
-  })
+  });
 
   const isDateAvailable = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0]
-    return availableDates.has(dateStr)
-  }
+    const dateStr = date.toISOString().split("T")[0];
+    return availableDates.has(dateStr);
+  };
 
   const isDateDisabled = (date: Date) => {
     // Disable past dates
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    if (date < today) return true
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (date < today) return true;
 
     // Disable if not available
-    return !isDateAvailable(date)
-  }
+    return !isDateAvailable(date);
+  };
 
   const modifiers = {
     available: (date: Date) => {
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-      return date >= today && isDateAvailable(date)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return date >= today && isDateAvailable(date);
     },
     unavailable: (date: Date) => {
-      const dateStr = date.toISOString().split('T')[0]
-      const dateInfo = monthAvailability?.dates.find(d => d.date === dateStr)
-      return !!(dateInfo && (dateInfo.status === "blocked" || dateInfo.status === "booked"))
+      const dateStr = date.toISOString().split("T")[0];
+      const dateInfo = monthAvailability?.dates.find((d) => d.date === dateStr);
+      return !!(
+        dateInfo &&
+        (dateInfo.status === "blocked" || dateInfo.status === "booked")
+      );
     },
     past: (date: Date) => {
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-      return date < today
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return date < today;
     },
-  }
+  };
 
   const modifiersClassNames = {
-    available: "bg-turquesa/10 hover:bg-turquesa/20 text-turquesa-dark cursor-pointer",
+    available:
+      "bg-turquesa/10 hover:bg-turquesa/20 text-turquesa-dark cursor-pointer",
     unavailable: "bg-gray-100 text-gray-400 cursor-not-allowed line-through",
     past: "opacity-50 cursor-not-allowed",
     selected: "bg-turquesa text-white hover:bg-turquesa/90",
-  }
+  };
 
   return (
     <Card className="w-full">
@@ -117,13 +121,16 @@ export function TravelerDatePicker({
             className="rounded-md border"
             components={{
               DayButton: ({ className, day, modifiers, ...props }) => {
-                const isAvailable = day.date >= new Date(new Date().setHours(0, 0, 0, 0)) && 
-                                  isDateAvailable(day.date)
-                const dateStr = day.date.toISOString().split('T')[0]
-                const dateInfo = monthAvailability?.dates.find(d => d.date === dateStr)
-                const isBooked = dateInfo?.status === "booked"
-                const isBlocked = dateInfo?.status === "blocked"
-                
+                const isAvailable =
+                  day.date >= new Date(new Date().setHours(0, 0, 0, 0)) &&
+                  isDateAvailable(day.date);
+                const dateStr = day.date.toISOString().split("T")[0];
+                const dateInfo = monthAvailability?.dates.find(
+                  (d) => d.date === dateStr,
+                );
+                const isBooked = dateInfo?.status === "booked";
+                const isBlocked = dateInfo?.status === "blocked";
+
                 return (
                   <Button
                     {...props}
@@ -132,15 +139,17 @@ export function TravelerDatePicker({
                     disabled={!isAvailable || isBooked || isBlocked}
                     className={cn(
                       "h-9 w-9 p-0 font-normal aria-selected:opacity-100 relative",
-                      className
+                      className,
                     )}
                   >
                     <span>{day.date.getDate()}</span>
                     {isBooked && (
-                      <span className="absolute bottom-0 text-[10px] text-gray-400">×</span>
+                      <span className="absolute bottom-0 text-[10px] text-gray-400">
+                        ×
+                      </span>
                     )}
                   </Button>
-                )
+                );
               },
             }}
           />
@@ -152,11 +161,11 @@ export function TravelerDatePicker({
               Fecha seleccionada:
             </p>
             <p className="text-lg font-semibold text-gris-90">
-              {selectedDate.toLocaleDateString('es-ES', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+              {selectedDate.toLocaleDateString("es-ES", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
               })}
             </p>
           </div>
@@ -164,10 +173,11 @@ export function TravelerDatePicker({
 
         {!selectedDate && (
           <p className="text-sm text-gris-80 text-center">
-            Por favor selecciona una fecha disponible para continuar con tu reserva.
+            Por favor selecciona una fecha disponible para continuar con tu
+            reserva.
           </p>
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

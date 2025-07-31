@@ -18,7 +18,10 @@ export const createCheckoutSession = action({
     pricePerPerson: v.number(),
     hostName: v.string(),
   },
-  handler: async (ctx, args): Promise<{
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{
     sessionId: string;
     sessionUrl: string | null;
     bookingId: Id<"bookings">;
@@ -88,7 +91,7 @@ export const retrieveSession = action({
   },
   handler: async (ctx, { sessionId }) => {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
-    
+
     return {
       paymentStatus: session.payment_status,
       customerEmail: session.customer_details?.email,

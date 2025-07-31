@@ -5,7 +5,13 @@ import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Users, DollarSign, Loader2 } from "lucide-react";
@@ -31,8 +37,9 @@ export default function TravelerDashboard() {
   });
 
   // Get traveler bookings
-  const bookings = useQuery(api.bookings.getTravelerBookings, 
-    currentUser ? { travelerId: currentUser._id } : "skip"
+  const bookings = useQuery(
+    api.bookings.getTravelerBookings,
+    currentUser ? { travelerId: currentUser._id } : "skip",
   ) as BookingWithDetails[] | undefined;
 
   // Separate bookings into upcoming and past using useMemo for performance
@@ -47,7 +54,7 @@ export default function TravelerDashboard() {
     const upcoming: BookingWithDetails[] = [];
     const past: BookingWithDetails[] = [];
 
-    bookings.forEach(booking => {
+    bookings.forEach((booking) => {
       const bookingDate = new Date(booking.selectedDate);
       if (bookingDate >= today) {
         upcoming.push(booking);
@@ -57,8 +64,14 @@ export default function TravelerDashboard() {
     });
 
     // Sort by date
-    upcoming.sort((a, b) => new Date(a.selectedDate).getTime() - new Date(b.selectedDate).getTime());
-    past.sort((a, b) => new Date(b.selectedDate).getTime() - new Date(a.selectedDate).getTime());
+    upcoming.sort(
+      (a, b) =>
+        new Date(a.selectedDate).getTime() - new Date(b.selectedDate).getTime(),
+    );
+    past.sort(
+      (a, b) =>
+        new Date(b.selectedDate).getTime() - new Date(a.selectedDate).getTime(),
+    );
 
     return { upcomingBookings: upcoming, pastBookings: past };
   }, [bookings]);
@@ -83,8 +96,15 @@ export default function TravelerDashboard() {
         </p>
       </div>
 
-      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
-        <TabsList className="grid w-full max-w-md grid-cols-2" aria-label="Filtrar reservas">
+      <Tabs
+        value={selectedTab}
+        onValueChange={setSelectedTab}
+        className="space-y-6"
+      >
+        <TabsList
+          className="grid w-full max-w-md grid-cols-2"
+          aria-label="Filtrar reservas"
+        >
           <TabsTrigger value="upcoming">
             Próximas ({upcomingBookings.length})
           </TabsTrigger>
@@ -145,10 +165,10 @@ export default function TravelerDashboard() {
 }
 
 // Booking Card Component
-function BookingCard({ 
-  booking, 
-  isUpcoming 
-}: { 
+function BookingCard({
+  booking,
+  isUpcoming,
+}: {
   booking: BookingWithDetails;
   isUpcoming: boolean;
 }) {
@@ -180,20 +200,22 @@ function BookingCard({
           </Badge>
         )}
       </div>
-      
+
       <CardHeader>
         <CardTitle className="line-clamp-2" title={experience.titleEs}>
           {experience.titleEs}
         </CardTitle>
-        <CardDescription>
-          Anfitrión: {host.name}
-        </CardDescription>
+        <CardDescription>Anfitrión: {host.name}</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-3">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Calendar className="h-4 w-4" aria-hidden="true" />
-          <span>{format(new Date(booking.selectedDate), "dd MMM yyyy", { locale: es })}</span>
+          <span>
+            {format(new Date(booking.selectedDate), "dd MMM yyyy", {
+              locale: es,
+            })}
+          </span>
         </div>
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -203,7 +225,10 @@ function BookingCard({
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Users className="h-4 w-4" aria-hidden="true" />
-          <span>{booking.guestCount} {booking.guestCount === 1 ? "persona" : "personas"}</span>
+          <span>
+            {booking.guestCount}{" "}
+            {booking.guestCount === 1 ? "persona" : "personas"}
+          </span>
         </div>
 
         <div className="flex items-center gap-2 text-sm font-semibold">
@@ -221,7 +246,10 @@ function BookingCard({
               </Button>
               {host.email && (
                 <Button className="w-full" variant="secondary" asChild>
-                  <a href={`mailto:${host.email}`} aria-label={`Enviar email a ${host.name}`}>
+                  <a
+                    href={`mailto:${host.email}`}
+                    aria-label={`Enviar email a ${host.name}`}
+                  >
                     Contactar Anfitrión
                   </a>
                 </Button>

@@ -1,16 +1,30 @@
-"use client"
+"use client";
 
-import { useState, useEffect, Suspense } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
-import { useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { ExperienceCard } from "@/components/ui/experience-card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
-import { Skeleton } from "@/components/ui/skeleton"
-import { X } from "lucide-react"
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { ExperienceCard } from "@/components/ui/experience-card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
+import { X } from "lucide-react";
 
 const destinations = [
   "Antigua Guatemala",
@@ -22,72 +36,72 @@ const destinations = [
   "Río Dulce",
   "Monterrico",
   "Cobán",
-  "Panajachel"
-]
+  "Panajachel",
+];
 
 function ExperiencesContent() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const [currentPage, setCurrentPage] = useState(1)
-  
-  const location = searchParams.get("location") || undefined
-  const date = searchParams.get("date")
-  const guests = searchParams.get("guests")
-  
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const location = searchParams.get("location") || undefined;
+  const date = searchParams.get("date");
+  const guests = searchParams.get("guests");
+
   const data = useQuery(api.experiences.getExperiencesPaginated, {
     location,
     status: "active",
     page: currentPage,
     pageSize: 12,
-  })
-  
+  });
+
   const handleLocationChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString())
+    const params = new URLSearchParams(searchParams.toString());
     if (value === "all") {
-      params.delete("location")
+      params.delete("location");
     } else {
-      params.set("location", value)
+      params.set("location", value);
     }
-    setCurrentPage(1)
-    router.push(`/experiences?${params.toString()}`)
-  }
-  
+    setCurrentPage(1);
+    router.push(`/experiences?${params.toString()}`);
+  };
+
   const clearFilters = () => {
-    setCurrentPage(1)
-    router.push("/experiences")
-  }
-  
-  const hasActiveFilters = location || date || guests
-  
+    setCurrentPage(1);
+    router.push("/experiences");
+  };
+
+  const hasActiveFilters = location || date || guests;
+
   const renderPaginationItems = () => {
-    if (!data || data.totalPages <= 1) return null
-    
-    const items = []
-    const maxVisible = 5
-    const halfVisible = Math.floor(maxVisible / 2)
-    
-    let startPage = Math.max(1, currentPage - halfVisible)
-    let endPage = Math.min(data.totalPages, startPage + maxVisible - 1)
-    
+    if (!data || data.totalPages <= 1) return null;
+
+    const items = [];
+    const maxVisible = 5;
+    const halfVisible = Math.floor(maxVisible / 2);
+
+    let startPage = Math.max(1, currentPage - halfVisible);
+    let endPage = Math.min(data.totalPages, startPage + maxVisible - 1);
+
     if (endPage - startPage < maxVisible - 1) {
-      startPage = Math.max(1, endPage - maxVisible + 1)
+      startPage = Math.max(1, endPage - maxVisible + 1);
     }
-    
+
     if (startPage > 1) {
       items.push(
         <PaginationItem key="1">
           <PaginationLink onClick={() => setCurrentPage(1)}>1</PaginationLink>
-        </PaginationItem>
-      )
+        </PaginationItem>,
+      );
       if (startPage > 2) {
         items.push(
           <PaginationItem key="ellipsis-start">
             <PaginationEllipsis />
-          </PaginationItem>
-        )
+          </PaginationItem>,
+        );
       }
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
       items.push(
         <PaginationItem key={i}>
@@ -97,43 +111,48 @@ function ExperiencesContent() {
           >
             {i}
           </PaginationLink>
-        </PaginationItem>
-      )
+        </PaginationItem>,
+      );
     }
-    
+
     if (endPage < data.totalPages) {
       if (endPage < data.totalPages - 1) {
         items.push(
           <PaginationItem key="ellipsis-end">
             <PaginationEllipsis />
-          </PaginationItem>
-        )
+          </PaginationItem>,
+        );
       }
       items.push(
         <PaginationItem key={data.totalPages}>
           <PaginationLink onClick={() => setCurrentPage(data.totalPages)}>
             {data.totalPages}
           </PaginationLink>
-        </PaginationItem>
-      )
+        </PaginationItem>,
+      );
     }
-    
-    return items
-  }
-  
+
+    return items;
+  };
+
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }, [currentPage])
-  
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="mb-6 text-3xl font-bold text-gris-90">Experiencias Cultripia</h1>
-          
+          <h1 className="mb-6 text-3xl font-bold text-gris-90">
+            Experiencias Cultripia
+          </h1>
+
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <Select value={location || "all"} onValueChange={handleLocationChange}>
+              <Select
+                value={location || "all"}
+                onValueChange={handleLocationChange}
+              >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Todos los destinos" />
                 </SelectTrigger>
@@ -146,7 +165,7 @@ function ExperiencesContent() {
                   ))}
                 </SelectContent>
               </Select>
-              
+
               {hasActiveFilters && (
                 <Button
                   variant="outline"
@@ -159,18 +178,24 @@ function ExperiencesContent() {
                 </Button>
               )}
             </div>
-            
+
             {hasActiveFilters && (
               <div className="text-sm text-gris-80">
                 Filtros activos:
-                {location && <span className="ml-2 font-medium">Destino: {location}</span>}
-                {date && <span className="ml-2 font-medium">Fecha: {date}</span>}
-                {guests && <span className="ml-2 font-medium">Huéspedes: {guests}</span>}
+                {location && (
+                  <span className="ml-2 font-medium">Destino: {location}</span>
+                )}
+                {date && (
+                  <span className="ml-2 font-medium">Fecha: {date}</span>
+                )}
+                {guests && (
+                  <span className="ml-2 font-medium">Huéspedes: {guests}</span>
+                )}
               </div>
             )}
           </div>
         </div>
-        
+
         {!data ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
@@ -199,11 +224,7 @@ function ExperiencesContent() {
               {location && ` en ${location}`}.
             </p>
             {hasActiveFilters && (
-              <Button
-                variant="outline"
-                className="mt-4"
-                onClick={clearFilters}
-              >
+              <Button variant="outline" className="mt-4" onClick={clearFilters}>
                 Limpiar filtros y ver todas
               </Button>
             )}
@@ -225,22 +246,36 @@ function ExperiencesContent() {
                 />
               ))}
             </div>
-            
+
             {data.totalPages > 1 && (
               <div className="mt-8">
                 <Pagination>
                   <PaginationContent>
                     <PaginationItem>
                       <PaginationPrevious
-                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                        className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() =>
+                          setCurrentPage(Math.max(1, currentPage - 1))
+                        }
+                        className={
+                          currentPage === 1
+                            ? "pointer-events-none opacity-50"
+                            : "cursor-pointer"
+                        }
                       />
                     </PaginationItem>
                     {renderPaginationItems()}
                     <PaginationItem>
                       <PaginationNext
-                        onClick={() => setCurrentPage(Math.min(data.totalPages, currentPage + 1))}
-                        className={currentPage === data.totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        onClick={() =>
+                          setCurrentPage(
+                            Math.min(data.totalPages, currentPage + 1),
+                          )
+                        }
+                        className={
+                          currentPage === data.totalPages
+                            ? "pointer-events-none opacity-50"
+                            : "cursor-pointer"
+                        }
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -251,20 +286,22 @@ function ExperiencesContent() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
 export default function ExperiencesPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-turquesa mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando experiencias...</p>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-turquesa mx-auto"></div>
+            <p className="mt-4 text-gray-600">Cargando experiencias...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <ExperiencesContent />
     </Suspense>
-  )
+  );
 }

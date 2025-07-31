@@ -1,10 +1,10 @@
-import { User, Mail } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Doc } from "@/convex/_generated/dataModel"
+import { User, Mail } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Doc } from "@/convex/_generated/dataModel";
 
 interface HostInfoCardProps {
-  host: Doc<"users">
+  host: Doc<"users">;
 }
 
 export function HostInfoCard({ host }: HostInfoCardProps) {
@@ -19,23 +19,20 @@ export function HostInfoCard({ host }: HostInfoCardProps) {
             <User className="h-8 w-8 text-turquesa" />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gris-90">
-              {host.name}
-            </h3>
-            <p className="text-sm text-gris-80">
-              Anfitrión verificado
-            </p>
+            <h3 className="text-lg font-semibold text-gris-90">{host.name}</h3>
+            <p className="text-sm text-gris-80">Anfitrión verificado</p>
           </div>
         </div>
-        
+
         <div className="space-y-2 rounded-lg bg-gray-50 p-4">
           <p className="text-sm text-gris-80">
-            {host.name} es un anfitrión local apasionado por compartir experiencias culturales auténticas con viajeros de todo el mundo.
+            {host.name} es un anfitrión local apasionado por compartir
+            experiencias culturales auténticas con viajeros de todo el mundo.
           </p>
         </div>
-        
-        <Button 
-          variant="outline" 
+
+        <Button
+          variant="outline"
           className="w-full border-turquesa text-turquesa hover:bg-turquesa/10"
           disabled
         >
@@ -44,5 +41,5 @@ export function HostInfoCard({ host }: HostInfoCardProps) {
         </Button>
       </CardContent>
     </Card>
-  )
+  );
 }

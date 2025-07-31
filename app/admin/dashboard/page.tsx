@@ -4,14 +4,28 @@ import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { redirect } from "next/navigation";
-import { Users, Package, Calendar, DollarSign, Clock, CheckCircle, XCircle } from "lucide-react";
+import {
+  Users,
+  Package,
+  Calendar,
+  DollarSign,
+  Clock,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
 import { useToast } from "@/hooks/use-toast";
 
@@ -21,8 +35,9 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
 
   // Get current user from Convex
-  const currentUser = useQuery(api.users.getUserByClerkId, 
-    user?.id ? { clerkId: user.id } : "skip"
+  const currentUser = useQuery(
+    api.users.getUserByClerkId,
+    user?.id ? { clerkId: user.id } : "skip",
   );
 
   // Redirect if not admin
@@ -31,19 +46,39 @@ export default function AdminDashboard() {
   }
 
   // Get admin metrics
-  const pendingApplicationsCount = useQuery(api.hostApplications.getPendingApplicationsCount);
-  const allApplications = useQuery(api.hostApplications.getAllApplications);
-  const allUsers = useQuery(api.users.getAllUsers);
+  const pendingApplicationsCount = useQuery(
+    api.hostApplications.getPendingApplicationsCount,
+  );
+  const allApplications = useQuery(api.hostApplications.getAll);
+  const allUsers = useQuery(api.users.getAll);
   const allExperiences = useQuery(api.experiences.getAll);
-  const allBookings = useQuery(api.bookings.getAllBookings);
+  const allBookings = useQuery(api.bookings.getAll);
 
   // Mutations for host application management
-  const approveApplication = useMutation(api.hostApplications.approveApplication);
-  const rejectApplication = useMutation(api.hostApplications.rejectApplication);
+  const updateApplicationStatus = useMutation(
+    api.hostApplications.updateStatus,
+  );
+  const updateUserRole = useMutation(api.users.updateUserRole);
 
-  const handleApproveApplication = async (applicationId: Id<"hostApplications">) => {
+  const handleApproveApplication = async (
+    applicationId: Id<"hostApplications">,
+  ) => {
     try {
-      await approveApplication({ applicationId });
+      const application = allApplications?.find(
+        (app) => app._id === applicationId,
+      );
+      if (!application) return;
+
+      await updateApplicationStatus({
+        applicationId,
+        status: "approved",
+      });
+
+      await updateUserRole({
+        userId: application.userId,
+        role: "host",
+      });
+
       toast({
         title: "Aplicación aprobada",
         description: "El usuario ahora es un anfitrión.",
@@ -57,9 +92,15 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleRejectApplication = async (applicationId: Id<"hostApplications">) => {
+  const handleRejectApplication = async (
+    applicationId: Id<"hostApplications">,
+  ) => {
     try {
-      await rejectApplication({ applicationId });
+      await updateApplicationStatus({
+        applicationId,
+        status: "rejected",
+      });
+
       toast({
         title: "Aplicación rechazada",
         description: "La aplicación ha sido rechazada.",
@@ -75,13 +116,18 @@ export default function AdminDashboard() {
 
   // Calculate metrics
   const totalUsers = allUsers?.length || 0;
-  const totalHosts = allUsers?.filter(u => u.role === "host" || u.role === "admin").length || 0;
+  const totalHosts =
+    allUsers?.filter((u) => u.role === "host" || u.role === "admin").length ||
+    0;
   const totalExperiences = allExperiences?.length || 0;
-  const activeExperiences = allExperiences?.filter(e => e.status === "active").length || 0;
+  const activeExperiences =
+    allExperiences?.filter((e) => e.status === "active").length || 0;
   const totalBookings = allBookings?.length || 0;
-  const totalRevenue = allBookings?.reduce((sum, booking) => 
-    sum + (booking.paid ? booking.totalAmount : 0), 0
-  ) || 0;
+  const totalRevenue =
+    allBookings?.reduce(
+      (sum, booking) => sum + (booking.paid ? booking.totalAmount : 0),
+      0,
+    ) || 0;
 
   if (!currentUser) {
     return (
@@ -103,7 +149,11 @@ export default function AdminDashboard() {
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <TabsList className="grid w-full max-w-md grid-cols-3">
           <TabsTrigger value="overview">Resumen</TabsTrigger>
           <TabsTrigger value="applications">Aplicaciones</TabsTrigger>
@@ -185,10 +235,11 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm">
-                  Tienes {pendingApplicationsCount} aplicaciones de anfitrión pendientes de revisión.
+                  Tienes {pendingApplicationsCount} aplicaciones de anfitrión
+                  pendientes de revisión.
                 </p>
-                <Button 
-                  className="mt-4" 
+                <Button
+                  className="mt-4"
                   onClick={() => setActiveTab("applications")}
                 >
                   Ver Aplicaciones
@@ -210,40 +261,60 @@ export default function AdminDashboard() {
               {allApplications && allApplications.length > 0 ? (
                 <div className="space-y-4">
                   {allApplications.map((application) => (
-                    <div 
-                      key={application._id} 
+                    <div
+                      key={application._id}
                       className="border rounded-lg p-4 space-y-3"
                     >
                       <div className="flex items-start justify-between">
                         <div className="space-y-1">
-                          <h4 className="font-semibold">{application.fullName}</h4>
+                          <h4 className="font-semibold">
+                            {application.applicationData.name}
+                          </h4>
                           <p className="text-sm text-muted-foreground">
-                            {application.email} • {application.phone}
+                            {application.applicationData.email} •{" "}
+                            {application.applicationData.phone}
                           </p>
-                          <Badge variant={
-                            application.status === "pending" ? "secondary" :
-                            application.status === "approved" ? "default" : "destructive"
-                          }>
+                          <Badge
+                            variant={
+                              application.status === "pending"
+                                ? "secondary"
+                                : application.status === "approved"
+                                  ? "default"
+                                  : "destructive"
+                            }
+                          >
                             {application.status === "pending" && "Pendiente"}
                             {application.status === "approved" && "Aprobado"}
                             {application.status === "rejected" && "Rechazado"}
                           </Badge>
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {format(new Date(application._creationTime), "dd MMM yyyy", { locale: es })}
+                          {format(
+                            new Date(application._creationTime),
+                            "dd MMM yyyy",
+                            { locale: es },
+                          )}
                         </div>
                       </div>
 
                       <div className="space-y-2 text-sm">
-                        <p><strong>Experiencia:</strong> {application.experience}</p>
-                        <p><strong>Por qué quiere ser anfitrión:</strong> {application.motivation}</p>
+                        <p>
+                          <strong>Experiencia:</strong>{" "}
+                          {application.applicationData.experienceTitle}
+                        </p>
+                        <p>
+                          <strong>Descripción:</strong>{" "}
+                          {application.applicationData.description}
+                        </p>
                       </div>
 
                       {application.status === "pending" && (
                         <div className="flex gap-2 pt-2">
                           <Button
                             size="sm"
-                            onClick={() => handleApproveApplication(application._id)}
+                            onClick={() =>
+                              handleApproveApplication(application._id)
+                            }
                             className="flex items-center gap-1"
                           >
                             <CheckCircle className="h-4 w-4" />
@@ -252,7 +323,9 @@ export default function AdminDashboard() {
                           <Button
                             size="sm"
                             variant="destructive"
-                            onClick={() => handleRejectApplication(application._id)}
+                            onClick={() =>
+                              handleRejectApplication(application._id)
+                            }
                             className="flex items-center gap-1"
                           >
                             <XCircle className="h-4 w-4" />
@@ -284,18 +357,25 @@ export default function AdminDashboard() {
               {allUsers && allUsers.length > 0 ? (
                 <div className="space-y-2">
                   {allUsers.map((user) => (
-                    <div 
-                      key={user._id} 
+                    <div
+                      key={user._id}
                       className="flex items-center justify-between p-3 border rounded-lg"
                     >
                       <div>
                         <p className="font-medium">{user.name}</p>
-                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {user.email}
+                        </p>
                       </div>
-                      <Badge variant={
-                        user.role === "admin" ? "default" :
-                        user.role === "host" ? "secondary" : "outline"
-                      }>
+                      <Badge
+                        variant={
+                          user.role === "admin"
+                            ? "default"
+                            : user.role === "host"
+                              ? "secondary"
+                              : "outline"
+                        }
+                      >
                         {user.role === "admin" && "Administrador"}
                         {user.role === "host" && "Anfitrión"}
                         {user.role === "traveler" && "Viajero"}

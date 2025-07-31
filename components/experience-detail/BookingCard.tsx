@@ -1,31 +1,31 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { TravelerDatePicker } from "@/components/booking/TravelerDatePicker"
-import { Id } from "@/convex/_generated/dataModel"
-import { Minus, Plus, Users } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import { useAction, useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
-import { useUser } from "@clerk/nextjs"
-import { stripePromise } from "@/lib/stripe"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { TravelerDatePicker } from "@/components/booking/TravelerDatePicker";
+import { Id } from "@/convex/_generated/dataModel";
+import { Minus, Plus, Users } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useAction, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useUser } from "@clerk/nextjs";
+import { stripePromise } from "@/lib/stripe";
 
 interface BookingCardProps {
-  experienceId: Id<"experiences">
-  pricePerPerson: number
-  maxGuests: number
-  selectedDate: Date | undefined
-  onDateSelect: (date: Date | undefined) => void
-  guestCount: number
-  onGuestCountChange: (count: number) => void
-  totalAmount: number
-  experienceTitle: string
-  hostName: string
+  experienceId: Id<"experiences">;
+  pricePerPerson: number;
+  maxGuests: number;
+  selectedDate: Date | undefined;
+  onDateSelect: (date: Date | undefined) => void;
+  guestCount: number;
+  onGuestCountChange: (count: number) => void;
+  totalAmount: number;
+  experienceTitle: string;
+  hostName: string;
 }
 
 export function BookingCard({
@@ -40,94 +40,94 @@ export function BookingCard({
   experienceTitle,
   hostName,
 }: BookingCardProps) {
-  const router = useRouter()
-  const { toast } = useToast()
-  const [isLoading, setIsLoading] = useState(false)
-  const { user, isSignedIn } = useUser()
-  const createCheckoutSession = useAction(api.stripe.createCheckoutSession)
-  
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const { user, isSignedIn } = useUser();
+  const createCheckoutSession = useAction(api.stripe.createCheckoutSession);
+
   // Get current user from Convex
-  const currentUser = useQuery(api.users.getCurrentUser)
-  
+  const currentUser = useQuery(api.users.getCurrentUser);
+
   const handleGuestIncrement = () => {
     if (guestCount < maxGuests) {
-      onGuestCountChange(guestCount + 1)
+      onGuestCountChange(guestCount + 1);
     }
-  }
-  
+  };
+
   const handleGuestDecrement = () => {
     if (guestCount > 1) {
-      onGuestCountChange(guestCount - 1)
+      onGuestCountChange(guestCount - 1);
     }
-  }
-  
+  };
+
   const handleBooking = async () => {
     if (!selectedDate) {
       toast({
         title: "Fecha requerida",
         description: "Por favor selecciona una fecha para tu reserva.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
-    
+
     if (!isSignedIn) {
       toast({
         title: "Inicia sesión",
         description: "Debes iniciar sesión para hacer una reserva.",
         variant: "destructive",
-      })
-      router.push("/sign-in")
-      return
+      });
+      router.push("/sign-in");
+      return;
     }
-    
+
     if (!currentUser) {
       toast({
         title: "Error",
         description: "No se pudo obtener la información del usuario.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
-    
-    setIsLoading(true)
-    
+
+    setIsLoading(true);
+
     try {
       // Create Stripe checkout session
       const result = await createCheckoutSession({
         experienceId,
         travelerId: currentUser._id,
         guestCount,
-        selectedDate: selectedDate.toISOString().split('T')[0],
+        selectedDate: selectedDate.toISOString().split("T")[0],
         experienceTitle,
         pricePerPerson,
         hostName,
-      })
-      
+      });
+
       // Redirect to Stripe Checkout
-      const stripe = await stripePromise
+      const stripe = await stripePromise;
       if (!stripe) {
-        throw new Error("Stripe no se pudo cargar")
+        throw new Error("Stripe no se pudo cargar");
       }
-      
+
       const { error } = await stripe.redirectToCheckout({
         sessionId: result.sessionId,
-      })
-      
+      });
+
       if (error) {
-        throw error
+        throw error;
       }
     } catch (error) {
-      console.error("Error creating checkout session:", error)
+      console.error("Error creating checkout session:", error);
       toast({
         title: "Error",
         description: "No se pudo procesar el pago. Por favor intenta de nuevo.",
         variant: "destructive",
-      })
-      setIsLoading(false)
+      });
+      setIsLoading(false);
     }
-  }
-  
+  };
+
   return (
     <Card className="shadow-lg">
       <CardHeader>
@@ -153,12 +153,10 @@ export function BookingCard({
             selectedDate={selectedDate}
           />
         </div>
-        
+
         {/* Guest Count Selector */}
         <div className="space-y-2">
-          <Label className="text-base font-semibold">
-            Número de personas
-          </Label>
+          <Label className="text-base font-semibold">Número de personas</Label>
           <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5 text-gris-80" />
@@ -193,12 +191,13 @@ export function BookingCard({
             </div>
           </div>
         </div>
-        
+
         {/* Price Breakdown */}
         <div className="space-y-3 rounded-lg bg-gray-50 p-4">
           <div className="flex justify-between text-sm">
             <span className="text-gris-80">
-              ${pricePerPerson} x {guestCount} {guestCount === 1 ? "persona" : "personas"}
+              ${pricePerPerson} x {guestCount}{" "}
+              {guestCount === 1 ? "persona" : "personas"}
             </span>
             <span className="font-medium">${totalAmount}</span>
           </div>
@@ -211,9 +210,9 @@ export function BookingCard({
             </div>
           </div>
         </div>
-        
+
         {/* Book Button */}
-        <Button 
+        <Button
           className="w-full bg-turquesa hover:bg-turquesa/90"
           size="lg"
           onClick={handleBooking}
@@ -228,7 +227,7 @@ export function BookingCard({
             "Proceder al pago"
           )}
         </Button>
-        
+
         {!selectedDate && (
           <p className="text-center text-sm text-gris-80">
             Selecciona una fecha para continuar
@@ -236,5 +235,5 @@ export function BookingCard({
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

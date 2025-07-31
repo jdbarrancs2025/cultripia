@@ -10,14 +10,21 @@ export default function AdminDashboard() {
   const users = useQuery(api.users.getAll);
   const experiences = useQuery(api.experiences.getAll);
   const bookings = useQuery(api.bookings.getAll);
-  const pendingApplications = useQuery(api.hostApplications.getApplicationsByStatus, {
-    status: "pending",
-  });
+  const pendingApplications = useQuery(
+    api.hostApplications.getApplicationsByStatus,
+    {
+      status: "pending",
+    },
+  );
 
   const hosts = users?.filter((user) => user.role === "host") || [];
-  const activeExperiences = experiences?.filter((exp) => exp.status === "active") || [];
+  const activeExperiences =
+    experiences?.filter((exp) => exp.status === "active") || [];
   const paidBookings = bookings?.filter((booking) => booking.paid) || [];
-  const totalRevenue = paidBookings.reduce((sum, booking) => sum + booking.totalAmount, 0);
+  const totalRevenue = paidBookings.reduce(
+    (sum, booking) => sum + booking.totalAmount,
+    0,
+  );
 
   const metrics = [
     {
@@ -93,7 +100,8 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-yellow-700">
-              You have {pendingApplications.length} host application{pendingApplications.length !== 1 ? 's' : ''} waiting for review.
+              You have {pendingApplications.length} host application
+              {pendingApplications.length !== 1 ? "s" : ""} waiting for review.
             </p>
             <a
               href="/admin/applications"

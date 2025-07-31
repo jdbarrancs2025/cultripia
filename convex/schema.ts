@@ -1,5 +1,5 @@
-import { defineSchema, defineTable } from "convex/server"
-import { v } from "convex/values"
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
 
 export default defineSchema({
   users: defineTable({
@@ -8,12 +8,15 @@ export default defineSchema({
     name: v.string(),
     email: v.string(),
     createdAt: v.number(),
-  })
-    .index("by_clerk_id", ["clerkId"]),
+  }).index("by_clerk_id", ["clerkId"]),
 
   hostApplications: defineTable({
     userId: v.id("users"),
-    status: v.union(v.literal("pending"), v.literal("approved"), v.literal("rejected")),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("approved"),
+      v.literal("rejected"),
+    ),
     applicationData: v.object({
       name: v.string(),
       email: v.string(),
@@ -43,7 +46,11 @@ export default defineSchema({
     maxGuests: v.number(),
     priceUsd: v.number(),
     imageUrl: v.string(),
-    status: v.union(v.literal("draft"), v.literal("active"), v.literal("inactive")),
+    status: v.union(
+      v.literal("draft"),
+      v.literal("active"),
+      v.literal("inactive"),
+    ),
     originalLanguage: v.optional(v.union(v.literal("EN"), v.literal("ES"))),
     createdAt: v.number(),
   })
@@ -54,7 +61,11 @@ export default defineSchema({
   availability: defineTable({
     experienceId: v.id("experiences"),
     date: v.string(), // YYYY-MM-DD format
-    status: v.union(v.literal("available"), v.literal("blocked"), v.literal("booked")),
+    status: v.union(
+      v.literal("available"),
+      v.literal("blocked"),
+      v.literal("booked"),
+    ),
   })
     .index("by_experience", ["experienceId"])
     .index("by_date", ["date"])
@@ -74,4 +85,4 @@ export default defineSchema({
     .index("by_traveler", ["travelerId"])
     .index("by_date", ["selectedDate"])
     .index("by_stripe_session", ["stripeSessionId"]),
-})
+});

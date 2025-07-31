@@ -1,22 +1,23 @@
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { Providers } from "./providers"
-import { Navigation } from "@/components/navigation"
-import { Footer } from "@/components/layout/Footer"
-import { Toaster } from "sonner"
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { Providers } from "./providers";
+import { Navigation } from "@/components/navigation";
+import { Footer } from "@/components/layout/Footer";
+import { Toaster } from "sonner";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Cultripia - Authentic Cultural Experiences",
-  description: "Discover and book unique cultural experiences with passionate local hosts",
-}
+  description:
+    "Discover and book unique cultural experiences with passionate local hosts",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -44,7 +45,7 @@ export default function RootLayout({
                   }, 1000);
                 }
               });
-            `
+            `,
           }}
         />
       </head>
@@ -52,14 +53,12 @@ export default function RootLayout({
         <Providers>
           <div className="flex min-h-screen flex-col">
             <Navigation />
-            <main className="flex-1">
-              {children}
-            </main>
+            <main className="flex-1">{children}</main>
             <Footer />
           </div>
           <Toaster />
         </Providers>
       </body>
     </html>
-  )
+  );
 }
