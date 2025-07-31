@@ -126,5 +126,30 @@
     "pendingApprovals": "Aprobaciones Pendientes",
     "approve": "Aprobar",
     "reject": "Rechazar"
+  },
+  "footer": {
+    "description": "Conectamos a viajeros conscientes con experiencias auténticas, culturales y ecológicas, mientras empodramos a comunidades locales.",
+    "explore": "Explora",
+    "discoverExperiences": "Descubre experiencias",
+    "destinations": "Destinos",
+    "cultureAndLegacy": "Cultura y legado",
+    "community": "Comunidad",
+    "becomeHost": "Sé un anfitrión",
+    "supportLocal": "Apoya lo local",
+    "sustainableImpact": "Impacto sostenible",
+    "support": "Soporte",
+    "contactUs": "Contáctanos",
+    "helpCenter": "Centro de ayuda",
+    "travelersGuide": "Guía para viajeros",
+    "copyright": "© 2025 Cultripia. Orgullosamente promoviendo el alma, la herencia y el poder de nuestras culturas.",
+    "privacyPolicy": "Política de privacidad",
+    "termsOfUse": "Condiciones de uso"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscas no existe o ha sido movida.",
+    "goHome": "Volver al inicio",
+    "browseExperiences": "Explorar experiencias",
+    "becomeHost": "Conviértete en anfitrión"
   }
 }

@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function Footer() {
+  const t = useTranslations("footer");
   return (
     <footer className="bg-gray-100 text-gris-80">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -15,22 +19,20 @@ export function Footer() {
               </span>
             </div>
             <p className="text-sm leading-relaxed">
-              Conectamos a viajeros conscientes con experiencias auténticas,
-              culturales y ecológicas, mientras empodramos a comunidades
-              locales.
+              {t("description")}
             </p>
           </div>
 
           {/* Explora */}
           <div className="col-span-1">
-            <h3 className="mb-4 text-lg font-semibold text-gris-90">Explora</h3>
+            <h3 className="mb-4 text-lg font-semibold text-gris-90">{t("explore")}</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="/experiences"
                   className="text-sm hover:text-turquesa transition-colors"
                 >
-                  Descubre experiencias
+                  {t("discoverExperiences")}
                 </Link>
               </li>
               <li>
@@ -38,7 +40,7 @@ export function Footer() {
                   href="/experiences"
                   className="text-sm hover:text-turquesa transition-colors"
                 >
-                  Destinos
+                  {t("destinations")}
                 </Link>
               </li>
               <li>
@@ -46,7 +48,7 @@ export function Footer() {
                   href="/about"
                   className="text-sm hover:text-turquesa transition-colors"
                 >
-                  Cultura y legado
+                  {t("cultureAndLegacy")}
                 </Link>
               </li>
             </ul>
@@ -55,7 +57,7 @@ export function Footer() {
           {/* Comunidad */}
           <div className="col-span-1">
             <h3 className="mb-4 text-lg font-semibold text-gris-90">
-              Comunidad
+              {t("community")}
             </h3>
             <ul className="space-y-2">
               <li>
@@ -63,7 +65,7 @@ export function Footer() {
                   href="/become-a-host"
                   className="text-sm hover:text-turquesa transition-colors"
                 >
-                  Sé un anfitrión
+                  {t("becomeHost")}
                 </Link>
               </li>
               <li>
@@ -71,7 +73,7 @@ export function Footer() {
                   href="#"
                   className="text-sm hover:text-turquesa transition-colors"
                 >
-                  Apoya lo local
+                  {t("supportLocal")}
                 </Link>
               </li>
               <li>
@@ -79,7 +81,7 @@ export function Footer() {
                   href="#"
                   className="text-sm hover:text-turquesa transition-colors"
                 >
-                  Impacto sostenible
+                  {t("sustainableImpact")}
                 </Link>
               </li>
             </ul>
@@ -87,14 +89,14 @@ export function Footer() {
 
           {/* Soporte */}
           <div className="col-span-1">
-            <h3 className="mb-4 text-lg font-semibold text-gris-90">Soporte</h3>
+            <h3 className="mb-4 text-lg font-semibold text-gris-90">{t("support")}</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="#"
                   className="text-sm hover:text-turquesa transition-colors"
                 >
-                  Contáctanos
+                  {t("contactUs")}
                 </Link>
               </li>
               <li>
@@ -102,7 +104,7 @@ export function Footer() {
                   href="/help"
                   className="text-sm hover:text-turquesa transition-colors"
                 >
-                  Centro de ayuda
+                  {t("helpCenter")}
                 </Link>
               </li>
               <li>
@@ -110,7 +112,7 @@ export function Footer() {
                   href="/guide"
                   className="text-sm hover:text-turquesa transition-colors"
                 >
-                  Guía para viajeros
+                  {t("travelersGuide")}
                 </Link>
               </li>
             </ul>
@@ -121,21 +123,20 @@ export function Footer() {
         <div className="mt-8 border-t border-gray-300 pt-8">
           <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
             <p className="text-sm">
-              © 2025 Cultripia. Orgullosamente promoviendo el alma, la herencia
-              y el poder de nuestras culturas.
+              {t("copyright")}
             </p>
             <div className="flex gap-6">
               <Link
                 href="/privacy"
                 className="text-sm hover:text-turquesa transition-colors"
               >
-                Política de privacidad
+                {t("privacyPolicy")}
               </Link>
               <Link
                 href="/terms"
                 className="text-sm hover:text-turquesa transition-colors"
               >
-                Condiciones de uso
+                {t("termsOfUse")}
               </Link>
             </div>
           </div>

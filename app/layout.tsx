@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Navigation } from "@/components/navigation";
-import { Footer } from "@/components/layout/Footer";
+import { ClientLayout } from "@/components/client-layout";
 import { Toaster } from "sonner";
+import { getLocale } from "@/lib/locale";
+import { getMessages } from "next-intl/server";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,11 +15,13 @@ export const metadata: Metadata = {
     "Discover and book unique cultural experiences with passionate local hosts",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
   return (
     <html lang="en">
       <head>
@@ -50,12 +53,8 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <Providers>
-          <div className="flex min-h-screen flex-col">
-            <Navigation />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+        <Providers locale={locale} messages={messages}>
+          <ClientLayout>{children}</ClientLayout>
           <Toaster />
         </Providers>
       </body>

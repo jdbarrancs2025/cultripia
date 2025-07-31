@@ -31,10 +31,8 @@ export function LanguageSwitcher() {
       });
       
       if (response.ok) {
-        // Refresh the page to apply the new locale
+        // Refresh the router to get new server-side props
         router.refresh();
-        // Force a hard refresh to ensure all translations are reloaded
-        window.location.reload();
       }
     } catch (error) {
       console.error("Failed to change locale:", error);
