@@ -13,6 +13,11 @@ export const metadata: Metadata = {
   title: "Cultripia - Authentic Cultural Experiences",
   description:
     "Discover and book unique cultural experiences with passionate local hosts",
+  icons: {
+    icon: "/images/favicon.png",
+    shortcut: "/images/favicon.png",
+    apple: "/images/favicon.png",
+  },
 };
 
 export const viewport = {

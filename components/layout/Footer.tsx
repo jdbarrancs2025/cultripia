@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 export function Footer() {
   const t = useTranslations("footer");
@@ -12,8 +13,14 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Logo and Description */}
           <div className="col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <MapPin className="h-8 w-8 text-turquesa" />
+            <div className="flex items-center gap-1 mb-4">
+              <Image
+                src="/images/cultripia-logo.png"
+                alt="Cultripia"
+                width={140}
+                height={47}
+                className="h-12 w-auto"
+              />
               <span className="text-2xl font-bold text-turquesa">
                 Cultripia
               </span>

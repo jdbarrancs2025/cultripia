@@ -12,6 +12,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import Image from "next/image";
 
 export function Navigation() {
   const { isSignedIn } = useClerkUser();
@@ -66,7 +67,15 @@ export function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center gap-1">
+            <Image
+              src="/images/cultripia-logo.png"
+              alt="Cultripia"
+              width={120}
+              height={40}
+              className="h-10 w-auto"
+              priority
+            />
             <span className="text-2xl font-bold text-[#009D9B]">Cultripia</span>
           </Link>
 
