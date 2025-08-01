@@ -21,7 +21,7 @@
 
 - Google / email auth (Clerk) & role-based dashboards.
 - Host application + admin approval.
-- **Auto EN↔ES translation (DeepL Free)**: Hosts create content in their preferred language, system translates on form submit (editable after translation).
+- **Auto EN↔ES translation (Microsoft Translator)**: Hosts create content in their preferred language, system translates on form submit (editable after translation).
 - **1-image** experience listings with location-based discovery and filtering.
 - Host calendar management (block/unblock dates, auto-block booked dates).
 - Traveler date selection with real-time availability checking.
@@ -40,7 +40,7 @@
 | Auth          | **Clerk**                    | Plug-and-play OAuth + email flows                        |
 | Payments      | **Stripe Checkout**          | PCI-safe hosted form, 5-line integration                 |
 | Emails        | **Resend**                   | Free 3k emails/mo, trivial API                           |
-| Translation   | **DeepL API Free**           | High-quality ES ↔ EN                                    |
+| Translation   | **Microsoft Translator**     | High-quality ES ↔ EN, 2M chars/month free               |
 | Hosting       | **Vercel**                   | Zero-config deploys, preview URLs                        |
 
 ## Conceptual data model (ERD in words)

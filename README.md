@@ -10,7 +10,7 @@ Airbnb-style marketplace for cultural experiences (no lodging).
 - **Authentication**: Clerk
 - **Payments**: Stripe Checkout
 - **Emails**: Resend
-- **Translation**: DeepL API
+- **Translation**: Microsoft Translator API
 - **Internationalization**: next-intl
 - **Hosting**: Vercel
 

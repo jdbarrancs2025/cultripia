@@ -12,7 +12,7 @@
 8. **Filters dropdown** – location-based filtering system for experiences.
 9. **Calendar system** – host availability management + traveler date picker components.
 10. **Experience CRUD** – create/edit form with single image via Convex file storage.
-11. **DeepL translate-on-submit** – hosts write in preferred language, auto-translate to other language on form submit (editable after translation).
+11. **Microsoft Translator translate-on-submit** – hosts write in preferred language, auto-translate to other language on form submit (editable after translation).
 12. **Experience detail page** – show experience info + available date selection + booking form.
 13. **Stripe Checkout** – create session with selected date/guests, store `sessionId`; webhook marks booking paid.
 14. **Host dashboard** – calendar view for blocking dates + manage listings + view bookings.
@@ -123,7 +123,7 @@ bookings: {
 ## Translation workflow details
 
 1. Host creates experience in their preferred language (EN or ES)
-2. On form submit, DeepL API translates to the other language
+2. On form submit, Microsoft Translator API translates to the other language
 3. System saves both versions to database
 4. Host can later edit both language versions independently
 5. Traveler sees experience in their selected language

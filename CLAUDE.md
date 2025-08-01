@@ -117,7 +117,7 @@ Strictly follow the tech choices in `/docs/masterplan.md`:
 - shadcn/ui + Tailwind CSS for UI
 - next-intl for internationalization
 - Resend for emails
-- DeepL for translation
+- Microsoft Translation API for translation
 
 ### 10. UI/UX REQUIREMENTS
 

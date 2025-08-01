@@ -34,43 +34,40 @@ CONVEX_DEPLOYMENT=dev:avid-kingfisher-625
 NEXT_PUBLIC_CONVEX_URL=https://avid-kingfisher-625.convex.cloud
 CLERK_JWT_ISSUER_DOMAIN=https://fond-sponge-54.clerk.accounts.dev
 
-# DeepL API (Needs to be configured)
-# Run: npx convex env set DEEPL_API_KEY "your-deepl-api-key"
+# Microsoft Translator API (Needs to be configured)
+# Run: npx convex env set AZURE_TRANSLATOR_KEY "your-azure-translator-key"
+# Run: npx convex env set AZURE_TRANSLATOR_ENDPOINT "https://api.cognitive.microsofttranslator.com/"
+# Run: npx convex env set AZURE_TRANSLATOR_REGION "global"
 ```
 
-## DeepL Translation Integration
+## Microsoft Translator Integration
 
-### Important Note about DeepL API Access
+### Important Note about Microsoft Translator API Access
 
-The DeepL translation feature has been implemented to work with the **official DeepL API**.
+The translation feature has been implemented to work with the **Microsoft Translator API**.
 
-#### For Official DeepL API:
+#### For Microsoft Translator API:
 
-1. Sign up at https://www.deepl.com/pro-api
-2. Get your API key from the DeepL dashboard
-3. Set the environment variable:
+1. Sign up for Azure and create a Translator resource at https://portal.azure.com
+2. Get your API key and endpoint from the Azure portal
+3. Set the environment variables:
    ```bash
-   npx convex env set DEEPL_API_KEY "your-deepl-api-key"
+   npx convex env set AZURE_TRANSLATOR_KEY "your-azure-translator-key"
+   npx convex env set AZURE_TRANSLATOR_ENDPOINT "https://api.cognitive.microsofttranslator.com/"
+   npx convex env set AZURE_TRANSLATOR_REGION "global"
    ```
-4. The API key format should look like: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:fx`
 
-#### RapidAPI Alternative (NOT COMPATIBLE with current code):
+#### Free Tier Details:
 
-If using RapidAPI's DeepL service, the current implementation **will NOT work** because:
-
-- RapidAPI uses different authentication headers (`X-RapidAPI-Key` and `X-RapidAPI-Host`)
-- RapidAPI uses a different endpoint URL
-- The request format may differ
+- **Free tier**: 2 million characters per month
+- **Languages**: 100+ languages supported
+- **Quality**: Enterprise-grade translation quality
 
 **Current Implementation** uses:
 
-- Endpoint: `https://api-free.deepl.com/v2/translate`
-- Authentication: `Authorization: DeepL-Auth-Key [yourAuthKey]`
-
-**RapidAPI would require**:
-
-- Different endpoint (e.g., `https://deep-translate.p.rapidapi.com/translate`)
-- Different headers: `X-RapidAPI-Key` and `X-RapidAPI-Host`
+- Endpoint: `https://api.cognitive.microsofttranslator.com/translate?api-version=3.0`
+- Authentication: `Ocp-Apim-Subscription-Key` header
+- Region: `Ocp-Apim-Subscription-Region` header
 
 ### Translation Feature Overview
 
@@ -197,7 +194,7 @@ npm start
 
 ## Known Limitations
 
-1. DeepL translation requires API key (not included)
+1. Microsoft Translator requires API key (not included)
 2. Stripe integration pending
 3. Email notifications not yet implemented
 4. Full internationalization pending

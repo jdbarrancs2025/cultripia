@@ -2,14 +2,16 @@ import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { api } from "./_generated/api";
 
-// Type definitions for DeepL API response
-interface DeepLTranslation {
-  text: string;
-  detected_source_language?: string;
-}
-
-interface DeepLResponse {
-  translations: DeepLTranslation[];
+// Type definitions for Microsoft Translator API response
+interface TranslatorResponse {
+  translations: Array<{
+    text: string;
+    to: string;
+  }>;
+  detectedLanguage?: {
+    language: string;
+    score: number;
+  };
 }
 
 export const translateText = action({
@@ -22,45 +24,58 @@ export const translateText = action({
     ctx,
     args,
   ): Promise<{ translatedText: string; detectedSourceLang?: string }> => {
-    const apiKey = process.env.DEEPL_API_KEY;
+    const apiKey = process.env.AZURE_TRANSLATOR_KEY;
+    const endpoint = process.env.AZURE_TRANSLATOR_ENDPOINT || "https://api.cognitive.microsofttranslator.com/";
+    const region = process.env.AZURE_TRANSLATOR_REGION || "global";
 
     if (!apiKey) {
-      throw new Error("DeepL API key not configured");
+      throw new Error("Microsoft Translator API key not configured");
     }
 
-    // DeepL Free API endpoint
-    const url = "https://api-free.deepl.com/v2/translate";
+    // Map language codes to Microsoft Translator format
+    const langMap = {
+      EN: "en",
+      ES: "es",
+    };
+
+    const targetLangCode = langMap[args.targetLang];
+    const sourceLangCode = args.sourceLang ? langMap[args.sourceLang] : undefined;
+
+    // Microsoft Translator API endpoint
+    const url = `${endpoint}translate?api-version=3.0&to=${targetLangCode}${
+      sourceLangCode ? `&from=${sourceLangCode}` : ""
+    }`;
 
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: {
-          Authorization: `DeepL-Auth-Key ${apiKey}`,
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Ocp-Apim-Subscription-Key": apiKey,
+          "Ocp-Apim-Subscription-Region": region,
+          "Content-Type": "application/json",
         },
-        body: new URLSearchParams({
-          text: args.text,
-          target_lang: args.targetLang,
-          ...(args.sourceLang && { source_lang: args.sourceLang }),
-        }),
+        body: JSON.stringify([{ text: args.text }]),
       });
 
       if (!response.ok) {
         const error = await response.text();
         // Log only the status code to avoid exposing sensitive information
-        console.error("DeepL API error - Status:", response.status);
+        console.error("Microsoft Translator API error - Status:", response.status);
         throw new Error(`Translation failed: ${response.status}`);
       }
 
-      const data = (await response.json()) as DeepLResponse;
+      const data = (await response.json()) as TranslatorResponse[];
 
-      if (!data.translations || data.translations.length === 0) {
+      if (!data || data.length === 0 || !data[0].translations || data[0].translations.length === 0) {
         throw new Error("No translation returned");
       }
 
+      const result = data[0];
+      const detectedLang = result.detectedLanguage?.language;
+
       return {
-        translatedText: data.translations[0].text,
-        detectedSourceLang: data.translations[0].detected_source_language,
+        translatedText: result.translations[0].text,
+        detectedSourceLang: detectedLang ? detectedLang.toUpperCase() : undefined,
       };
     } catch (error) {
       // Log error type without details to avoid exposing sensitive information
@@ -92,12 +107,12 @@ export const translateExperienceContent = action({
     try {
       // Translate both title and description in parallel
       const [titleResult, descResult] = await Promise.all([
-        ctx.runAction(api.deepl.translateText, {
+        ctx.runAction(api.translator.translateText, {
           text: args.title,
           targetLang,
           sourceLang: args.sourceLang,
         }),
-        ctx.runAction(api.deepl.translateText, {
+        ctx.runAction(api.translator.translateText, {
           text: args.description,
           targetLang,
           sourceLang: args.sourceLang,

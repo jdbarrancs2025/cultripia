@@ -56,7 +56,7 @@ export default function EditExperiencePage() {
   const updateExperience = useMutation(api.experiences.updateExperience);
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const getImageUrl = useMutation(api.files.getUrl);
-  const translateContent = useAction(api.deepl.translateExperienceContent);
+  const translateContent = useAction(api.translator.translateExperienceContent);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
