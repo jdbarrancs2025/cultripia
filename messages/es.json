@@ -77,7 +77,7 @@
     "loadingExperiences": "Cargando experiencias..."
   },
   "host": {
-    "dashboard": "Panel de Anfitrión",
+    "dashboard": "Dashboard",
     "myExperiences": "Mis Experiencias",
     "createExperience": "Crear Experiencia",
     "earnings": "Ganancias",
@@ -85,7 +85,20 @@
     "bookings": "Reservas",
     "applicationPending": "Tu solicitud de anfitrión está pendiente de aprobación",
     "applicationApproved": "Tu solicitud de anfitrión ha sido aprobada",
-    "applicationRejected": "Tu solicitud de anfitrión ha sido rechazada"
+    "applicationRejected": "Tu solicitud de anfitrión ha sido rechazada",
+    "totalBookings": "Total de Reservas",
+    "upcoming": "próximas",
+    "totalRevenue": "Ingresos Totales",
+    "allPaidBookings": "Todas las reservas pagadas",
+    "monthlyRevenue": "Ingresos Este Mes",
+    "activeExperiences": "Experiencias Activas",
+    "ofTotalExperiences": "De {total} experiencias totales",
+    "recentActivity": "Actividad Reciente",
+    "latestBookingsUpdates": "Últimas reservas y actualizaciones",
+    "noRecentActivity": "No hay actividad reciente",
+    "paid": "Pagado",
+    "pending": "Pendiente",
+    "noPermission": "No tienes permisos para ver esta página."
   },
   "booking": {
     "selectDate": "Selecciona una fecha",

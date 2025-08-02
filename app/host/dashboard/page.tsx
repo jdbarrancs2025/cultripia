@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useUser } from "@/hooks/useUser";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Card,
   CardContent,
@@ -14,13 +13,12 @@ import {
 } from "@/components/ui/card";
 import { Calendar, DollarSign, CalendarCheck, Package } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-import { ExperiencesList } from "@/components/host/experiences-list";
-import { BookingsList } from "@/components/host/bookings-list";
-import { CalendarView } from "@/components/host/calendar-view";
 
 export default function HostDashboardPage() {
   const { user, role } = useUser();
-  const [activeTab, setActiveTab] = useState("overview");
+  const t = useTranslations("host");
+  const tDashboard = useTranslations("dashboard");
+  const locale = useLocale();
 
   // Fetch host metrics
   const metrics = useQuery(
@@ -44,7 +42,7 @@ export default function HostDashboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-500">
-          No tienes permisos para ver esta página.
+          {t("noPermission")}
         </p>
       </div>
     );
@@ -80,28 +78,16 @@ export default function HostDashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Panel de Control
+          {t("dashboard")}
         </h1>
 
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="space-y-6"
-        >
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Resumen</TabsTrigger>
-            <TabsTrigger value="experiences">Experiencias</TabsTrigger>
-            <TabsTrigger value="calendar">Calendario</TabsTrigger>
-            <TabsTrigger value="bookings">Reservas</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-6">
+        <div className="space-y-6">
             {/* Metrics Cards */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Total de Reservas
+                    {t("totalBookings")}
                   </CardTitle>
                   <CalendarCheck className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
@@ -110,7 +96,7 @@ export default function HostDashboardPage() {
                     {bookings?.length || 0}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {upcomingBookings} próximas
+                    {upcomingBookings} {t("upcoming")}
                   </p>
                 </CardContent>
               </Card>
@@ -118,7 +104,7 @@ export default function HostDashboardPage() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Ingresos Totales
+                    {t("totalRevenue")}
                   </CardTitle>
                   <DollarSign className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
@@ -127,7 +113,7 @@ export default function HostDashboardPage() {
                     {formatCurrency(totalRevenue)}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Todas las reservas pagadas
+                    {t("allPaidBookings")}
                   </p>
                 </CardContent>
               </Card>
@@ -135,7 +121,7 @@ export default function HostDashboardPage() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Ingresos Este Mes
+                    {t("monthlyRevenue")}
                   </CardTitle>
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
@@ -144,7 +130,7 @@ export default function HostDashboardPage() {
                     {formatCurrency(monthlyRevenue)}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {new Date().toLocaleDateString("es-ES", {
+                    {new Date().toLocaleDateString(locale === 'en' ? 'en-US' : 'es-ES', {
                       month: "long",
                       year: "numeric",
                     })}
@@ -155,7 +141,7 @@ export default function HostDashboardPage() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Experiencias Activas
+                    {t("activeExperiences")}
                   </CardTitle>
                   <Package className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
@@ -165,7 +151,7 @@ export default function HostDashboardPage() {
                       .length || 0}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    De {experiences?.length || 0} experiencias totales
+                    {t("ofTotalExperiences", { total: experiences?.length || 0 })}
                   </p>
                 </CardContent>
               </Card>
@@ -174,9 +160,9 @@ export default function HostDashboardPage() {
             {/* Recent Activity */}
             <Card>
               <CardHeader>
-                <CardTitle>Actividad Reciente</CardTitle>
+                <CardTitle>{t("recentActivity")}</CardTitle>
                 <CardDescription>
-                  Últimas reservas y actualizaciones
+                  {t("latestBookingsUpdates")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -189,13 +175,13 @@ export default function HostDashboardPage() {
                       >
                         <div>
                           <p className="font-medium">
-                            {booking.experience?.titleEs}
+                            {locale === 'en' ? booking.experience?.titleEn : booking.experience?.titleEs}
                           </p>
                           <p className="text-sm text-gray-500">
                             {new Date(booking.selectedDate).toLocaleDateString(
-                              "es-ES",
+                              locale === 'en' ? 'en-US' : 'es-ES',
                             )}{" "}
-                            - {booking.qtyPersons} personas
+                            - {booking.qtyPersons} {booking.qtyPersons === 1 ? tDashboard("person") : tDashboard("people")}
                           </p>
                         </div>
                         <div className="text-right">
@@ -203,31 +189,18 @@ export default function HostDashboardPage() {
                             {formatCurrency(booking.totalAmount)}
                           </p>
                           <p className="text-sm text-gray-500">
-                            {booking.paid ? "Pagado" : "Pendiente"}
+                            {booking.paid ? t("paid") : t("pending")}
                           </p>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500">No hay actividad reciente</p>
+                  <p className="text-gray-500">{t("noRecentActivity")}</p>
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
-
-          <TabsContent value="experiences">
-            <ExperiencesList experiences={experiences || []} />
-          </TabsContent>
-
-          <TabsContent value="calendar">
-            <CalendarView />
-          </TabsContent>
-
-          <TabsContent value="bookings">
-            <BookingsList bookings={bookings || []} />
-          </TabsContent>
-        </Tabs>
+        </div>
       </div>
     </div>
   );

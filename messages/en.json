@@ -77,7 +77,7 @@
     "loadingExperiences": "Loading experiences..."
   },
   "host": {
-    "dashboard": "Host Dashboard",
+    "dashboard": "Dashboard",
     "myExperiences": "My Experiences",
     "createExperience": "Create Experience",
     "earnings": "Earnings",
@@ -85,7 +85,20 @@
     "bookings": "Bookings",
     "applicationPending": "Your host application is pending approval",
     "applicationApproved": "Your host application has been approved",
-    "applicationRejected": "Your host application has been rejected"
+    "applicationRejected": "Your host application has been rejected",
+    "totalBookings": "Total Bookings",
+    "upcoming": "upcoming",
+    "totalRevenue": "Total Revenue",
+    "allPaidBookings": "All paid bookings",
+    "monthlyRevenue": "Monthly Revenue",
+    "activeExperiences": "Active Experiences",
+    "ofTotalExperiences": "Of {total} total experiences",
+    "recentActivity": "Recent Activity",
+    "latestBookingsUpdates": "Latest bookings and updates",
+    "noRecentActivity": "No recent activity",
+    "paid": "Paid",
+    "pending": "Pending",
+    "noPermission": "You don't have permission to view this page."
   },
   "booking": {
     "selectDate": "Select a date",

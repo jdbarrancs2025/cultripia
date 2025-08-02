@@ -23,7 +23,11 @@ export function Providers({
     <ErrorBoundary>
       <ClerkProvider>
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-          <NextIntlClientProvider locale={locale} messages={messages}>
+          <NextIntlClientProvider 
+            locale={locale} 
+            messages={messages}
+            timeZone="America/New_York"
+          >
             {children}
           </NextIntlClientProvider>
         </ConvexProviderWithClerk>
