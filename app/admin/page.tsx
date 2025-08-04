@@ -5,8 +5,10 @@ import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Calendar, ShoppingCart, DollarSign } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslations } from "next-intl";
 
 export default function AdminDashboard() {
+  const t = useTranslations("adminOverview");
   const users = useQuery(api.users.getAll);
   const experiences = useQuery(api.experiences.getAll);
   const bookings = useQuery(api.bookings.getAll);
@@ -28,38 +30,38 @@ export default function AdminDashboard() {
 
   const metrics = [
     {
-      title: "Total Hosts",
+      title: t("totalHosts"),
       value: hosts.length,
       icon: Users,
-      description: "Active host accounts",
+      description: t("activeHostAccounts"),
       color: "text-blue-600",
     },
     {
-      title: "Total Experiences",
+      title: t("totalExperiences"),
       value: activeExperiences.length,
       icon: Calendar,
-      description: "Active experiences",
+      description: t("activeExperiences"),
       color: "text-green-600",
     },
     {
-      title: "Total Bookings",
+      title: t("totalBookings"),
       value: paidBookings.length,
       icon: ShoppingCart,
-      description: "Confirmed bookings",
+      description: t("confirmedBookings"),
       color: "text-purple-600",
     },
     {
-      title: "Revenue",
+      title: t("revenue"),
       value: `$${totalRevenue.toFixed(2)}`,
       icon: DollarSign,
-      description: "Total revenue",
+      description: t("totalRevenue"),
       color: "text-yellow-600",
     },
   ];
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8">{t("title")}</h1>
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -95,19 +97,21 @@ export default function AdminDashboard() {
         <Card className="border-yellow-200 bg-yellow-50">
           <CardHeader>
             <CardTitle className="text-lg text-yellow-800">
-              Pending Host Applications
+              {t("pendingHostApplications")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-yellow-700">
-              You have {pendingApplications.length} host application
-              {pendingApplications.length !== 1 ? "s" : ""} waiting for review.
+              {t("pendingApplicationsMessage", {
+                count: pendingApplications.length,
+                plural: pendingApplications.length !== 1 ? "s" : ""
+              })}
             </p>
             <a
               href="/admin/applications"
               className="text-yellow-700 underline hover:text-yellow-800 mt-2 inline-block"
             >
-              Review applications →
+              {t("reviewApplications")}
             </a>
           </CardContent>
         </Card>

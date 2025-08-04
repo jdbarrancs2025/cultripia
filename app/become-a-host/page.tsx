@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,33 +28,46 @@ import { useToast } from "@/hooks/use-toast";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 
-const languages = [
-  { value: "spanish", label: "Spanish" },
-  { value: "english", label: "English" },
-  { value: "french", label: "French" },
-  { value: "german", label: "German" },
-  { value: "italian", label: "Italian" },
-  { value: "portuguese", label: "Portuguese" },
-  { value: "kiche", label: "K'iche'" },
-  { value: "kaqchikel", label: "Kaqchikel" },
+// These will be populated inside the component
+const languageKeys = [
+  "spanish",
+  "english",
+  "french",
+  "german",
+  "italian",
+  "portuguese",
+  "kiche",
+  "kaqchikel",
 ];
 
-const experienceTypes = [
-  { value: "cooking", label: "Cooking Classes" },
-  { value: "artisanal", label: "Artisanal Workshops" },
-  { value: "cultural", label: "Cultural Tours" },
-  { value: "nature", label: "Nature & Adventure" },
-  { value: "historical", label: "Historical Tours" },
-  { value: "spiritual", label: "Spiritual Experiences" },
-  { value: "agricultural", label: "Agricultural Experiences" },
-  { value: "textile", label: "Textile Workshops" },
+const experienceTypeKeys = [
+  "cooking",
+  "artisanal",
+  "cultural",
+  "nature",
+  "historical",
+  "spiritual",
+  "agricultural",
+  "textile",
 ];
 
 export default function BecomeAHostPage() {
   const { userId, isLoaded } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const t = useTranslations("becomeHost");
   const createApplication = useMutation(api.hostApplications.createApplication);
+
+  // Create translated arrays
+  const languages = languageKeys.map(key => ({
+    value: key,
+    label: t(`languages.${key}`)
+  }));
+
+  const experienceTypes = experienceTypeKeys.map(key => ({
+    value: key,
+    label: t(`experienceTypes.${key}`)
+  }));
 
   const [formData, setFormData] = useState({
     // Personal Information
@@ -212,9 +226,8 @@ export default function BecomeAHostPage() {
       await createApplication(sanitizedData);
 
       toast({
-        title: "Application submitted!",
-        description:
-          "We'll review your application and get back to you within 48 hours.",
+        title: t("submitSuccess"),
+        description: t("submitSuccessDesc"),
       });
 
       // Redirect to dashboard with success state
@@ -223,17 +236,15 @@ export default function BecomeAHostPage() {
       console.error("Error submitting application:", error);
 
       // Provide specific error messages
-      let errorMessage =
-        "There was an error submitting your application. Please try again.";
+      let errorMessage = t("genericError");
       if (error.message?.includes("Unauthorized")) {
-        errorMessage = "Your session has expired. Please sign in again.";
+        errorMessage = t("sessionExpired");
       } else if (error.message?.includes("network")) {
-        errorMessage =
-          "Network error. Please check your connection and try again.";
+        errorMessage = t("networkError");
       }
 
       toast({
-        title: "Submission failed",
+        title: t("submitError"),
         description: errorMessage,
         variant: "destructive",
       });
@@ -265,10 +276,9 @@ export default function BecomeAHostPage() {
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-4">Become a Host</h1>
+        <h1 className="text-4xl font-bold mb-4">{t("title")}</h1>
         <p className="text-lg text-gray-600">
-          Share your unique cultural experiences with travelers from around the
-          world
+          {t("subtitle")}
         </p>
       </div>
 
@@ -276,20 +286,20 @@ export default function BecomeAHostPage() {
         {/* Personal Information Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
+            <CardTitle>{t("personalInfo")}</CardTitle>
             <CardDescription>
-              Tell us about yourself so we can get to know you better
+              {t("personalInfoDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name *</Label>
+                <Label htmlFor="name">{t("fullName")} *</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  placeholder="Enter your full name"
+                  placeholder={t("fullName")}
                   required
                   maxLength={100}
                   aria-label="Full name"
@@ -297,7 +307,7 @@ export default function BecomeAHostPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address *</Label>
+                <Label htmlFor="email">{t("email")} *</Label>
                 <Input
                   id="email"
                   type="email"
@@ -315,7 +325,7 @@ export default function BecomeAHostPage() {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number *</Label>
+                <Label htmlFor="phone">{t("phone")} *</Label>
                 <Input
                   id="phone"
                   type="tel"
@@ -329,11 +339,11 @@ export default function BecomeAHostPage() {
                   aria-describedby="phone-help"
                 />
                 <p id="phone-help" className="text-xs text-gray-500 mt-1">
-                  Include country code (e.g., +502 for Guatemala)
+                  {t("phoneHelp")}
                 </p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="location">Location *</Label>
+                <Label htmlFor="location">{t("location")} *</Label>
                 <Select
                   value={formData.location}
                   onValueChange={(value) =>
@@ -341,30 +351,30 @@ export default function BecomeAHostPage() {
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select your location" />
+                    <SelectValue placeholder={t("selectLocation")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="antigua">Antigua</SelectItem>
-                    <SelectItem value="lake-atitlan">Lake Atitlán</SelectItem>
+                    <SelectItem value="antigua">{t("locations.antigua")}</SelectItem>
+                    <SelectItem value="lake-atitlan">{t("locations.lakeAtitlan")}</SelectItem>
                     <SelectItem value="chichicastenango">
-                      Chichicastenango
+                      {t("locations.chichicastenango")}
                     </SelectItem>
-                    <SelectItem value="tikal">Tikal</SelectItem>
-                    <SelectItem value="semuc-champey">Semuc Champey</SelectItem>
+                    <SelectItem value="tikal">{t("locations.tikal")}</SelectItem>
+                    <SelectItem value="semuc-champey">{t("locations.semucChampey")}</SelectItem>
                     <SelectItem value="guatemala-city">
-                      Guatemala City
+                      {t("locations.guatemalaCity")}
                     </SelectItem>
                     <SelectItem value="quetzaltenango">
-                      Quetzaltenango
+                      {t("locations.quetzaltenango")}
                     </SelectItem>
-                    <SelectItem value="livingston">Livingston</SelectItem>
+                    <SelectItem value="livingston">{t("locations.livingston")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Languages Spoken *</Label>
+              <Label>{t("languagesSpoken")} *</Label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {languages.map((language) => (
                   <div
@@ -396,14 +406,14 @@ export default function BecomeAHostPage() {
         {/* Experience Proposal Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Experience Proposal</CardTitle>
+            <CardTitle>{t("experienceProposal")}</CardTitle>
             <CardDescription>
-              Describe the experience you&apos;d like to offer to travelers
+              {t("experienceProposalDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="experienceType">Experience Type *</Label>
+              <Label htmlFor="experienceType">{t("experienceType")} *</Label>
               <Select
                 value={formData.experienceType}
                 onValueChange={(value) =>
@@ -411,7 +421,7 @@ export default function BecomeAHostPage() {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select experience type" />
+                  <SelectValue placeholder={t("selectExperienceType")} />
                 </SelectTrigger>
                 <SelectContent>
                   {experienceTypes.map((type) => (
@@ -424,14 +434,14 @@ export default function BecomeAHostPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="experienceTitle">Experience Title *</Label>
+              <Label htmlFor="experienceTitle">{t("experienceTitle")} *</Label>
               <Input
                 id="experienceTitle"
                 value={formData.experienceTitle}
                 onChange={(e) =>
                   handleInputChange("experienceTitle", e.target.value)
                 }
-                placeholder="e.g., Traditional Mayan Cooking Class"
+                placeholder={t("experienceTitlePlaceholder")}
                 required
                 maxLength={100}
                 aria-label="Experience title"
@@ -441,7 +451,7 @@ export default function BecomeAHostPage() {
 
             <div className="space-y-2">
               <Label htmlFor="experienceDescription">
-                Experience Description *
+                {t("experienceDescription")} *
               </Label>
               <Textarea
                 id="experienceDescription"
@@ -449,7 +459,7 @@ export default function BecomeAHostPage() {
                 onChange={(e) =>
                   handleInputChange("experienceDescription", e.target.value)
                 }
-                placeholder="Describe what travelers will experience, what's included, and what makes it unique..."
+                placeholder={t("experienceDescPlaceholder")}
                 rows={6}
                 required
                 maxLength={1000}
@@ -457,13 +467,13 @@ export default function BecomeAHostPage() {
                 aria-required="true"
               />
               <p className="text-xs text-gray-500 mt-1">
-                {formData.experienceDescription.length}/1000 characters
+                {t("charactersCount", { count: formData.experienceDescription.length, max: 1000 })}
               </p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="maxGuests">Maximum Guests *</Label>
+                <Label htmlFor="maxGuests">{t("maxGuests")} *</Label>
                 <Input
                   id="maxGuests"
                   type="number"
@@ -473,12 +483,12 @@ export default function BecomeAHostPage() {
                   onChange={(e) =>
                     handleInputChange("maxGuests", e.target.value)
                   }
-                  placeholder="e.g., 8"
+                  placeholder={t("maxGuestsPlaceholder")}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="pricePerPerson">Price per Person (USD) *</Label>
+                <Label htmlFor="pricePerPerson">{t("pricePerPerson")} *</Label>
                 <Input
                   id="pricePerPerson"
                   type="number"
@@ -488,14 +498,14 @@ export default function BecomeAHostPage() {
                   onChange={(e) =>
                     handleInputChange("pricePerPerson", e.target.value)
                   }
-                  placeholder="e.g., 75.00"
+                  placeholder={t("pricePlaceholder")}
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Availability Preference *</Label>
+              <Label>{t("availability")} *</Label>
               <RadioGroup
                 value={formData.availability}
                 onValueChange={(value) =>
@@ -504,22 +514,22 @@ export default function BecomeAHostPage() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="weekdays" id="weekdays" />
-                  <label htmlFor="weekdays">Weekdays only</label>
+                  <label htmlFor="weekdays">{t("weekdaysOnly")}</label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="weekends" id="weekends" />
-                  <label htmlFor="weekends">Weekends only</label>
+                  <label htmlFor="weekends">{t("weekendsOnly")}</label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="flexible" id="flexible" />
-                  <label htmlFor="flexible">Flexible (any day)</label>
+                  <label htmlFor="flexible">{t("flexible")}</label>
                 </div>
               </RadioGroup>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="specialRequirements">
-                Special Requirements or Notes (Optional)
+                {t("specialRequirements")}
               </Label>
               <Textarea
                 id="specialRequirements"
@@ -527,13 +537,13 @@ export default function BecomeAHostPage() {
                 onChange={(e) =>
                   handleInputChange("specialRequirements", e.target.value)
                 }
-                placeholder="Any special equipment, dietary restrictions, or other requirements..."
+                placeholder={t("specialRequirementsPlaceholder")}
                 rows={4}
                 maxLength={500}
                 aria-label="Special requirements or notes"
               />
               <p className="text-xs text-gray-500 mt-1">
-                {formData.specialRequirements.length}/500 characters
+                {t("charactersCount", { count: formData.specialRequirements.length, max: 500 })}
               </p>
             </div>
           </CardContent>
@@ -546,14 +556,14 @@ export default function BecomeAHostPage() {
             onClick={() => router.push("/")}
             disabled={isSubmitting}
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             type="submit"
             disabled={isSubmitting}
             aria-busy={isSubmitting}
           >
-            {isSubmitting ? "Submitting..." : "Submit Application"}
+            {isSubmitting ? t("submitting") : t("submit")}
           </Button>
         </div>
       </form>

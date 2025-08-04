@@ -1,5 +1,8 @@
+"use client";
+
 import { MapPin, Users, Calendar, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useTranslations } from "next-intl";
 
 interface ExperienceInfoProps {
   title: string;
@@ -14,6 +17,7 @@ export function ExperienceInfo({
   location,
   maxGuests,
 }: ExperienceInfoProps) {
+  const t = useTranslations("experienceDetail");
   return (
     <div className="space-y-6">
       {/* Title and Location */}
@@ -31,9 +35,9 @@ export function ExperienceInfo({
           <CardContent className="flex items-center gap-2 p-4">
             <Users className="h-5 w-5 text-turquesa" />
             <div>
-              <p className="text-sm text-gris-80">Capacidad</p>
+              <p className="text-sm text-gris-80">{t("capacity")}</p>
               <p className="font-semibold text-gris-90">
-                Hasta {maxGuests} personas
+                {t("upToGuests", { max: maxGuests })}
               </p>
             </div>
           </CardContent>
@@ -43,8 +47,8 @@ export function ExperienceInfo({
           <CardContent className="flex items-center gap-2 p-4">
             <Clock className="h-5 w-5 text-turquesa" />
             <div>
-              <p className="text-sm text-gris-80">Duración</p>
-              <p className="font-semibold text-gris-90">Por definir</p>
+              <p className="text-sm text-gris-80">{t("duration")}</p>
+              <p className="font-semibold text-gris-90">{t("toBeDefined")}</p>
             </div>
           </CardContent>
         </Card>
@@ -53,8 +57,8 @@ export function ExperienceInfo({
           <CardContent className="flex items-center gap-2 p-4">
             <Calendar className="h-5 w-5 text-turquesa" />
             <div>
-              <p className="text-sm text-gris-80">Disponibilidad</p>
-              <p className="font-semibold text-gris-90">Ver calendario</p>
+              <p className="text-sm text-gris-80">{t("availability")}</p>
+              <p className="font-semibold text-gris-90">{t("seeCalendar")}</p>
             </div>
           </CardContent>
         </Card>
@@ -63,7 +67,7 @@ export function ExperienceInfo({
       {/* Description */}
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-gris-90">
-          Acerca de esta experiencia
+          {t("aboutExperience")}
         </h2>
         <div className="prose prose-gray max-w-none">
           <p className="whitespace-pre-wrap text-gris-80 leading-relaxed">
@@ -75,12 +79,12 @@ export function ExperienceInfo({
       {/* What's Included (placeholder for future enhancement) */}
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-gris-90">
-          ¿Qué está incluido?
+          {t("whatsIncluded")}
         </h2>
         <Card className="bg-turquesa/5 border-turquesa/20">
           <CardContent className="p-6">
             <p className="text-gris-80">
-              Esta información será proporcionada por el anfitrión próximamente.
+              {t("infoFromHost")}
             </p>
           </CardContent>
         </Card>

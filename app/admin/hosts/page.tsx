@@ -12,26 +12,30 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
+import { es, enUS } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function AdminHostsPage() {
+  const t = useTranslations("adminHosts");
+  const locale = useLocale();
   const users = useQuery(api.users.getAll);
   const hosts = users?.filter((user) => user.role === "host") || [];
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Host Management</h1>
+      <h1 className="text-3xl font-bold mb-8">{t("title")}</h1>
 
       {users ? (
         hosts.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("table.name")}</TableHead>
+                <TableHead>{t("table.email")}</TableHead>
+                <TableHead>{t("table.role")}</TableHead>
+                <TableHead>{t("table.joined")}</TableHead>
+                <TableHead>{t("table.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -41,23 +45,24 @@ export default function AdminHostsPage() {
                   <TableCell>{host.email}</TableCell>
                   <TableCell>
                     <Badge variant="default" className="bg-green-600">
-                      Host
+                      {t("host")}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     {formatDistanceToNow(new Date(host.createdAt), {
                       addSuffix: true,
+                      locale: locale === "es" ? es : enUS,
                     })}
                   </TableCell>
                   <TableCell>
-                    <Badge variant="secondary">Active</Badge>
+                    <Badge variant="secondary">{t("active")}</Badge>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         ) : (
-          <p className="text-gray-500">No hosts found.</p>
+          <p className="text-gray-500">{t("noHosts")}</p>
         )
       ) : (
         <div className="space-y-4">

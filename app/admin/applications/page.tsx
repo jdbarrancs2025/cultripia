@@ -24,9 +24,13 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { formatDistanceToNow } from "date-fns";
+import { es, enUS } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function AdminApplicationsPage() {
+  const t = useTranslations("adminApplications");
+  const locale = useLocale();
   const applications = useQuery(api.hostApplications.getAll);
   const updateApplicationStatus = useMutation(
     api.hostApplications.updateStatus,
@@ -93,15 +97,15 @@ export default function AdminApplicationsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge variant="secondary">Pending</Badge>;
+        return <Badge variant="secondary">{t("status.pending")}</Badge>;
       case "approved":
         return (
           <Badge variant="default" className="bg-green-600">
-            Approved
+            {t("status.approved")}
           </Badge>
         );
       case "rejected":
-        return <Badge variant="destructive">Rejected</Badge>;
+        return <Badge variant="destructive">{t("status.rejected")}</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }
@@ -109,20 +113,20 @@ export default function AdminApplicationsPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Host Applications</h1>
+      <h1 className="text-3xl font-bold mb-8">{t("title")}</h1>
 
       {applications ? (
         applications.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Experience Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Submitted</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t("table.name")}</TableHead>
+                <TableHead>{t("table.email")}</TableHead>
+                <TableHead>{t("table.phone")}</TableHead>
+                <TableHead>{t("table.experienceType")}</TableHead>
+                <TableHead>{t("table.status")}</TableHead>
+                <TableHead>{t("table.submitted")}</TableHead>
+                <TableHead>{t("table.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -140,6 +144,7 @@ export default function AdminApplicationsPage() {
                   <TableCell>
                     {formatDistanceToNow(new Date(application.createdAt), {
                       addSuffix: true,
+                      locale: locale === "es" ? es : enUS,
                     })}
                   </TableCell>
                   <TableCell>
@@ -148,7 +153,7 @@ export default function AdminApplicationsPage() {
                       variant="outline"
                       onClick={() => setSelectedApplication(application)}
                     >
-                      Review
+                      {t("table.review")}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -156,7 +161,7 @@ export default function AdminApplicationsPage() {
             </TableBody>
           </Table>
         ) : (
-          <p className="text-gray-500">No applications found.</p>
+          <p className="text-gray-500">{t("noApplications")}</p>
         )
       ) : (
         <div className="space-y-4">
@@ -178,10 +183,9 @@ export default function AdminApplicationsPage() {
       >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Review Host Application</DialogTitle>
+            <DialogTitle>{t("modal.title")}</DialogTitle>
             <DialogDescription>
-              Review the application details and decide whether to approve or
-              reject.
+              {t("modal.description")}
             </DialogDescription>
           </DialogHeader>
 
@@ -189,38 +193,38 @@ export default function AdminApplicationsPage() {
             <div className="space-y-4 mt-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-semibold">Name</Label>
+                  <Label className="text-sm font-semibold">{t("modal.name")}</Label>
                   <p className="text-sm">
                     {selectedApplication.applicationData.name}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-semibold">Email</Label>
+                  <Label className="text-sm font-semibold">{t("modal.email")}</Label>
                   <p className="text-sm">
                     {selectedApplication.applicationData.email}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-semibold">Phone</Label>
+                  <Label className="text-sm font-semibold">{t("modal.phone")}</Label>
                   <p className="text-sm">
                     {selectedApplication.applicationData.phone}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-semibold">Location</Label>
+                  <Label className="text-sm font-semibold">{t("modal.location")}</Label>
                   <p className="text-sm">
                     {selectedApplication.applicationData.location}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-semibold">Languages</Label>
+                  <Label className="text-sm font-semibold">{t("modal.languages")}</Label>
                   <p className="text-sm">
                     {selectedApplication.applicationData.languages.join(", ")}
                   </p>
                 </div>
                 <div>
                   <Label className="text-sm font-semibold">
-                    Experience Type
+                    {t("modal.experienceType")}
                   </Label>
                   <p className="text-sm">
                     {selectedApplication.applicationData.experienceType}
@@ -230,7 +234,7 @@ export default function AdminApplicationsPage() {
 
               <div>
                 <Label className="text-sm font-semibold">
-                  Experience Title
+                  {t("modal.experienceTitle")}
                 </Label>
                 <p className="text-sm">
                   {selectedApplication.applicationData.experienceTitle}
@@ -239,7 +243,7 @@ export default function AdminApplicationsPage() {
 
               <div>
                 <Label className="text-sm font-semibold">
-                  Experience Description
+                  {t("modal.experienceDescription")}
                 </Label>
                 <p className="text-sm mt-1 whitespace-pre-wrap">
                   {selectedApplication.applicationData.description}
@@ -248,14 +252,13 @@ export default function AdminApplicationsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-semibold">Pricing</Label>
+                  <Label className="text-sm font-semibold">{t("modal.pricing")}</Label>
                   <p className="text-sm">
-                    ${selectedApplication.applicationData.pricing} USD per
-                    person
+                    ${selectedApplication.applicationData.pricing} {t("modal.perPerson")}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-semibold">Availability</Label>
+                  <Label className="text-sm font-semibold">{t("modal.availability")}</Label>
                   <p className="text-sm">
                     {selectedApplication.applicationData.availability}
                   </p>
@@ -263,10 +266,10 @@ export default function AdminApplicationsPage() {
               </div>
 
               <div>
-                <Label htmlFor="feedback">Feedback (optional)</Label>
+                <Label htmlFor="feedback">{t("modal.feedback")}</Label>
                 <Textarea
                   id="feedback"
-                  placeholder="Add any feedback for the applicant..."
+                  placeholder={t("modal.feedbackPlaceholder")}
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
                   className="mt-1"
@@ -280,7 +283,7 @@ export default function AdminApplicationsPage() {
                   onClick={() => setSelectedApplication(null)}
                   disabled={isProcessing}
                 >
-                  Cancel
+                  {t("modal.cancel")}
                 </Button>
                 <Button
                   variant="destructive"
@@ -289,7 +292,7 @@ export default function AdminApplicationsPage() {
                     isProcessing || selectedApplication.status !== "pending"
                   }
                 >
-                  Reject
+                  {t("modal.reject")}
                 </Button>
                 <Button
                   variant="default"
@@ -299,7 +302,7 @@ export default function AdminApplicationsPage() {
                     isProcessing || selectedApplication.status !== "pending"
                   }
                 >
-                  Approve
+                  {t("modal.approve")}
                 </Button>
               </div>
             </div>

@@ -1,17 +1,21 @@
+"use client";
+
 import { User, Mail } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Doc } from "@/convex/_generated/dataModel";
+import { useTranslations } from "next-intl";
 
 interface HostInfoCardProps {
   host: Doc<"users">;
 }
 
 export function HostInfoCard({ host }: HostInfoCardProps) {
+  const t = useTranslations("experienceDetail");
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl">Conoce a tu anfitrión</CardTitle>
+        <CardTitle className="text-xl">{t("meetYourHost")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center space-x-4">
@@ -20,14 +24,13 @@ export function HostInfoCard({ host }: HostInfoCardProps) {
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-gris-90">{host.name}</h3>
-            <p className="text-sm text-gris-80">Anfitrión verificado</p>
+            <p className="text-sm text-gris-80">{t("verifiedHost")}</p>
           </div>
         </div>
 
         <div className="space-y-2 rounded-lg bg-gray-50 p-4">
           <p className="text-sm text-gris-80">
-            {host.name} es un anfitrión local apasionado por compartir
-            experiencias culturales auténticas con viajeros de todo el mundo.
+            {t("hostDescription", { name: host.name })}
           </p>
         </div>
 
@@ -37,7 +40,7 @@ export function HostInfoCard({ host }: HostInfoCardProps) {
           disabled
         >
           <Mail className="mr-2 h-4 w-4" />
-          Contactar anfitrión (próximamente)
+          {t("contactHost")}
         </Button>
       </CardContent>
     </Card>

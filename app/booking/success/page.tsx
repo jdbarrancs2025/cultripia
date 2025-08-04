@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAction, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useTranslations, useLocale } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Calendar, Users, MapPin, Mail } from "lucide-react";
@@ -12,6 +13,8 @@ import Link from "next/link";
 function BookingSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const t = useTranslations("bookingSuccess");
+  const locale = useLocale();
   const sessionId = searchParams.get("session_id");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,7 +40,7 @@ function BookingSuccessContent() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-turquesa border-t-transparent mx-auto mb-4" />
-          <p className="text-gray-600">Confirmando tu reserva...</p>
+          <p className="text-gray-600">{t("confirmingBooking")}</p>
         </div>
       </div>
     );
@@ -48,9 +51,9 @@ function BookingSuccessContent() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Card className="max-w-md w-full">
           <CardContent className="text-center py-8">
-            <p className="text-gray-600 mb-4">No se encontró la reserva.</p>
+            <p className="text-gray-600 mb-4">{t("bookingNotFound")}</p>
             <Button asChild>
-              <Link href="/">Volver al inicio</Link>
+              <Link href="/">{t("backToHome")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -60,7 +63,7 @@ function BookingSuccessContent() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString + "T00:00:00");
-    return date.toLocaleDateString("es", {
+    return date.toLocaleDateString(locale === "en" ? "en-US" : "es", {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -75,25 +78,25 @@ function BookingSuccessContent() {
         <div className="text-center mb-8">
           <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            ¡Reserva Confirmada!
+            {t("bookingConfirmed")}
           </h1>
           <p className="text-gray-600">
-            Tu pago ha sido procesado exitosamente
+            {t("paymentProcessedSuccessfully")}
           </p>
         </div>
 
         {/* Booking Details Card */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Detalles de tu reserva</CardTitle>
+            <CardTitle>{t("bookingDetails")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Experience Info */}
             <div>
               <h3 className="font-semibold text-lg mb-2">
-                {booking.experience?.titleEs}
+                {locale === "es" ? booking.experience?.titleEs : booking.experience?.titleEn}
               </h3>
-              <p className="text-gray-600">{booking.experience?.descEs}</p>
+              <p className="text-gray-600">{locale === "es" ? booking.experience?.descEs : booking.experience?.descEn}</p>
             </div>
 
             {/* Booking Details */}
@@ -101,7 +104,7 @@ function BookingSuccessContent() {
               <div className="flex items-start gap-3">
                 <Calendar className="h-5 w-5 text-turquesa mt-0.5" />
                 <div>
-                  <p className="font-medium">Fecha</p>
+                  <p className="font-medium">{t("date")}</p>
                   <p className="text-gray-600">
                     {formatDate(booking.selectedDate)}
                   </p>
@@ -111,10 +114,10 @@ function BookingSuccessContent() {
               <div className="flex items-start gap-3">
                 <Users className="h-5 w-5 text-turquesa mt-0.5" />
                 <div>
-                  <p className="font-medium">Número de personas</p>
+                  <p className="font-medium">{t("numberOfPeople")}</p>
                   <p className="text-gray-600">
                     {booking.qtyPersons}{" "}
-                    {booking.qtyPersons === 1 ? "persona" : "personas"}
+                    {booking.qtyPersons === 1 ? t("person") : t("people")}
                   </p>
                 </div>
               </div>
@@ -122,7 +125,7 @@ function BookingSuccessContent() {
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-turquesa mt-0.5" />
                 <div>
-                  <p className="font-medium">Ubicación</p>
+                  <p className="font-medium">{t("location")}</p>
                   <p className="text-gray-600">
                     {booking.experience?.location}
                   </p>
@@ -132,7 +135,7 @@ function BookingSuccessContent() {
               <div className="flex items-start gap-3">
                 <Mail className="h-5 w-5 text-turquesa mt-0.5" />
                 <div>
-                  <p className="font-medium">Anfitrión</p>
+                  <p className="font-medium">{t("host")}</p>
                   <p className="text-gray-600">{booking.host?.name}</p>
                 </div>
               </div>
@@ -141,7 +144,7 @@ function BookingSuccessContent() {
             {/* Payment Info */}
             <div className="border-t pt-4">
               <div className="flex justify-between items-center">
-                <span className="font-medium">Total pagado</span>
+                <span className="font-medium">{t("totalPaid")}</span>
                 <span className="text-2xl font-bold text-turquesa">
                   ${booking.totalAmount} USD
                 </span>
@@ -153,7 +156,7 @@ function BookingSuccessContent() {
         {/* Next Steps */}
         <Card>
           <CardHeader>
-            <CardTitle>Próximos pasos</CardTitle>
+            <CardTitle>{t("nextSteps")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-start gap-3">
@@ -161,10 +164,9 @@ function BookingSuccessContent() {
                 1
               </div>
               <div>
-                <p className="font-medium">Revisa tu correo electrónico</p>
+                <p className="font-medium">{t("checkEmail")}</p>
                 <p className="text-sm text-gray-600">
-                  Recibirás un correo de confirmación con todos los detalles de
-                  tu reserva.
+                  {t("checkEmailDescription")}
                 </p>
               </div>
             </div>
@@ -174,10 +176,9 @@ function BookingSuccessContent() {
                 2
               </div>
               <div>
-                <p className="font-medium">Contacta a tu anfitrión</p>
+                <p className="font-medium">{t("contactHost")}</p>
                 <p className="text-sm text-gray-600">
-                  Tu anfitrión se pondrá en contacto contigo para coordinar los
-                  detalles de la experiencia.
+                  {t("contactHostDescription")}
                 </p>
               </div>
             </div>
@@ -187,10 +188,9 @@ function BookingSuccessContent() {
                 3
               </div>
               <div>
-                <p className="font-medium">Disfruta tu experiencia</p>
+                <p className="font-medium">{t("enjoyExperience")}</p>
                 <p className="text-sm text-gray-600">
-                  Prepárate para vivir una experiencia cultural única e
-                  inolvidable.
+                  {t("enjoyExperienceDescription")}
                 </p>
               </div>
             </div>
@@ -200,10 +200,10 @@ function BookingSuccessContent() {
         {/* Action Buttons */}
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild size="lg">
-            <Link href="/dashboard">Ver mis reservas</Link>
+            <Link href="/dashboard">{t("viewMyBookings")}</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link href="/experiences">Explorar más experiencias</Link>
+            <Link href="/experiences">{t("exploreMoreExperiences")}</Link>
           </Button>
         </div>
       </div>
@@ -218,7 +218,7 @@ export default function BookingSuccessPage() {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="h-12 w-12 animate-spin rounded-full border-4 border-turquesa border-t-transparent mx-auto mb-4" />
-            <p className="text-gray-600">Cargando...</p>
+            <p className="text-gray-600">{t("loading")}</p>
           </div>
         </div>
       }

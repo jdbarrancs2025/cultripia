@@ -14,6 +14,7 @@ import { useAction, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { stripePromise } from "@/lib/stripe";
+import { useTranslations } from "next-intl";
 
 interface BookingCardProps {
   experienceId: Id<"experiences">;
@@ -42,6 +43,7 @@ export function BookingCard({
 }: BookingCardProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const t = useTranslations("experienceDetail");
   const [isLoading, setIsLoading] = useState(false);
   const { user, isSignedIn } = useUser();
   const createCheckoutSession = useAction(api.stripe.createCheckoutSession);
@@ -64,8 +66,8 @@ export function BookingCard({
   const handleBooking = async () => {
     if (!selectedDate) {
       toast({
-        title: "Fecha requerida",
-        description: "Por favor selecciona una fecha para tu reserva.",
+        title: t("dateRequired"),
+        description: t("selectDateMessage"),
         variant: "destructive",
       });
       return;
@@ -73,8 +75,8 @@ export function BookingCard({
 
     if (!isSignedIn) {
       toast({
-        title: "Inicia sesión",
-        description: "Debes iniciar sesión para hacer una reserva.",
+        title: t("signInRequired"),
+        description: t("signInMessage"),
         variant: "destructive",
       });
       router.push("/sign-in");
@@ -83,8 +85,8 @@ export function BookingCard({
 
     if (!currentUser) {
       toast({
-        title: "Error",
-        description: "No se pudo obtener la información del usuario.",
+        title: t("error"),
+        description: t("userInfoError"),
         variant: "destructive",
       });
       return;
@@ -107,7 +109,7 @@ export function BookingCard({
       // Redirect to Stripe Checkout
       const stripe = await stripePromise;
       if (!stripe) {
-        throw new Error("Stripe no se pudo cargar");
+        throw new Error(t("stripeError"));
       }
 
       const { error } = await stripe.redirectToCheckout({
@@ -120,8 +122,8 @@ export function BookingCard({
     } catch (error) {
       console.error("Error creating checkout session:", error);
       toast({
-        title: "Error",
-        description: "No se pudo procesar el pago. Por favor intenta de nuevo.",
+        title: t("error"),
+        description: t("paymentError"),
         variant: "destructive",
       });
       setIsLoading(false);
@@ -132,12 +134,12 @@ export function BookingCard({
     <Card className="shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span>Reserva tu experiencia</span>
+          <span>{t("bookExperience")}</span>
           <div className="text-right">
             <span className="text-2xl font-bold text-turquesa">
               ${pricePerPerson}
             </span>
-            <p className="text-sm font-normal text-gris-80">por persona</p>
+            <p className="text-sm font-normal text-gris-80">{t("perPerson")}</p>
           </div>
         </CardTitle>
       </CardHeader>
@@ -145,7 +147,7 @@ export function BookingCard({
         {/* Date Selection */}
         <div className="space-y-2">
           <Label className="text-base font-semibold">
-            Selecciona una fecha
+            {t("selectDate")}
           </Label>
           <TravelerDatePicker
             experienceId={experienceId}
@@ -156,12 +158,12 @@ export function BookingCard({
 
         {/* Guest Count Selector */}
         <div className="space-y-2">
-          <Label className="text-base font-semibold">Número de personas</Label>
+          <Label className="text-base font-semibold">{t("numberOfPeople")}</Label>
           <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5 text-gris-80" />
               <span className="text-sm text-gris-80">
-                Huéspedes (máx. {maxGuests})
+                {t("guests", { max: maxGuests })}
               </span>
             </div>
             <div className="flex items-center gap-3">
@@ -197,13 +199,13 @@ export function BookingCard({
           <div className="flex justify-between text-sm">
             <span className="text-gris-80">
               ${pricePerPerson} x {guestCount}{" "}
-              {guestCount === 1 ? "persona" : "personas"}
+              {guestCount === 1 ? t("person") : t("people")}
             </span>
             <span className="font-medium">${totalAmount}</span>
           </div>
           <div className="border-t pt-3">
             <div className="flex justify-between">
-              <span className="font-semibold">Total</span>
+              <span className="font-semibold">{t("total")}</span>
               <span className="text-xl font-bold text-turquesa">
                 ${totalAmount} USD
               </span>
@@ -221,16 +223,16 @@ export function BookingCard({
           {isLoading ? (
             <span className="flex items-center gap-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              Procesando...
+              {t("processing")}
             </span>
           ) : (
-            "Proceder al pago"
+            t("proceedToPayment")
           )}
         </Button>
 
         {!selectedDate && (
           <p className="text-center text-sm text-gris-80">
-            Selecciona una fecha para continuar
+            {t("selectDateToContinue")}
           </p>
         )}
       </CardContent>

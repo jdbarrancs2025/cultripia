@@ -12,9 +12,13 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
+import { es, enUS } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function AdminExperiencesPage() {
+  const t = useTranslations("adminExperiences");
+  const locale = useLocale();
   const experiences = useQuery(api.experiences.getAll);
 
   const getStatusBadge = (status: string) => {
@@ -22,13 +26,13 @@ export default function AdminExperiencesPage() {
       case "active":
         return (
           <Badge variant="default" className="bg-green-600">
-            Active
+            {t("status.active")}
           </Badge>
         );
       case "inactive":
-        return <Badge variant="secondary">Inactive</Badge>;
+        return <Badge variant="secondary">{t("status.inactive")}</Badge>;
       case "draft":
-        return <Badge variant="outline">Draft</Badge>;
+        return <Badge variant="outline">{t("status.draft")}</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }
@@ -36,19 +40,19 @@ export default function AdminExperiencesPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Experience Management</h1>
+      <h1 className="text-3xl font-bold mb-8">{t("title")}</h1>
 
       {experiences ? (
         experiences.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title (EN)</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Max Guests</TableHead>
-                <TableHead>Price (USD)</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>{t("table.titleEn")}</TableHead>
+                <TableHead>{t("table.location")}</TableHead>
+                <TableHead>{t("table.maxGuests")}</TableHead>
+                <TableHead>{t("table.priceUsd")}</TableHead>
+                <TableHead>{t("table.status")}</TableHead>
+                <TableHead>{t("table.created")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -64,6 +68,7 @@ export default function AdminExperiencesPage() {
                   <TableCell>
                     {formatDistanceToNow(new Date(experience.createdAt), {
                       addSuffix: true,
+                      locale: locale === "es" ? es : enUS,
                     })}
                   </TableCell>
                 </TableRow>
@@ -71,7 +76,7 @@ export default function AdminExperiencesPage() {
             </TableBody>
           </Table>
         ) : (
-          <p className="text-gray-500">No experiences found.</p>
+          <p className="text-gray-500">{t("noExperiences")}</p>
         )
       ) : (
         <div className="space-y-4">

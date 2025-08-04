@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Card,
   CardContent,
@@ -26,7 +27,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import Image from "next/image";
 import Link from "next/link";
 import { BookingDetailWithTraveler } from "@/types/booking";
@@ -34,6 +35,8 @@ import { BookingDetailWithTraveler } from "@/types/booking";
 export default function BookingDetailPage() {
   const params = useParams();
   const { user } = useUser();
+  const t = useTranslations("bookingDetails");
+  const locale = useLocale();
 
   // Validate bookingId format
   const bookingId = params.bookingId as string;
@@ -55,7 +58,7 @@ export default function BookingDetailPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="flex items-center gap-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Cargando detalles de la reserva...</span>
+          <span>{t("loadingBookingDetails")}</span>
         </div>
       </div>
     );
@@ -69,13 +72,13 @@ export default function BookingDetailPage() {
           <CardContent className="text-center py-12">
             <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">
-              Reserva no encontrada
+              {t("bookingNotFound")}
             </h2>
             <p className="text-muted-foreground mb-4">
-              No pudimos encontrar esta reserva o no tienes acceso a ella.
+              {t("bookingNotFoundDescription")}
             </p>
             <Button asChild>
-              <Link href="/dashboard">Volver a mis reservas</Link>
+              <Link href="/dashboard">{t("backToBookings")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -93,7 +96,7 @@ export default function BookingDetailPage() {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-6">
         <Button variant="ghost" asChild>
-          <Link href="/dashboard">← Volver a mis reservas</Link>
+          <Link href="/dashboard">← {t("backToBookings")}</Link>
         </Button>
       </div>
 
@@ -104,14 +107,14 @@ export default function BookingDetailPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Detalles de la Experiencia</CardTitle>
+                <CardTitle>{t("experienceDetails")}</CardTitle>
                 {booking.paid ? (
                   <Badge className="bg-green-600">
                     <CheckCircle className="w-4 h-4 mr-1" />
-                    Confirmada
+                    {t("confirmed")}
                   </Badge>
                 ) : (
-                  <Badge variant="secondary">Pendiente de pago</Badge>
+                  <Badge variant="secondary">{t("pendingPayment")}</Badge>
                 )}
               </div>
             </CardHeader>
@@ -120,7 +123,7 @@ export default function BookingDetailPage() {
                 <div className="relative h-64 rounded-lg overflow-hidden">
                   <Image
                     src={booking.experience.imageUrl}
-                    alt={booking.experience.titleEs || "Experiencia"}
+                    alt={(locale === "es" ? booking.experience.titleEs : booking.experience.titleEn) || "Experience"}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 66vw"
@@ -131,10 +134,10 @@ export default function BookingDetailPage() {
 
               <div>
                 <h3 className="text-xl font-semibold">
-                  {booking.experience?.titleEs}
+                  {locale === "es" ? booking.experience?.titleEs : booking.experience?.titleEn}
                 </h3>
                 <p className="text-muted-foreground mt-2">
-                  {booking.experience?.descEs}
+                  {locale === "es" ? booking.experience?.descEs : booking.experience?.descEn}
                 </p>
               </div>
 
@@ -147,8 +150,8 @@ export default function BookingDetailPage() {
                   <span>
                     {format(
                       new Date(booking.selectedDate),
-                      "EEEE, d 'de' MMMM 'de' yyyy",
-                      { locale: es },
+                      locale === "es" ? "EEEE, d 'de' MMMM 'de' yyyy" : "EEEE, MMMM d, yyyy",
+                      { locale: locale === "es" ? es : enUS },
                     )}
                   </span>
                 </div>
@@ -168,7 +171,7 @@ export default function BookingDetailPage() {
                   />
                   <span>
                     {booking.guestCount}{" "}
-                    {booking.guestCount === 1 ? "persona" : "personas"}
+                    {booking.guestCount === 1 ? t("person") : t("people")}
                   </span>
                 </div>
 
@@ -188,40 +191,40 @@ export default function BookingDetailPage() {
           {/* Booking Information Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Información de la Reserva</CardTitle>
-              <CardDescription>Reserva ID: {booking._id}</CardDescription>
+              <CardTitle>{t("bookingInformation")}</CardTitle>
+              <CardDescription>{t("bookingId")}: {booking._id}</CardDescription>
             </CardHeader>
             <CardContent>
               <dl className="space-y-4">
                 <div>
                   <dt className="text-sm font-medium text-muted-foreground">
-                    Fecha de reserva
+                    {t("bookingDate")}
                   </dt>
                   <dd className="text-sm">
                     {format(
                       new Date(booking.createdAt),
-                      "d 'de' MMMM 'de' yyyy, HH:mm",
-                      { locale: es },
+                      locale === "es" ? "d 'de' MMMM 'de' yyyy, HH:mm" : "MMMM d, yyyy, h:mm a",
+                      { locale: locale === "es" ? es : enUS },
                     )}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-muted-foreground">
-                    Estado del pago
+                    {t("paymentStatus")}
                   </dt>
                   <dd className="text-sm">
                     {booking.paid ? (
-                      <span className="text-green-600 font-medium">Pagado</span>
+                      <span className="text-green-600 font-medium">{t("paid")}</span>
                     ) : (
                       <span className="text-yellow-600 font-medium">
-                        Pendiente
+                        {t("pending")}
                       </span>
                     )}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-muted-foreground">
-                    Método de pago
+                    {t("paymentMethod")}
                   </dt>
                   <dd className="text-sm">Stripe</dd>
                 </div>
@@ -235,13 +238,13 @@ export default function BookingDetailPage() {
           {/* Host Information Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Información del Anfitrión</CardTitle>
+              <CardTitle>{t("hostInformation")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <h4 className="font-medium">{booking.host?.name}</h4>
                 <p className="text-sm text-muted-foreground">
-                  Anfitrión verificado
+                  {t("verifiedHost")}
                 </p>
               </div>
 
@@ -250,7 +253,7 @@ export default function BookingDetailPage() {
               {isUpcoming && booking.host?.email && (
                 <div className="space-y-3">
                   <p className="text-sm text-muted-foreground">
-                    ¿Necesitas contactar a tu anfitrión?
+                    {t("needToContactHost")}
                   </p>
                   <Button className="w-full" variant="outline" asChild>
                     <a
@@ -258,7 +261,7 @@ export default function BookingDetailPage() {
                       aria-label={`Enviar email a ${booking.host.name}`}
                     >
                       <Mail className="w-4 h-4 mr-2" aria-hidden="true" />
-                      Enviar Email
+                      {t("sendEmail")}
                     </a>
                   </Button>
                 </div>
@@ -269,25 +272,24 @@ export default function BookingDetailPage() {
           {/* Actions Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Acciones</CardTitle>
+              <CardTitle>{t("actions")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {!isUpcoming && booking.experience && (
                 <Button className="w-full" asChild>
                   <Link href={`/experiences/${booking.experience._id}`}>
-                    Reservar de Nuevo
+                    {t("bookAgain")}
                   </Link>
                 </Button>
               )}
 
               <Button className="w-full" variant="outline" asChild>
-                <Link href="/dashboard">Volver a Mis Reservas</Link>
+                <Link href="/dashboard">{t("backToMyBookings")}</Link>
               </Button>
 
               {isUpcoming && (
                 <p className="text-xs text-muted-foreground text-center">
-                  Para cancelaciones, por favor contacta al anfitrión
-                  directamente.
+                  {t("cancellationNote")}
                 </p>
               )}
             </CardContent>

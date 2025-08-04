@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import { useTranslations, useLocale } from "next-intl";
 
 const testExperiences = [
   {
@@ -97,6 +98,8 @@ const testExperiences = [
 
 export default function TestDataPage() {
   const router = useRouter();
+  const t = useTranslations("adminTestData");
+  const locale = useLocale();
   const [loading, setLoading] = useState(false);
   const createExperience = useMutation(api.experiences.createExperience);
   const experiences = useQuery(api.experiences.getAll);
@@ -111,13 +114,13 @@ export default function TestDataPage() {
         });
       }
       toast({
-        title: "Test data created",
-        description: `Created ${testExperiences.length} test experiences`,
+        title: t("toastSuccess"),
+        description: t("toastSuccessDesc", { count: testExperiences.length }),
       });
       router.push("/experiences");
     } catch (error) {
       toast({
-        title: "Error creating test data",
+        title: t("toastError"),
         description: error instanceof Error ? error.message : "Unknown error",
         variant: "destructive",
       });
@@ -131,25 +134,23 @@ export default function TestDataPage() {
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Test Data</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t("title")}</h2>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Create Test Experiences</CardTitle>
+          <CardTitle>{t("createTestExperiences")}</CardTitle>
           <CardDescription>
-            This will create {testExperiences.length} sample experiences for
-            testing the platform. Currently, there are {existingCount}{" "}
-            experiences in the database.
+            {t("description", { count: testExperiences.length, existing: existingCount })}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-sm text-gris-80">
-            The following test experiences will be created:
+            {t("followingWillBeCreated")}:
             <ul className="mt-2 list-inside list-disc space-y-1">
               {testExperiences.map((exp, i) => (
                 <li key={i}>
-                  {exp.titleEs} - {exp.location} (${exp.priceUsd})
+                  {locale === "es" ? exp.titleEs : exp.titleEn} - {exp.location} (${exp.priceUsd})
                 </li>
               ))}
             </ul>
@@ -159,7 +160,7 @@ export default function TestDataPage() {
             disabled={loading}
             className="bg-turquesa hover:bg-turquesa/90"
           >
-            {loading ? "Creating..." : "Create Test Experiences"}
+            {loading ? t("creating") : t("createButton")}
           </Button>
         </CardContent>
       </Card>

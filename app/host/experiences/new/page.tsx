@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Card,
   CardContent,
@@ -41,6 +42,7 @@ const destinations = [
 
 export default function NewExperiencePage() {
   const router = useRouter();
+  const t = useTranslations("createExperience");
   const createExperience = useMutation(api.experiences.createExperience);
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const getImageUrl = useMutation(api.files.getUrl);
@@ -78,7 +80,7 @@ export default function NewExperiencePage() {
         if (uploadedUrl) {
           imageUrl = uploadedUrl;
         } else {
-          throw new Error("Failed to upload image");
+          throw new Error(t("uploadFailed"));
         }
       }
 
@@ -134,16 +136,16 @@ export default function NewExperiencePage() {
         originalLanguage: primaryLanguage,
       });
 
-      toast.success("Experience created successfully", {
-        description: `Your experience has been saved as a ${formData.status}.`,
+      toast.success(t("experienceCreated"), {
+        description: t("redirecting"),
       });
 
       router.push("/host/experiences");
     } catch (error) {
       console.error("Error creating experience:", error);
-      toast.error("Error creating experience", {
+      toast.error(t("errorCreating"), {
         description:
-          error instanceof Error ? error.message : "Please try again later.",
+          error instanceof Error ? error.message : t("tryAgain"),
       });
     } finally {
       setIsSubmitting(false);
@@ -230,10 +232,9 @@ export default function NewExperiencePage() {
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Create New Experience</h1>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
         <p className="text-gray-600 mt-2">
-          Share your unique cultural experience with travelers from around the
-          world.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -241,15 +242,15 @@ export default function NewExperiencePage() {
         {/* Basic Information Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle>{t("basicInfo")}</CardTitle>
             <CardDescription>
-              Provide the essential details about your experience.
+              {t("basicInfoDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Language Selector */}
             <div className="space-y-2">
-              <Label htmlFor="language">Primary Language</Label>
+              <Label htmlFor="language">{t("primaryLanguage")}</Label>
               <Select
                 value={primaryLanguage}
                 onValueChange={(value) =>
@@ -265,8 +266,7 @@ export default function NewExperiencePage() {
                 </SelectContent>
               </Select>
               <p className="text-sm text-muted-foreground">
-                Write in your preferred language. We&apos;ll automatically
-                translate to the other language.
+                {t("writeInPreferredLanguage")}
               </p>
             </div>
 
@@ -274,14 +274,14 @@ export default function NewExperiencePage() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="title">
-                  Title {primaryLanguage === "EN" ? "(English)" : "(Español)"}
+                  {primaryLanguage === "EN" ? t("titleEnglish") : t("titleSpanish")}
                 </Label>
                 <Input
                   id="title"
                   placeholder={
                     primaryLanguage === "EN"
-                      ? "e.g., Traditional Cooking Class in Antigua"
-                      : "e.g., Clase de Cocina Tradicional en Antigua"
+                      ? t("titleEnglishPlaceholder")
+                      : t("titleSpanishPlaceholder")
                   }
                   value={
                     primaryLanguage === "EN"
@@ -303,10 +303,9 @@ export default function NewExperiencePage() {
                 (primaryLanguage === "ES" && formData.titleEn)) && (
                 <div className="space-y-2">
                   <Label htmlFor="titleTranslated">
-                    Title{" "}
                     {primaryLanguage === "EN"
-                      ? "(Spanish - Auto-translated)"
-                      : "(English - Auto-translated)"}
+                      ? t("titleSpanishAuto")
+                      : t("titleEnglishAuto")}
                   </Label>
                   <Input
                     id="titleTranslated"
@@ -331,15 +330,14 @@ export default function NewExperiencePage() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="description">
-                  Description{" "}
-                  {primaryLanguage === "EN" ? "(English)" : "(Español)"}
+                  {primaryLanguage === "EN" ? t("descriptionEnglish") : t("descriptionSpanish")}
                 </Label>
                 <Textarea
                   id="description"
                   placeholder={
                     primaryLanguage === "EN"
-                      ? "Describe your experience in detail..."
-                      : "Describe tu experiencia en detalle..."
+                      ? t("descriptionEnglishPlaceholder")
+                      : t("descriptionSpanishPlaceholder")
                   }
                   rows={4}
                   value={
@@ -360,10 +358,9 @@ export default function NewExperiencePage() {
                 (primaryLanguage === "ES" && formData.descEn)) && (
                 <div className="space-y-2">
                   <Label htmlFor="descriptionTranslated">
-                    Description{" "}
                     {primaryLanguage === "EN"
-                      ? "(Spanish - Auto-translated)"
-                      : "(English - Auto-translated)"}
+                      ? t("descriptionSpanishAuto")
+                      : t("descriptionEnglishAuto")}
                   </Label>
                   <Textarea
                     id="descriptionTranslated"
@@ -386,14 +383,14 @@ export default function NewExperiencePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="location">{t("location")}</Label>
               <Select
                 value={formData.location}
                 onValueChange={(value) => handleInputChange("location", value)}
                 required
               >
                 <SelectTrigger id="location">
-                  <SelectValue placeholder="Select location" />
+                  <SelectValue placeholder={t("selectLocation")} />
                 </SelectTrigger>
                 <SelectContent>
                   {destinations.map((dest) => (
@@ -407,7 +404,7 @@ export default function NewExperiencePage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="maxGuests">Maximum Guests</Label>
+                <Label htmlFor="maxGuests">{t("maxGuests")}</Label>
                 <Input
                   id="maxGuests"
                   type="number"
@@ -425,7 +422,7 @@ export default function NewExperiencePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="priceUsd">Price per Person (USD)</Label>
+                <Label htmlFor="priceUsd">{t("pricePerPerson")}</Label>
                 <Input
                   id="priceUsd"
                   type="number"
@@ -444,7 +441,7 @@ export default function NewExperiencePage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Experience Image</Label>
+              <Label>{t("experienceImage")}</Label>
               <div className="space-y-4">
                 {imagePreview || formData.imageUrl ? (
                   <div className="relative">
@@ -465,7 +462,7 @@ export default function NewExperiencePage() {
                         setFormData((prev) => ({ ...prev, imageUrl: "" }));
                       }}
                     >
-                      Remove
+                      {t("remove")}
                     </Button>
                   </div>
                 ) : (
@@ -478,7 +475,7 @@ export default function NewExperiencePage() {
                           className="cursor-pointer"
                         >
                           <span className="mt-2 block text-sm font-medium text-gray-900">
-                            Click to upload or drag and drop
+                            {t("clickToUpload")}
                           </span>
                           <input
                             id="image-upload"
@@ -492,7 +489,7 @@ export default function NewExperiencePage() {
                         </label>
                       </div>
                       <p className="text-xs text-gray-500 mt-2">
-                        PNG, JPG, GIF up to 5MB
+                        {t("imageUploadHint")}
                       </p>
                     </div>
                   </div>
@@ -502,7 +499,7 @@ export default function NewExperiencePage() {
                   <div className="flex-1">
                     <Input
                       type="url"
-                      placeholder="Or paste an image URL"
+                      placeholder={t("orPasteUrl")}
                       value={formData.imageUrl}
                       onChange={(e) => {
                         handleInputChange("imageUrl", e.target.value);
@@ -522,7 +519,7 @@ export default function NewExperiencePage() {
                       >
                         <span>
                           <Upload className="h-4 w-4 mr-2" />
-                          {isUploading ? "Uploading..." : "Choose File"}
+                          {isUploading ? t("uploading") : t("chooseFile")}
                         </span>
                       </Button>
                     </label>
@@ -540,7 +537,7 @@ export default function NewExperiencePage() {
             variant="outline"
             onClick={() => router.push("/host/experiences")}
           >
-            Cancel
+            {t("cancel")}
           </Button>
 
           <Button
@@ -549,10 +546,10 @@ export default function NewExperiencePage() {
             className="md:w-auto w-full"
           >
             {isTranslating
-              ? "Translating..."
+              ? t("translating")
               : isSubmitting
-                ? "Creating..."
-                : "Save as Draft"}
+                ? t("creating")
+                : t("saveAsDraft")}
           </Button>
 
           <Button
@@ -566,10 +563,10 @@ export default function NewExperiencePage() {
             className="bg-turquesa hover:bg-turquesa/90 md:w-auto w-full"
           >
             {isTranslating
-              ? "Translating..."
+              ? t("translating")
               : isSubmitting
-                ? "Publishing..."
-                : "Save & Publish"}
+                ? t("publishing")
+                : t("saveAndPublish")}
           </Button>
         </div>
       </form>

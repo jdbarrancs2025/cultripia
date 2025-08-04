@@ -2,6 +2,7 @@
 
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import {
   Card,
   CardContent,
@@ -45,6 +46,7 @@ export default function EditExperiencePage() {
   const router = useRouter();
   const params = useParams();
   const { user } = useUser();
+  const t = useTranslations("editExperience");
   const experienceId = params.id as Id<"experiences">;
 
   const experience = useQuery(api.experiences.getExperience, {
@@ -121,16 +123,14 @@ export default function EditExperiencePage() {
         imageUrl,
       });
 
-      toast.success("Experience updated successfully", {
-        description: "Your changes have been saved.",
-      });
+      toast.success(t("updateSuccess"));
 
       router.push("/host/experiences");
     } catch (error) {
       console.error("Error updating experience:", error);
-      toast.error("Error updating experience", {
+      toast.error(t("updateError"), {
         description:
-          error instanceof Error ? error.message : "Please try again later.",
+          error instanceof Error ? error.message : "",
       });
     } finally {
       setIsSubmitting(false);
@@ -238,16 +238,16 @@ export default function EditExperiencePage() {
           <CardContent className="py-16">
             <div className="text-center">
               <h2 className="text-xl font-semibold text-red-900">
-                Access Denied
+                {t("accessDenied")}
               </h2>
               <p className="mt-2 text-red-700">
-                You don&apos;t have permission to edit this experience.
+                {t("noPermission")}
               </p>
               <Button
                 onClick={() => router.push("/host/experiences")}
                 className="mt-4"
               >
-                Back to My Experiences
+                {t("backToExperiences")}
               </Button>
             </div>
           </CardContent>
@@ -259,9 +259,9 @@ export default function EditExperiencePage() {
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Edit Experience</h1>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
         <p className="text-gray-600 mt-2">
-          Update your experience details and manage availability.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -269,15 +269,15 @@ export default function EditExperiencePage() {
         {/* Basic Information Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle>{t("basicInfo")}</CardTitle>
             <CardDescription>
-              Update the essential details about your experience.
+              {t("basicInfoDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="titleEn">Title (English)</Label>
+                <Label htmlFor="titleEn">{t("titleEnglish")}</Label>
                 <Input
                   id="titleEn"
                   placeholder="e.g., Traditional Cooking Class in Antigua"
@@ -288,7 +288,7 @@ export default function EditExperiencePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="titleEs">Title (Spanish)</Label>
+                <Label htmlFor="titleEs">{t("titleSpanish")}</Label>
                 <Input
                   id="titleEs"
                   placeholder="e.g., Clase de Cocina Tradicional en Antigua"
@@ -301,7 +301,7 @@ export default function EditExperiencePage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="descEn">Description (English)</Label>
+                <Label htmlFor="descEn">{t("descriptionEnglish")}</Label>
                 <Textarea
                   id="descEn"
                   placeholder="Describe your experience in detail..."
@@ -313,7 +313,7 @@ export default function EditExperiencePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="descEs">Description (Spanish)</Label>
+                <Label htmlFor="descEs">{t("descriptionSpanish")}</Label>
                 <Textarea
                   id="descEs"
                   placeholder="Describe tu experiencia en detalle..."
@@ -347,7 +347,7 @@ export default function EditExperiencePage() {
 
             <div className="grid gap-6 md:grid-cols-3">
               <div className="space-y-2">
-                <Label htmlFor="maxGuests">Maximum Guests</Label>
+                <Label htmlFor="maxGuests">{t("maxGuests")}</Label>
                 <Input
                   id="maxGuests"
                   type="number"
@@ -365,7 +365,7 @@ export default function EditExperiencePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="priceUsd">Price per Person (USD)</Label>
+                <Label htmlFor="priceUsd">{t("pricePerPerson")}</Label>
                 <Input
                   id="priceUsd"
                   type="number"
@@ -383,7 +383,7 @@ export default function EditExperiencePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
+                <Label htmlFor="status">{t("status")}</Label>
                 <Select
                   value={formData.status}
                   onValueChange={(value: "draft" | "active" | "inactive") =>
@@ -394,16 +394,16 @@ export default function EditExperiencePage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="draft">{t("draft")}</SelectItem>
+                    <SelectItem value="active">{t("active")}</SelectItem>
+                    <SelectItem value="inactive">{t("inactive")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Experience Image</Label>
+              <Label>{t("experienceImage")}</Label>
               <div className="space-y-4">
                 {imagePreview || formData.imageUrl ? (
                   <div className="relative">
@@ -506,7 +506,7 @@ export default function EditExperiencePage() {
               router.push(`/host/experiences/${experienceId}/availability`)
             }
           >
-            Manage Availability
+            {t("manageAvailability")}
           </Button>
 
           <div className="flex gap-4">
@@ -515,7 +515,7 @@ export default function EditExperiencePage() {
               variant="outline"
               onClick={() => router.push("/host/experiences")}
             >
-              Cancel
+              {t("cancel")}
             </Button>
 
             <Button
@@ -523,7 +523,7 @@ export default function EditExperiencePage() {
               disabled={isSubmitting || isUploading}
               className="bg-turquesa hover:bg-turquesa/90 md:w-auto w-full"
             >
-              {isSubmitting ? "Saving..." : "Save Changes"}
+              {isSubmitting ? t("saving") : t("saveChanges")}
             </Button>
           </div>
         </div>

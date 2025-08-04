@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import { redirect } from "next/navigation";
 import {
   Users,
@@ -28,10 +28,13 @@ import {
 } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function AdminDashboard() {
   const { user } = useUser();
   const { toast } = useToast();
+  const t = useTranslations("adminDashboard");
+  const locale = useLocale();
   const [activeTab, setActiveTab] = useState("overview");
 
   // Get current user from Convex
@@ -80,13 +83,13 @@ export default function AdminDashboard() {
       });
 
       toast({
-        title: "Aplicación aprobada",
-        description: "El usuario ahora es un anfitrión.",
+        title: t("toast.applicationApproved"),
+        description: t("toast.applicationApprovedDesc"),
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "No se pudo aprobar la aplicación.",
+        title: t("toast.error"),
+        description: t("toast.approveError"),
         variant: "destructive",
       });
     }
@@ -102,13 +105,13 @@ export default function AdminDashboard() {
       });
 
       toast({
-        title: "Aplicación rechazada",
-        description: "La aplicación ha sido rechazada.",
+        title: t("toast.applicationRejected"),
+        description: t("toast.applicationRejectedDesc"),
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "No se pudo rechazar la aplicación.",
+        title: t("toast.error"),
+        description: t("toast.rejectError"),
         variant: "destructive",
       });
     }
@@ -143,9 +146,9 @@ export default function AdminDashboard() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Panel de Administración</h1>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
         <p className="text-muted-foreground mt-2">
-          Gestiona la plataforma Cultripia
+          {t("subtitle")}
         </p>
       </div>
 
@@ -155,9 +158,9 @@ export default function AdminDashboard() {
         className="space-y-6"
       >
         <TabsList className="grid w-full max-w-md grid-cols-3">
-          <TabsTrigger value="overview">Resumen</TabsTrigger>
-          <TabsTrigger value="applications">Aplicaciones</TabsTrigger>
-          <TabsTrigger value="users">Usuarios</TabsTrigger>
+          <TabsTrigger value="overview">{t("tabs.overview")}</TabsTrigger>
+          <TabsTrigger value="applications">{t("tabs.applications")}</TabsTrigger>
+          <TabsTrigger value="users">{t("tabs.users")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -166,14 +169,14 @@ export default function AdminDashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Usuarios Totales
+                  {t("metrics.totalUsers")}
                 </CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{totalUsers}</div>
                 <p className="text-xs text-muted-foreground">
-                  {totalHosts} anfitriones
+                  {t("metrics.hosts", { count: totalHosts })}
                 </p>
               </CardContent>
             </Card>
@@ -181,14 +184,14 @@ export default function AdminDashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Experiencias
+                  {t("metrics.experiences")}
                 </CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{totalExperiences}</div>
                 <p className="text-xs text-muted-foreground">
-                  {activeExperiences} activas
+                  {t("metrics.active", { count: activeExperiences })}
                 </p>
               </CardContent>
             </Card>
@@ -196,14 +199,14 @@ export default function AdminDashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Reservas Totales
+                  {t("metrics.totalBookings")}
                 </CardTitle>
                 <Calendar className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{totalBookings}</div>
                 <p className="text-xs text-muted-foreground">
-                  Todas las reservas
+                  {t("metrics.allBookings")}
                 </p>
               </CardContent>
             </Card>
@@ -211,14 +214,14 @@ export default function AdminDashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Ingresos Totales
+                  {t("metrics.totalRevenue")}
                 </CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">${totalRevenue} USD</div>
                 <p className="text-xs text-muted-foreground">
-                  Comisión de plataforma
+                  {t("metrics.platformCommission")}
                 </p>
               </CardContent>
             </Card>
@@ -230,19 +233,18 @@ export default function AdminDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="h-5 w-5 text-yellow-600" />
-                  Aplicaciones Pendientes
+                  {t("pendingApplications.title")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm">
-                  Tienes {pendingApplicationsCount} aplicaciones de anfitrión
-                  pendientes de revisión.
+                  {t("pendingApplications.message", { count: pendingApplicationsCount })}
                 </p>
                 <Button
                   className="mt-4"
                   onClick={() => setActiveTab("applications")}
                 >
-                  Ver Aplicaciones
+                  {t("pendingApplications.viewApplications")}
                 </Button>
               </CardContent>
             </Card>
@@ -252,9 +254,9 @@ export default function AdminDashboard() {
         <TabsContent value="applications" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Aplicaciones de Anfitrión</CardTitle>
+              <CardTitle>{t("hostApplications.title")}</CardTitle>
               <CardDescription>
-                Revisa y aprueba las aplicaciones para convertirse en anfitrión
+                {t("hostApplications.subtitle")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -283,27 +285,27 @@ export default function AdminDashboard() {
                                   : "destructive"
                             }
                           >
-                            {application.status === "pending" && "Pendiente"}
-                            {application.status === "approved" && "Aprobado"}
-                            {application.status === "rejected" && "Rechazado"}
+                            {application.status === "pending" && t("hostApplications.pending")}
+                            {application.status === "approved" && t("hostApplications.approved")}
+                            {application.status === "rejected" && t("hostApplications.rejected")}
                           </Badge>
                         </div>
                         <div className="text-sm text-muted-foreground">
                           {format(
                             new Date(application._creationTime),
                             "dd MMM yyyy",
-                            { locale: es },
+                            { locale: locale === "es" ? es : enUS },
                           )}
                         </div>
                       </div>
 
                       <div className="space-y-2 text-sm">
                         <p>
-                          <strong>Experiencia:</strong>{" "}
+                          <strong>{t("hostApplications.experience")}</strong>{" "}
                           {application.applicationData.experienceTitle}
                         </p>
                         <p>
-                          <strong>Descripción:</strong>{" "}
+                          <strong>{t("hostApplications.description")}</strong>{" "}
                           {application.applicationData.description}
                         </p>
                       </div>
@@ -318,7 +320,7 @@ export default function AdminDashboard() {
                             className="flex items-center gap-1"
                           >
                             <CheckCircle className="h-4 w-4" />
-                            Aprobar
+                            {t("hostApplications.approve")}
                           </Button>
                           <Button
                             size="sm"
@@ -329,7 +331,7 @@ export default function AdminDashboard() {
                             className="flex items-center gap-1"
                           >
                             <XCircle className="h-4 w-4" />
-                            Rechazar
+                            {t("hostApplications.reject")}
                           </Button>
                         </div>
                       )}
@@ -338,7 +340,7 @@ export default function AdminDashboard() {
                 </div>
               ) : (
                 <p className="text-muted-foreground text-center py-8">
-                  No hay aplicaciones en este momento
+                  {t("hostApplications.noApplications")}
                 </p>
               )}
             </CardContent>
@@ -348,9 +350,9 @@ export default function AdminDashboard() {
         <TabsContent value="users" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Usuarios Registrados</CardTitle>
+              <CardTitle>{t("users.title")}</CardTitle>
               <CardDescription>
-                Lista de todos los usuarios en la plataforma
+                {t("users.subtitle")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -376,16 +378,16 @@ export default function AdminDashboard() {
                               : "outline"
                         }
                       >
-                        {user.role === "admin" && "Administrador"}
-                        {user.role === "host" && "Anfitrión"}
-                        {user.role === "traveler" && "Viajero"}
+                        {user.role === "admin" && t("users.admin")}
+                        {user.role === "host" && t("users.host")}
+                        {user.role === "traveler" && t("users.traveler")}
                       </Badge>
                     </div>
                   ))}
                 </div>
               ) : (
                 <p className="text-muted-foreground text-center py-8">
-                  No hay usuarios registrados
+                  {t("users.noUsers")}
                 </p>
               )}
             </CardContent>

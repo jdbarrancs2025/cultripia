@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useLocale } from "next-intl";
 import { Doc } from "@/convex/_generated/dataModel";
 import { ExperienceHero } from "./ExperienceHero";
 import { ExperienceInfo } from "./ExperienceInfo";
@@ -17,17 +18,20 @@ interface ExperienceDetailContentProps {
 export function ExperienceDetailContent({
   experience,
 }: ExperienceDetailContentProps) {
+  const locale = useLocale();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [guestCount, setGuestCount] = useState(1);
 
   const totalAmount = guestCount * experience.priceUsd;
+  const title = locale === "es" ? experience.titleEs : experience.titleEn;
+  const description = locale === "es" ? experience.descEs : experience.descEn;
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <ExperienceHero
         imageUrl={experience.imageUrl}
-        title={experience.titleEs}
+        title={title}
       />
 
       {/* Content Section */}
@@ -36,8 +40,8 @@ export function ExperienceDetailContent({
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             <ExperienceInfo
-              title={experience.titleEs}
-              description={experience.descEs}
+              title={title}
+              description={description}
               location={experience.location}
               maxGuests={experience.maxGuests}
             />
@@ -57,7 +61,7 @@ export function ExperienceDetailContent({
                 guestCount={guestCount}
                 onGuestCountChange={setGuestCount}
                 totalAmount={totalAmount}
-                experienceTitle={experience.titleEs}
+                experienceTitle={title}
                 hostName={experience.host?.name || "Host"}
               />
             </div>

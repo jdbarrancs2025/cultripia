@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Card,
   CardContent,
@@ -27,6 +28,8 @@ import Link from "next/link";
 export default function HostExperiencesPage() {
   const router = useRouter();
   const { user } = useUser();
+  const t = useTranslations("hostExperiences");
+  const locale = useLocale();
 
   // Get the user from Convex
   const convexUser = useQuery(
@@ -49,7 +52,7 @@ export default function HostExperiencesPage() {
       <div className="container mx-auto py-8 px-4">
         <Card>
           <CardContent className="py-8">
-            <p className="text-center text-gray-500">Loading...</p>
+            <p className="text-center text-gray-500">{t("loading")}</p>
           </CardContent>
         </Card>
       </div>
@@ -62,11 +65,11 @@ export default function HostExperiencesPage() {
         <Card>
           <CardContent className="py-8">
             <p className="text-center text-gray-500">
-              You need to be approved as a host to access this page.
+              {t("notApprovedMessage")}
             </p>
             <div className="text-center mt-4">
               <Button onClick={() => router.push("/become-a-host")}>
-                Apply to Become a Host
+                {t("applyToBeHost")}
               </Button>
             </div>
           </CardContent>
@@ -79,43 +82,43 @@ export default function HostExperiencesPage() {
     <div className="container mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold">My Experiences</h1>
+          <h1 className="text-3xl font-bold">{t("myExperiences")}</h1>
           <p className="text-gray-600 mt-2">
-            Manage your cultural experiences and availability.
+            {t("manageExperiences")}
           </p>
         </div>
 
         <Button onClick={() => router.push("/host/experiences/new")}>
           <Plus className="h-4 w-4 mr-2" />
-          Create New Experience
+          {t("createNewExperience")}
         </Button>
       </div>
 
       {experiences && experiences.length > 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>Your Experiences</CardTitle>
+            <CardTitle>{t("yourExperiences")}</CardTitle>
             <CardDescription>
-              Click on an experience to edit details or manage availability.
+              {t("yourExperiencesDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Max Guests</TableHead>
-                  <TableHead>Price (USD)</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t("title")}</TableHead>
+                  <TableHead>{t("location")}</TableHead>
+                  <TableHead>{t("maxGuests")}</TableHead>
+                  <TableHead>{t("priceUsd")}</TableHead>
+                  <TableHead>{t("status")}</TableHead>
+                  <TableHead>{t("actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {experiences.map((experience) => (
                   <TableRow key={experience._id}>
                     <TableCell className="font-medium">
-                      {experience.titleEn}
+                      {locale === "es" ? experience.titleEs : experience.titleEn}
                     </TableCell>
                     <TableCell>{experience.location}</TableCell>
                     <TableCell>{experience.maxGuests}</TableCell>
@@ -130,7 +133,7 @@ export default function HostExperiencesPage() {
                               : "outline"
                         }
                       >
-                        {experience.status}
+                        {t(experience.status)}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -169,14 +172,13 @@ export default function HostExperiencesPage() {
         <Card>
           <CardContent className="py-16">
             <div className="text-center">
-              <h3 className="text-lg font-semibold mb-2">No experiences yet</h3>
+              <h3 className="text-lg font-semibold mb-2">{t("noExperiencesYet")}</h3>
               <p className="text-gray-500 mb-6">
-                Create your first experience to start sharing your culture with
-                travelers.
+                {t("createFirstExperience")}
               </p>
               <Button onClick={() => router.push("/host/experiences/new")}>
                 <Plus className="h-4 w-4 mr-2" />
-                Create Your First Experience
+                {t("createYourFirstExperience")}
               </Button>
             </div>
           </CardContent>
