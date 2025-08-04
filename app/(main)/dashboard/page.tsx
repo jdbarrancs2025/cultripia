@@ -24,10 +24,22 @@ import { redirect } from "next/navigation";
 import { BookingWithDetails } from "@/types/booking";
 
 export default function TravelerDashboard() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const t = useTranslations("dashboard");
   const locale = useLocale();
   const [selectedTab, setSelectedTab] = useState("upcoming");
+
+  // Show loading while Clerk is loading
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   // Redirect if not authenticated
   if (!user) {
@@ -90,14 +102,15 @@ export default function TravelerDashboard() {
     );
   }
 
-  return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">{t("title")}</h1>
-        <p className="text-muted-foreground mt-2">
-          {t("subtitle")}
-        </p>
-      </div>
+  try {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold">{t("title")}</h1>
+          <p className="text-muted-foreground mt-2">
+            {t("subtitle")}
+          </p>
+        </div>
 
       <Tabs
         value={selectedTab}
@@ -164,7 +177,23 @@ export default function TravelerDashboard() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+    );
+  } catch (error) {
+    console.error("Dashboard render error:", error);
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Error loading dashboard</h1>
+          <p className="text-muted-foreground mb-4">
+            Please refresh the page or contact support if the issue persists.
+          </p>
+          <p className="text-sm text-red-600">
+            {error instanceof Error ? error.message : "Unknown error"}
+          </p>
+        </div>
+      </div>
+    );
+  }
 }
 
 // Booking Card Component
