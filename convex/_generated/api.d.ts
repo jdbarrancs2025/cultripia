@@ -19,6 +19,7 @@ import type * as experiences from "../experiences.js";
 import type * as files from "../files.js";
 import type * as hostApplications from "../hostApplications.js";
 import type * as hosts from "../hosts.js";
+import type * as migrations from "../migrations.js";
 import type * as stripe from "../stripe.js";
 import type * as translator from "../translator.js";
 import type * as users from "../users.js";
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   files: typeof files;
   hostApplications: typeof hostApplications;
   hosts: typeof hosts;
+  migrations: typeof migrations;
   stripe: typeof stripe;
   translator: typeof translator;
   users: typeof users;

@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CountrySelect } from "@/components/ui/country-select";
 import { toast } from "sonner";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -29,18 +30,6 @@ import { useAction } from "convex/react";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUser } from "@clerk/nextjs";
 
-const destinations = [
-  "Antigua Guatemala",
-  "Lago de Atitlán",
-  "Chichicastenango",
-  "Quetzaltenango",
-  "Semuc Champey",
-  "Tikal",
-  "Río Dulce",
-  "Monterrico",
-  "Cobán",
-  "Panajachel",
-];
 
 export default function EditExperiencePage() {
   const router = useRouter();
@@ -72,6 +61,7 @@ export default function EditExperiencePage() {
     descEn: "",
     descEs: "",
     location: "",
+    country: "",
     maxGuests: 1,
     priceUsd: 0,
     imageUrl: "",
@@ -82,15 +72,16 @@ export default function EditExperiencePage() {
   useEffect(() => {
     if (experience) {
       setFormData({
-        titleEn: experience.titleEn,
-        titleEs: experience.titleEs,
-        descEn: experience.descEn,
-        descEs: experience.descEs,
-        location: experience.location,
-        maxGuests: experience.maxGuests,
-        priceUsd: experience.priceUsd,
-        imageUrl: experience.imageUrl,
-        status: experience.status,
+        titleEn: experience.titleEn || "",
+        titleEs: experience.titleEs || "",
+        descEn: experience.descEn || "",
+        descEs: experience.descEs || "",
+        location: experience.location || "",
+        country: experience.country || "Guatemala", // Default to Guatemala for old data
+        maxGuests: experience.maxGuests || 1,
+        priceUsd: experience.priceUsd || 0,
+        imageUrl: experience.imageUrl || "",
+        status: experience.status || "draft", // Default to draft if undefined
       });
     }
   }, [experience]);
@@ -117,20 +108,58 @@ export default function EditExperiencePage() {
         throw new Error("Please provide an image for your experience");
       }
 
-      await updateExperience({
+      // Filter out empty values and ensure status is valid
+      const updateData: any = {
         experienceId,
-        ...formData,
         imageUrl,
+      };
+
+      // Only include non-empty string values
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== "" && value !== undefined && value !== null) {
+          updateData[key] = value;
+        }
       });
+
+      // Ensure status has a valid value
+      if (!updateData.status || updateData.status === "") {
+        updateData.status = "draft";
+      }
+
+      await updateExperience(updateData);
 
       toast.success(t("updateSuccess"));
 
       router.push("/host/experiences");
     } catch (error) {
       console.error("Error updating experience:", error);
-      toast.error(t("updateError"), {
-        description:
-          error instanceof Error ? error.message : "",
+      
+      // Provide more specific error messages
+      let errorMessage = t("updateError");
+      let errorDescription = "";
+      
+      if (error instanceof Error) {
+        if (error.message.includes("status")) {
+          errorMessage = t("statusError");
+        } else if (error.message.includes("Location")) {
+          errorMessage = t("locationError");
+        } else if (error.message.includes("Country")) {
+          errorMessage = t("countryError");
+        } else if (error.message.includes("title")) {
+          errorMessage = t("titleError");
+        } else if (error.message.includes("description")) {
+          errorMessage = t("descriptionError");
+        } else if (error.message.includes("Price")) {
+          errorMessage = t("priceError");
+        } else if (error.message.includes("guests")) {
+          errorMessage = t("guestsError");
+        } else {
+          errorDescription = error.message;
+        }
+      }
+      
+      toast.error(errorMessage, {
+        description: errorDescription,
       });
     } finally {
       setIsSubmitting(false);
@@ -325,24 +354,30 @@ export default function EditExperiencePage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Select
-                value={formData.location}
-                onValueChange={(value) => handleInputChange("location", value)}
-                required
-              >
-                <SelectTrigger id="location">
-                  <SelectValue placeholder="Select location" />
-                </SelectTrigger>
-                <SelectContent>
-                  {destinations.map((dest) => (
-                    <SelectItem key={dest} value={dest}>
-                      {dest}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="country">Country</Label>
+                <CountrySelect
+                  value={formData.country}
+                  onValueChange={(value) => handleInputChange("country", value)}
+                  placeholder="Select country"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="location">Location</Label>
+                <Input
+                  id="location"
+                  placeholder="Enter city, region, or area"
+                  value={formData.location}
+                  onChange={(e) => handleInputChange("location", e.target.value)}
+                  required
+                />
+                <p className="text-sm text-muted-foreground">
+                  Be specific: e.g., &apos;Shibuya, Tokyo&apos; or &apos;Historic Center, Oaxaca&apos;
+                </p>
+              </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
@@ -389,6 +424,7 @@ export default function EditExperiencePage() {
                   onValueChange={(value: "draft" | "active" | "inactive") =>
                     handleInputChange("status", value)
                   }
+                  required
                 >
                   <SelectTrigger id="status">
                     <SelectValue />

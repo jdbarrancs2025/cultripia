@@ -8,6 +8,7 @@ export const createExperience = mutation({
     descEn: v.string(),
     descEs: v.string(),
     location: v.string(),
+    country: v.optional(v.string()), // Country field for new multi-country support
     maxGuests: v.number(),
     priceUsd: v.number(),
     imageUrl: v.string(),
@@ -81,6 +82,7 @@ export const createExperience = mutation({
       descEn: args.descEn,
       descEs: args.descEs,
       location: args.location,
+      country: args.country || "Guatemala", // Default to Guatemala for backward compatibility
       maxGuests: args.maxGuests,
       priceUsd: args.priceUsd,
       imageUrl: args.imageUrl,
@@ -96,6 +98,7 @@ export const createExperience = mutation({
 export const getExperiences = query({
   args: {
     location: v.optional(v.string()),
+    country: v.optional(v.string()),
     status: v.optional(
       v.union(v.literal("draft"), v.literal("active"), v.literal("inactive")),
     ),
@@ -151,6 +154,7 @@ export const getAll = query({
 export const getExperiencesPaginated = query({
   args: {
     location: v.optional(v.string()),
+    country: v.optional(v.string()),
     status: v.optional(
       v.union(v.literal("draft"), v.literal("active"), v.literal("inactive")),
     ),
@@ -162,32 +166,26 @@ export const getExperiencesPaginated = query({
     const offset = (args.page - 1) * pageSize;
 
     // Build query based on filters
-    let allExperiences;
+    let allExperiences = await ctx.db.query("experiences").collect();
 
-    if (args.location && args.status) {
-      // Both filters: need to fetch all and filter manually
-      allExperiences = await ctx.db
-        .query("experiences")
-        .withIndex("by_location", (q) => q.eq("location", args.location!))
-        .collect();
-      allExperiences = allExperiences.filter(
-        (exp) => exp.status === args.status,
+    // Apply filters
+    if (args.status) {
+      allExperiences = allExperiences.filter(exp => exp.status === args.status);
+    }
+    
+    if (args.location) {
+      // Search for location in both location field and country field
+      const searchTerm = args.location.toLowerCase();
+      allExperiences = allExperiences.filter(exp => 
+        exp.location.toLowerCase().includes(searchTerm) || 
+        (exp.country && exp.country.toLowerCase().includes(searchTerm))
       );
-    } else if (args.location) {
-      // Location filter only
-      allExperiences = await ctx.db
-        .query("experiences")
-        .withIndex("by_location", (q) => q.eq("location", args.location!))
-        .collect();
-    } else if (args.status) {
-      // Status filter only
-      allExperiences = await ctx.db
-        .query("experiences")
-        .withIndex("by_status", (q) => q.eq("status", args.status!))
-        .collect();
-    } else {
-      // No filters
-      allExperiences = await ctx.db.query("experiences").collect();
+    }
+    
+    if (args.country) {
+      allExperiences = allExperiences.filter(exp => 
+        exp.country && exp.country.toLowerCase() === args.country!.toLowerCase()
+      );
     }
 
     const totalCount = allExperiences.length;
@@ -228,6 +226,7 @@ export const updateExperience = mutation({
     descEn: v.optional(v.string()),
     descEs: v.optional(v.string()),
     location: v.optional(v.string()),
+    country: v.optional(v.string()), // Country field for new multi-country support
     maxGuests: v.optional(v.number()),
     priceUsd: v.optional(v.number()),
     imageUrl: v.optional(v.string()),
@@ -286,6 +285,11 @@ export const updateExperience = mutation({
     }
     if (updateData.imageUrl !== undefined && !updateData.imageUrl.trim()) {
       throw new Error("Image URL cannot be empty");
+    }
+    if (updateData.status !== undefined) {
+      if (!updateData.status || !["draft", "active", "inactive"].includes(updateData.status)) {
+        throw new Error("Status must be one of: draft, active, inactive");
+      }
     }
 
     const updates = Object.fromEntries(

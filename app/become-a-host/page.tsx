@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CountrySelect } from "@/components/ui/country-select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
@@ -75,6 +76,7 @@ export default function BecomeAHostPage() {
     email: "",
     phone: "",
     location: "",
+    country: "",
     languagesSpoken: [] as string[],
 
     // Experience Proposal
@@ -140,6 +142,7 @@ export default function BecomeAHostPage() {
       !formData.email ||
       !formData.phone ||
       !formData.location ||
+      !formData.country ||
       formData.languagesSpoken.length === 0 ||
       !formData.experienceType ||
       !formData.experienceTitle ||
@@ -206,6 +209,7 @@ export default function BecomeAHostPage() {
         email: formData.email.trim().toLowerCase(),
         phone: formData.phone.replace(/[\s()-]/g, ""),
         location: formData.location,
+        country: formData.country,
         languagesSpoken: formData.languagesSpoken,
         experienceType: formData.experienceType,
         experienceTitle: sanitizeInput(formData.experienceTitle).substring(
@@ -343,33 +347,27 @@ export default function BecomeAHostPage() {
                 </p>
               </div>
               <div className="space-y-2">
+                <Label htmlFor="country">{t("country")} *</Label>
+                <CountrySelect
+                  value={formData.country}
+                  onValueChange={(value) => handleInputChange("country", value)}
+                  placeholder={t("selectCountry")}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="location">{t("location")} *</Label>
-                <Select
+                <Input
+                  id="location"
+                  type="text"
+                  placeholder={t("locationPlaceholder")}
                   value={formData.location}
-                  onValueChange={(value) =>
-                    handleInputChange("location", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("selectLocation")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="antigua">{t("locations.antigua")}</SelectItem>
-                    <SelectItem value="lake-atitlan">{t("locations.lakeAtitlan")}</SelectItem>
-                    <SelectItem value="chichicastenango">
-                      {t("locations.chichicastenango")}
-                    </SelectItem>
-                    <SelectItem value="tikal">{t("locations.tikal")}</SelectItem>
-                    <SelectItem value="semuc-champey">{t("locations.semucChampey")}</SelectItem>
-                    <SelectItem value="guatemala-city">
-                      {t("locations.guatemalaCity")}
-                    </SelectItem>
-                    <SelectItem value="quetzaltenango">
-                      {t("locations.quetzaltenango")}
-                    </SelectItem>
-                    <SelectItem value="livingston">{t("locations.livingston")}</SelectItem>
-                  </SelectContent>
-                </Select>
+                  onChange={(e) => handleInputChange("location", e.target.value)}
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {t("locationHint")}
+                </p>
               </div>
             </div>
 

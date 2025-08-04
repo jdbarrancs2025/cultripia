@@ -22,6 +22,7 @@ export default defineSchema({
       email: v.string(),
       phone: v.string(),
       location: v.string(),
+      country: v.optional(v.string()), // Making it optional for backward compatibility
       languages: v.array(v.string()),
       experienceType: v.string(),
       experienceTitle: v.string(),
@@ -43,6 +44,7 @@ export default defineSchema({
     descEn: v.string(),
     descEs: v.string(),
     location: v.string(),
+    country: v.optional(v.string()), // Making it optional for backward compatibility
     maxGuests: v.number(),
     priceUsd: v.number(),
     imageUrl: v.string(),

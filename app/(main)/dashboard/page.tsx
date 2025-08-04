@@ -29,27 +29,11 @@ export default function TravelerDashboard() {
   const locale = useLocale();
   const [selectedTab, setSelectedTab] = useState("upcoming");
 
-  // Show loading while Clerk is loading
-  if (!isLoaded) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="flex items-center gap-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
-  // Redirect if not authenticated
-  if (!user) {
-    redirect("/sign-in");
-  }
-
-  // Get current user from Convex
-  const currentUser = useQuery(api.users.getUserByClerkId, {
-    clerkId: user.id,
-  });
+  // Get current user from Convex (conditional on user being loaded)
+  const currentUser = useQuery(
+    api.users.getUserByClerkId,
+    isLoaded && user ? { clerkId: user.id } : "skip"
+  );
 
   // Get traveler bookings
   const bookings = useQuery(
@@ -90,6 +74,23 @@ export default function TravelerDashboard() {
 
     return { upcomingBookings: upcoming, pastBookings: past };
   }, [bookings]);
+
+  // Show loading while Clerk is loading
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect if not authenticated
+  if (!user) {
+    redirect("/sign-in");
+  }
 
   if (!currentUser) {
     return (

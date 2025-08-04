@@ -17,6 +17,7 @@ interface ExperienceCardProps {
   title: string;
   description: string;
   location: string;
+  country?: string;
   maxGuests: number;
   hostName: string;
   priceUsd: number;
@@ -28,6 +29,7 @@ export function ExperienceCard({
   title,
   description,
   location,
+  country,
   maxGuests,
   hostName,
   priceUsd,
@@ -57,7 +59,7 @@ export function ExperienceCard({
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-sm text-gris-80">
             <MapPin className="h-4 w-4" aria-hidden="true" />
-            <span>{location}</span>
+            <span>{location}{country ? `, ${country}` : ""}</span>
           </div>
 
           <div className="flex items-center gap-2 text-sm text-gris-80">

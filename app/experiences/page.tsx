@@ -6,14 +6,8 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useTranslations, useLocale } from "next-intl";
 import { ExperienceCard } from "@/components/ui/experience-card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   Pagination,
@@ -27,18 +21,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { X } from "lucide-react";
 
-const destinations = [
-  "Antigua Guatemala",
-  "Lago de Atitlán",
-  "Chichicastenango",
-  "Quetzaltenango",
-  "Semuc Champey",
-  "Tikal",
-  "Río Dulce",
-  "Monterrico",
-  "Cobán",
-  "Panajachel",
-];
 
 function ExperiencesContent() {
   const searchParams = useSearchParams();
@@ -153,22 +135,13 @@ function ExperiencesContent() {
 
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <Select
-                value={location || "all"}
-                onValueChange={handleLocationChange}
-              >
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder={t("allDestinations")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("allDestinations")}</SelectItem>
-                  {destinations.map((dest) => (
-                    <SelectItem key={dest} value={dest}>
-                      {dest}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Input
+                type="text"
+                placeholder={t("searchLocation")}
+                value={location || ""}
+                onChange={(e) => handleLocationChange(e.target.value || "all")}
+                className="w-[200px]"
+              />
 
               {hasActiveFilters && (
                 <Button
@@ -242,6 +215,7 @@ function ExperiencesContent() {
                   title={locale === "es" ? experience.titleEs : experience.titleEn}
                   description={locale === "es" ? experience.descEs : experience.descEn}
                   location={experience.location}
+                  country={experience.country}
                   maxGuests={experience.maxGuests}
                   hostName={experience.host?.name || tHome("host")}
                   priceUsd={experience.priceUsd}

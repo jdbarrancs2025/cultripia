@@ -66,6 +66,7 @@
     "notAvailable": "No disponible",
     "viewDetails": "Ver Detalles",
     "allDestinations": "Todos los destinos",
+    "searchLocation": "Buscar ubicación...",
     "clearFilters": "Limpiar filtros",
     "activeFilters": "Filtros activos:",
     "destination": "Destino",
@@ -211,6 +212,10 @@
     "phoneHelp": "Incluye el código de país (ej. +502 para Guatemala)",
     "location": "Ubicación",
     "selectLocation": "Selecciona tu ubicación",
+    "country": "País",
+    "selectCountry": "Seleccionar país",
+    "locationPlaceholder": "Ingresa ciudad, región o área",
+    "locationHint": "Sé específico: ej., 'Shibuya, Tokio' o 'Centro Histórico, Oaxaca'",
     "languagesSpoken": "Idiomas que Hablas",
     "experienceProposal": "Propuesta de Experiencia",
     "experienceProposalDesc": "Describe la experiencia que te gustaría ofrecer a los viajeros",
@@ -259,16 +264,6 @@
       "spiritual": "Experiencias Espirituales",
       "agricultural": "Experiencias Agrícolas",
       "textile": "Talleres Textiles"
-    },
-    "locations": {
-      "antigua": "Antigua",
-      "lakeAtitlan": "Lago de Atitlán",
-      "chichicastenango": "Chichicastenango",
-      "tikal": "Tikal",
-      "semucChampey": "Semuc Champey",
-      "guatemalaCity": "Ciudad de Guatemala",
-      "quetzaltenango": "Quetzaltenango",
-      "livingston": "Livingston"
     }
   },
   "hostExperiences": {
@@ -316,6 +311,10 @@
     "descriptionEnglishAuto": "Descripción (Inglés - Traducción automática)",
     "location": "Ubicación",
     "selectLocation": "Seleccionar ubicación",
+    "country": "País",
+    "selectCountry": "Seleccionar país",
+    "locationPlaceholder": "Ingresa ciudad, región o área",
+    "locationHint": "Sé específico: ej., 'Shibuya, Tokio' o 'Centro Histórico, Oaxaca'",
     "maxGuests": "Máximo de Huéspedes",
     "pricePerPerson": "Precio por Persona (USD)",
     "experienceImage": "Imagen de la Experiencia",
@@ -367,7 +366,15 @@
     "saving": "Guardando...",
     "updateSuccess": "¡Experiencia actualizada exitosamente!",
     "updateError": "Error al actualizar la experiencia",
-    "pleaseWait": "Por favor espera..."
+    "pleaseWait": "Por favor espera...",
+    "validationError": "Por favor completa todos los campos requeridos",
+    "statusError": "Por favor selecciona un estado válido (borrador, activo o inactivo)",
+    "locationError": "La ubicación no puede estar vacía",
+    "countryError": "El país es requerido",
+    "titleError": "El título es requerido en ambos idiomas",
+    "descriptionError": "La descripción es requerida en ambos idiomas",
+    "priceError": "El precio debe ser mayor a 0",
+    "guestsError": "El máximo de huéspedes debe ser al menos 1"
   },
   "footer": {
     "description": "Conectamos a viajeros conscientes con experiencias auténticas, culturales y ecológicas, mientras empodramos a comunidades locales.",

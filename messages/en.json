@@ -66,6 +66,7 @@
     "notAvailable": "Not available",
     "viewDetails": "View Details",
     "allDestinations": "All destinations",
+    "searchLocation": "Search location...",
     "clearFilters": "Clear filters",
     "activeFilters": "Active filters:",
     "destination": "Destination",
@@ -259,16 +260,6 @@
       "spiritual": "Spiritual Experiences",
       "agricultural": "Agricultural Experiences",
       "textile": "Textile Workshops"
-    },
-    "locations": {
-      "antigua": "Antigua",
-      "lakeAtitlan": "Lake Atitlán",
-      "chichicastenango": "Chichicastenango",
-      "tikal": "Tikal",
-      "semucChampey": "Semuc Champey",
-      "guatemalaCity": "Guatemala City",
-      "quetzaltenango": "Quetzaltenango",
-      "livingston": "Livingston"
     }
   },
   "hostExperiences": {
@@ -316,6 +307,10 @@
     "descriptionEnglishAuto": "Description (English - Auto-translated)",
     "location": "Location",
     "selectLocation": "Select location",
+    "country": "Country",
+    "selectCountry": "Select country",
+    "locationPlaceholder": "Enter city, region, or area",
+    "locationHint": "Be specific: e.g., 'Shibuya, Tokyo' or 'Historic Center, Oaxaca'",
     "maxGuests": "Maximum Guests",
     "pricePerPerson": "Price per Person (USD)",
     "experienceImage": "Experience Image",
@@ -367,7 +362,15 @@
     "saving": "Saving...",
     "updateSuccess": "Experience updated successfully!",
     "updateError": "Error updating experience",
-    "pleaseWait": "Please wait..."
+    "pleaseWait": "Please wait...",
+    "validationError": "Please fill in all required fields",
+    "statusError": "Please select a valid status (draft, active, or inactive)",
+    "locationError": "Location cannot be empty",
+    "countryError": "Country is required",
+    "titleError": "Title is required in both languages",
+    "descriptionError": "Description is required in both languages",
+    "priceError": "Price must be greater than 0",
+    "guestsError": "Maximum guests must be at least 1"
   },
   "footer": {
     "description": "We connect conscious travelers with authentic cultural and ecological experiences while empowering local communities.",

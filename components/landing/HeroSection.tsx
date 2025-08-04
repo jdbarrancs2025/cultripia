@@ -6,13 +6,6 @@ import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -24,18 +17,6 @@ import { format } from "date-fns";
 import { es, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
-const destinations = [
-  "Antigua Guatemala",
-  "Lago de Atitlán",
-  "Chichicastenango",
-  "Quetzaltenango",
-  "Semuc Champey",
-  "Tikal",
-  "Río Dulce",
-  "Monterrico",
-  "Cobán",
-  "Panajachel",
-];
 
 export function HeroSection() {
   const router = useRouter();
@@ -116,18 +97,13 @@ export function HeroSection() {
               <label className="text-sm font-medium text-gray-700">
                 {t("whereLabel")}
               </label>
-              <Select value={location} onValueChange={setLocation}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t("wherePlaceholder")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {destinations.map((dest) => (
-                    <SelectItem key={dest} value={dest}>
-                      {dest}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Input
+                type="text"
+                placeholder={t("wherePlaceholder")}
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="w-full"
+              />
             </div>
 
             <div className="space-y-2">

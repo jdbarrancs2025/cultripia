@@ -7,6 +7,7 @@ export const createApplication = mutation({
     email: v.string(),
     phone: v.string(),
     location: v.string(),
+    country: v.optional(v.string()), // Country field for new multi-country support
     languagesSpoken: v.array(v.string()),
     experienceType: v.string(),
     experienceTitle: v.string(),
@@ -79,20 +80,7 @@ export const createApplication = mutation({
       throw new Error("Invalid language selection");
     }
 
-    // Validate location
-    const validLocations = [
-      "antigua",
-      "lake-atitlan",
-      "chichicastenango",
-      "tikal",
-      "semuc-champey",
-      "guatemala-city",
-      "quetzaltenango",
-      "livingston",
-    ];
-    if (!validLocations.includes(args.location)) {
-      throw new Error("Invalid location selection");
-    }
+    // No longer validate location since hosts can enter any location
 
     // Validate experience type
     const validTypes = [
@@ -159,6 +147,7 @@ export const createApplication = mutation({
         email: args.email,
         phone: args.phone,
         location: args.location,
+        country: args.country || "Guatemala", // Default to Guatemala for backward compatibility
         languages: args.languagesSpoken,
         experienceType: args.experienceType,
         experienceTitle: args.experienceTitle,

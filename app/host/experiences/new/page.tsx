@@ -21,24 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CountrySelect } from "@/components/ui/country-select";
 import { toast } from "sonner";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Upload, Image as ImageIcon, Languages } from "lucide-react";
 import { useAction } from "convex/react";
 
-const destinations = [
-  "Antigua Guatemala",
-  "Lago de Atitlán",
-  "Chichicastenango",
-  "Quetzaltenango",
-  "Semuc Champey",
-  "Tikal",
-  "Río Dulce",
-  "Monterrico",
-  "Cobán",
-  "Panajachel",
-];
 
 export default function NewExperiencePage() {
   const router = useRouter();
@@ -60,6 +49,7 @@ export default function NewExperiencePage() {
     descEn: "",
     descEs: "",
     location: "",
+    country: "",
     maxGuests: 1,
     priceUsd: 0,
     imageUrl: "",
@@ -131,8 +121,32 @@ export default function NewExperiencePage() {
 
       setIsTranslating(false);
 
+      // Validate all required fields before submission
+      if (!finalData.titleEn || !finalData.titleEs) {
+        throw new Error("Title is required in both languages");
+      }
+      if (!finalData.descEn || !finalData.descEs) {
+        throw new Error("Description is required in both languages");
+      }
+      if (!finalData.location || finalData.location.trim() === "") {
+        throw new Error("Location is required");
+      }
+      if (!finalData.country || finalData.country.trim() === "") {
+        throw new Error("Country is required");
+      }
+      if (!finalData.maxGuests || finalData.maxGuests < 1) {
+        throw new Error("Maximum guests must be at least 1");
+      }
+      if (!finalData.priceUsd || finalData.priceUsd <= 0) {
+        throw new Error("Price must be greater than 0");
+      }
+      if (!finalData.status || !["draft", "active", "inactive"].includes(finalData.status)) {
+        finalData.status = "draft"; // Default to draft if invalid
+      }
+
       const experienceId = await createExperience({
         ...finalData,
+        country: formData.country,
         originalLanguage: primaryLanguage,
       });
 
@@ -382,24 +396,30 @@ export default function NewExperiencePage() {
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="location">{t("location")}</Label>
-              <Select
-                value={formData.location}
-                onValueChange={(value) => handleInputChange("location", value)}
-                required
-              >
-                <SelectTrigger id="location">
-                  <SelectValue placeholder={t("selectLocation")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {destinations.map((dest) => (
-                    <SelectItem key={dest} value={dest}>
-                      {dest}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="country">{t("country")}</Label>
+                <CountrySelect
+                  value={formData.country}
+                  onValueChange={(value) => handleInputChange("country", value)}
+                  placeholder={t("selectCountry")}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="location">{t("location")}</Label>
+                <Input
+                  id="location"
+                  placeholder={t("locationPlaceholder")}
+                  value={formData.location}
+                  onChange={(e) => handleInputChange("location", e.target.value)}
+                  required
+                />
+                <p className="text-sm text-muted-foreground">
+                  {t("locationHint")}
+                </p>
+              </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
