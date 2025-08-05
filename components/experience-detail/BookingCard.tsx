@@ -163,7 +163,7 @@ export function BookingCard({
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5 text-gris-80" />
               <span className="text-sm text-gris-80">
-                {t("guests", { max: maxGuests })}
+                {t("guests")} ({t("max")} {maxGuests})
               </span>
             </div>
             <div className="flex items-center gap-3">

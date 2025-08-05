@@ -212,6 +212,10 @@
     "phoneHelp": "Include country code (e.g., +502 for Guatemala)",
     "location": "Location",
     "selectLocation": "Select your location",
+    "country": "Country",
+    "selectCountry": "Select country",
+    "locationPlaceholder": "Enter city, region, or area",
+    "locationHint": "Be specific: e.g., 'Shibuya, Tokyo' or 'Historic Center, Oaxaca'",
     "languagesSpoken": "Languages Spoken",
     "experienceProposal": "Experience Proposal",
     "experienceProposalDesc": "Describe the experience you'd like to offer to travelers",
@@ -399,7 +403,8 @@
   },
   "experienceDetail": {
     "capacity": "Capacity",
-    "upToGuests": "Up to {{max}} people",
+    "upToGuests": "Up to {max} people",
+    "upTo": "Up to",
     "duration": "Duration",
     "toBeDefined": "To be defined",
     "availability": "Availability",
@@ -409,13 +414,15 @@
     "infoFromHost": "This information will be provided by the host soon.",
     "meetYourHost": "Meet your host",
     "verifiedHost": "Verified host",
-    "hostDescription": "{{name}} is a local host passionate about sharing authentic cultural experiences with travelers from around the world.",
+    "hostDescription": "{name} is a local host passionate about sharing authentic cultural experiences with travelers from around the world.",
     "contactHost": "Contact host (coming soon)",
     "bookExperience": "Book your experience",
     "perPerson": "per person",
     "selectDate": "Select a date",
     "numberOfPeople": "Number of people",
-    "guests": "Guests (max. {{max}})",
+    "guests": "Guests",
+    "guestsMax": "Guests (max. {max})",
+    "max": "max.",
     "person": "person",
     "people": "people",
     "total": "Total",
@@ -455,7 +462,7 @@
     "revenue": "Revenue",
     "totalRevenue": "Total revenue",
     "pendingHostApplications": "Pending Host Applications",
-    "pendingApplicationsMessage": "You have {{count}} host application{{plural}} waiting for review.",
+    "pendingApplicationsMessage": "You have {count} host application{plural} waiting for review.",
     "reviewApplications": "Review applications →"
   },
   "adminDashboard": {
@@ -468,9 +475,9 @@
     },
     "metrics": {
       "totalUsers": "Total Users",
-      "hosts": "{{count}} hosts",
+      "hosts": "{count} hosts",
       "experiences": "Experiences",
-      "active": "{{count}} active",
+      "active": "{count} active",
       "totalBookings": "Total Bookings",
       "allBookings": "All bookings",
       "totalRevenue": "Total Revenue",
@@ -478,7 +485,7 @@
     },
     "pendingApplications": {
       "title": "Pending Applications",
-      "message": "You have {{count}} host applications pending review.",
+      "message": "You have {count} host applications pending review.",
       "viewApplications": "View Applications"
     },
     "hostApplications": {
@@ -587,12 +594,12 @@
   "adminTestData": {
     "title": "Test Data",
     "createTestExperiences": "Create Test Experiences",
-    "description": "This will create {{count}} sample experiences for testing the platform. Currently, there are {{existing}} experiences in the database.",
+    "description": "This will create {count} sample experiences for testing the platform. Currently, there are {existing} experiences in the database.",
     "followingWillBeCreated": "The following test experiences will be created:",
     "creating": "Creating...",
     "createButton": "Create Test Experiences",
     "toastSuccess": "Test data created",
-    "toastSuccessDesc": "Created {{count}} test experiences",
+    "toastSuccessDesc": "Created {count} test experiences",
     "toastError": "Error creating test data"
   }
 }

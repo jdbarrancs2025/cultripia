@@ -403,7 +403,8 @@
   },
   "experienceDetail": {
     "capacity": "Capacidad",
-    "upToGuests": "Hasta {{max}} personas",
+    "upToGuests": "Hasta {max} personas",
+    "upTo": "Hasta",
     "duration": "Duración",
     "toBeDefined": "Por definir",
     "availability": "Disponibilidad",
@@ -413,13 +414,15 @@
     "infoFromHost": "Esta información será proporcionada por el anfitrión próximamente.",
     "meetYourHost": "Conoce a tu anfitrión",
     "verifiedHost": "Anfitrión verificado",
-    "hostDescription": "{{name}} es un anfitrión local apasionado por compartir experiencias culturales auténticas con viajeros de todo el mundo.",
+    "hostDescription": "{name} es un anfitrión local apasionado por compartir experiencias culturales auténticas con viajeros de todo el mundo.",
     "contactHost": "Contactar anfitrión (próximamente)",
     "bookExperience": "Reserva tu experiencia",
     "perPerson": "por persona",
     "selectDate": "Selecciona una fecha",
     "numberOfPeople": "Número de personas",
-    "guests": "Huéspedes (máx. {{max}})",
+    "guests": "Huéspedes",
+    "guestsMax": "Huéspedes (máx. {max})",
+    "max": "máx.",
     "person": "persona",
     "people": "personas",
     "total": "Total",
@@ -459,7 +462,7 @@
     "revenue": "Ingresos",
     "totalRevenue": "Ingresos totales",
     "pendingHostApplications": "Solicitudes de Anfitriones Pendientes",
-    "pendingApplicationsMessage": "Tienes {{count}} solicitud{{plural}} de anfitrión esperando revisión.",
+    "pendingApplicationsMessage": "Tienes {count} solicitud{plural} de anfitrión esperando revisión.",
     "reviewApplications": "Revisar solicitudes →"
   },
   "adminDashboard": {
@@ -472,9 +475,9 @@
     },
     "metrics": {
       "totalUsers": "Usuarios Totales",
-      "hosts": "{{count}} anfitriones",
+      "hosts": "{count} anfitriones",
       "experiences": "Experiencias",
-      "active": "{{count}} activas",
+      "active": "{count} activas",
       "totalBookings": "Reservas Totales",
       "allBookings": "Todas las reservas",
       "totalRevenue": "Ingresos Totales",
@@ -482,7 +485,7 @@
     },
     "pendingApplications": {
       "title": "Aplicaciones Pendientes",
-      "message": "Tienes {{count}} aplicaciones de anfitrión pendientes de revisión.",
+      "message": "Tienes {count} aplicaciones de anfitrión pendientes de revisión.",
       "viewApplications": "Ver Aplicaciones"
     },
     "hostApplications": {
@@ -591,12 +594,12 @@
   "adminTestData": {
     "title": "Datos de Prueba",
     "createTestExperiences": "Crear Experiencias de Prueba",
-    "description": "Esto creará {{count}} experiencias de muestra para probar la plataforma. Actualmente, hay {{existing}} experiencias en la base de datos.",
+    "description": "Esto creará {count} experiencias de muestra para probar la plataforma. Actualmente, hay {existing} experiencias en la base de datos.",
     "followingWillBeCreated": "Se crearán las siguientes experiencias de prueba:",
     "creating": "Creando...",
     "createButton": "Crear Experiencias de Prueba",
     "toastSuccess": "Datos de prueba creados",
-    "toastSuccessDesc": "Se crearon {{count}} experiencias de prueba",
+    "toastSuccessDesc": "Se crearon {count} experiencias de prueba",
     "toastError": "Error al crear datos de prueba"
   }
 }
