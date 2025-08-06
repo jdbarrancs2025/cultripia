@@ -16,7 +16,7 @@ export const setDefaultCountryForExperiences = internalMutation({
       }
     }
     
-    console.log(`Updated ${updated} experiences with default country Guatemala`);
+    // Updated experiences with default country
     return { updated };
   },
 });
@@ -39,7 +39,7 @@ export const setDefaultCountryForHostApplications = internalMutation({
       }
     }
     
-    console.log(`Updated ${updated} host applications with default country Guatemala`);
+    // Updated host applications with default country
     return { updated };
   },
 });

@@ -42,7 +42,7 @@ export default async function RootLayout({
               // Handle chunk loading errors
               window.addEventListener('error', function(e) {
                 if (e.message && (e.message.includes('Loading chunk') || e.message.includes('ChunkLoadError'))) {
-                  console.warn('Chunk loading error detected, reloading page...');
+                  // Chunk loading error detected, reloading page
                   setTimeout(() => {
                     window.location.reload();
                   }, 1000);
@@ -52,7 +52,7 @@ export default async function RootLayout({
               // Handle unhandled promise rejections
               window.addEventListener('unhandledrejection', function(e) {
                 if (e.reason && e.reason.name === 'ChunkLoadError') {
-                  console.warn('Chunk loading error in promise, reloading page...');
+                  // Chunk loading error in promise, reloading page
                   e.preventDefault();
                   setTimeout(() => {
                     window.location.reload();

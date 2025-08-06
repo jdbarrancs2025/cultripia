@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-06-30.basil",
 });
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "whsec_test_secret";
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -16,30 +16,20 @@ export async function POST(req: Request) {
 
   let event: Stripe.Event;
 
-  // In development, if webhook secret is not configured, parse the event directly
-  if (
-    webhookSecret === "whsec_test_secret" &&
-    process.env.NODE_ENV === "development"
-  ) {
-    console.warn(
-      "⚠️  Using insecure webhook handling for development. Configure STRIPE_WEBHOOK_SECRET for production!",
+  // Validate webhook secret is configured
+  if (!webhookSecret) {
+    console.error("STRIPE_WEBHOOK_SECRET not configured");
+    return NextResponse.json(
+      { error: "Webhook secret not configured" },
+      { status: 500 },
     );
-    try {
-      event = JSON.parse(body) as Stripe.Event;
-    } catch (err) {
-      console.error("Failed to parse webhook body:", err);
-      return NextResponse.json(
-        { error: "Invalid request body" },
-        { status: 400 },
-      );
-    }
-  } else {
-    try {
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    } catch (err) {
-      console.error("Webhook signature verification failed:", err);
-      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
-    }
+  }
+
+  try {
+    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+  } catch (err) {
+    console.error("Webhook signature verification failed:", err);
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
   // Initialize Convex client
@@ -50,7 +40,7 @@ export async function POST(req: Request) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
 
-        console.log("Payment successful for session:", session.id);
+        // Payment successful for session
 
         // Update booking payment status
         await convex.mutation(api.bookings.updateBookingPaymentStatus, {
@@ -96,7 +86,7 @@ export async function POST(req: Request) {
       case "checkout.session.expired": {
         const session = event.data.object as Stripe.Checkout.Session;
 
-        console.log("Session expired:", session.id);
+        // Session expired
 
         // Optionally clean up unpaid bookings
         // await convex.mutation(api.bookings.deleteUnpaidBooking, {
@@ -107,7 +97,7 @@ export async function POST(req: Request) {
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        // Unhandled event type
     }
 
     return NextResponse.json({ received: true });
