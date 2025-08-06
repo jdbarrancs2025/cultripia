@@ -39,7 +39,7 @@ export function Navigation() {
     // Host navigation
     if (role === "host") {
       items.push(
-        { label: t("dashboard"), href: "/host/dashboard", show: true },
+        { label: t("hostDashboard"), href: "/host/dashboard", show: true },
         { label: t("myExperiences"), href: "/host/experiences", show: true },
         { label: t("myBookings"), href: "/dashboard", show: true },
       );
@@ -48,10 +48,9 @@ export function Navigation() {
     // Admin navigation
     if (role === "admin") {
       items.push(
-        { label: t("adminDashboard"), href: "/admin", show: true },
-        { label: t("dashboard"), href: "/host/dashboard", show: true },
+        { label: t("adminDashboard"), href: "/admin/dashboard", show: true },
+        { label: t("hostDashboard"), href: "/host/dashboard", show: true },
         { label: t("myExperiences"), href: "/host/experiences", show: true },
-        { label: t("myBookings"), href: "/dashboard", show: true },
       );
     }
 

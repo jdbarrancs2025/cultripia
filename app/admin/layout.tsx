@@ -42,7 +42,7 @@ export default async function AdminLayout({
       <div className="w-64 bg-gray-50 border-r border-gray-200 p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-8">Admin Panel</h2>
         <nav className="space-y-2">
-          <Link href="/admin">
+          <Link href="/admin/dashboard">
             <Button
               variant="ghost"
               className="w-full justify-start text-gray-700 hover:text-gray-900"
