@@ -169,7 +169,19 @@
     "backToMyBookings": "Back to My Bookings",
     "cancellationNote": "For cancellations, please contact the host directly.",
     "person": "person",
-    "people": "people"
+    "people": "people",
+    "cancelBooking": "Cancel Booking",
+    "cancelBookingTitle": "Cancel Booking",
+    "cancelBookingConfirmation": "Are you sure you want to cancel this booking?",
+    "cancel": "Cancel",
+    "continueCancellation": "Continue Cancellation",
+    "cancellationRequested": "Cancellation requested",
+    "cancellationRequestedDesc": "Your cancellation request has been submitted. The admin will contact you soon.",
+    "cancellationError": "Cancellation error",
+    "cancellationErrorDesc": "There was an error processing your cancellation request. Please try again.",
+    "processing": "Processing...",
+    "cancellationPending": "Cancellation Pending",
+    "cancellationPendingNote": "Your cancellation request has been submitted. The admin will contact you soon."
   },
   "dashboard": {
     "title": "My Dashboard",
@@ -472,6 +484,7 @@
     "tabs": {
       "overview": "Overview",
       "applications": "Applications",
+      "cancellations": "Cancellations",
       "users": "Users"
     },
     "metrics": {
@@ -517,6 +530,28 @@
       "error": "Error",
       "approveError": "Could not approve the application.",
       "rejectError": "Could not reject the application."
+    },
+    "cancellationRequests": {
+      "title": "Pending Cancellation Requests",
+      "subtitle": "Review and process booking cancellation requests",
+      "message": "You have {count} cancellation request(s) to process.",
+      "viewRequests": "View Cancellation Requests",
+      "cancellationRequest": "Cancellation Request",
+      "experienceDetails": "Experience Details",
+      "contactInfo": "Contact Information",
+      "traveler": "Traveler",
+      "host": "Host",
+      "bookingDate": "Booking date",
+      "bookingId": "Booking ID",
+      "amount": "Amount",
+      "travelerEmail": "Traveler email",
+      "hostEmail": "Host email",
+      "requestedAt": "Requested at",
+      "markProcessed": "Mark as Processed",
+      "processedTitle": "Request processed",
+      "processedDesc": "The cancellation request has been marked as processed.",
+      "processError": "Error processing cancellation request",
+      "noRequests": "No pending cancellation requests"
     }
   },
   "adminApplications": {

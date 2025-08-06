@@ -169,7 +169,19 @@
     "backToMyBookings": "Volver a Mis Reservas",
     "cancellationNote": "Para cancelaciones, por favor contacta al anfitrión directamente.",
     "person": "persona",
-    "people": "personas"
+    "people": "personas",
+    "cancelBooking": "Cancelar Reserva",
+    "cancelBookingTitle": "Cancelar Reserva",
+    "cancelBookingConfirmation": "¿Estás seguro de que quieres cancelar esta reserva?",
+    "cancel": "Cancelar",
+    "continueCancellation": "Continuar Cancelación",
+    "cancellationRequested": "Cancelación solicitada",
+    "cancellationRequestedDesc": "Tu solicitud de cancelación ha sido enviada. El administrador te contactará pronto.",
+    "cancellationError": "Error de cancelación",
+    "cancellationErrorDesc": "Hubo un error al procesar tu solicitud de cancelación. Por favor intenta de nuevo.",
+    "processing": "Procesando...",
+    "cancellationPending": "Cancelación Pendiente",
+    "cancellationPendingNote": "Tu solicitud de cancelación ha sido enviada. El administrador te contactará pronto."
   },
   "dashboard": {
     "title": "Mi Dashboard",
@@ -472,6 +484,7 @@
     "tabs": {
       "overview": "Resumen",
       "applications": "Aplicaciones",
+      "cancellations": "Cancelaciones",
       "users": "Usuarios"
     },
     "metrics": {
@@ -517,6 +530,28 @@
       "error": "Error",
       "approveError": "No se pudo aprobar la aplicación.",
       "rejectError": "No se pudo rechazar la aplicación."
+    },
+    "cancellationRequests": {
+      "title": "Solicitudes de Cancelación Pendientes",
+      "subtitle": "Revisar y procesar solicitudes de cancelación de reservas",
+      "message": "Tienes {count} solicitud(es) de cancelación para procesar.",
+      "viewRequests": "Ver Solicitudes de Cancelación",
+      "cancellationRequest": "Solicitud de Cancelación",
+      "experienceDetails": "Detalles de la Experiencia",
+      "contactInfo": "Información de Contacto",
+      "traveler": "Viajero",
+      "host": "Anfitrión",
+      "bookingDate": "Fecha de reserva",
+      "bookingId": "ID de Reserva",
+      "amount": "Monto",
+      "travelerEmail": "Email del viajero",
+      "hostEmail": "Email del anfitrión",
+      "requestedAt": "Solicitado el",
+      "markProcessed": "Marcar como Procesado",
+      "processedTitle": "Solicitud procesada",
+      "processedDesc": "La solicitud de cancelación ha sido marcada como procesada.",
+      "processError": "Error al procesar la solicitud de cancelación",
+      "noRequests": "No hay solicitudes de cancelación pendientes"
     }
   },
   "adminApplications": {

@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as availability from "../availability.js";
 import type * as bookings from "../bookings.js";
+import type * as cancellationRequests from "../cancellationRequests.js";
 import type * as experiences from "../experiences.js";
 import type * as files from "../files.js";
 import type * as hostApplications from "../hostApplications.js";
@@ -35,6 +36,7 @@ import type * as users from "../users.js";
 declare const fullApi: ApiFromModules<{
   availability: typeof availability;
   bookings: typeof bookings;
+  cancellationRequests: typeof cancellationRequests;
   experiences: typeof experiences;
   files: typeof files;
   hostApplications: typeof hostApplications;

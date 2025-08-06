@@ -2,10 +2,11 @@
 
 import { useParams, redirect, notFound } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useTranslations, useLocale } from "next-intl";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -31,12 +32,26 @@ import { es, enUS } from "date-fns/locale";
 import Image from "next/image";
 import Link from "next/link";
 import { BookingDetailWithTraveler } from "@/types/booking";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 export default function BookingDetailPage() {
   const params = useParams();
   const { user } = useUser();
   const t = useTranslations("bookingDetails");
   const locale = useLocale();
+  const { toast } = useToast();
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [isRequestingCancellation, setIsRequestingCancellation] = useState(false);
 
   // Validate bookingId format
   const bookingId = params.bookingId as string;
@@ -51,6 +66,11 @@ export default function BookingDetailPage() {
   const booking = useQuery(api.bookings.getBookingById, {
     bookingId: bookingId as Id<"bookings">,
   }) as BookingDetailWithTraveler | null | undefined;
+
+  const createCancellationRequest = useMutation(api.cancellationRequests.createRequest);
+  const existingCancellationRequest = useQuery(api.cancellationRequests.getRequestForBooking, {
+    bookingId: bookingId as Id<"bookings">,
+  });
 
   // Handle loading state
   if (booking === undefined) {
@@ -288,14 +308,90 @@ export default function BookingDetailPage() {
               </Button>
 
               {isUpcoming && (
-                <p className="text-xs text-muted-foreground text-center">
-                  {t("cancellationNote")}
-                </p>
+                <>
+                  {existingCancellationRequest ? (
+                    <div className="space-y-2">
+                      <Button 
+                        className="w-full" 
+                        variant="outline"
+                        disabled
+                      >
+                        {t("cancellationPending")}
+                      </Button>
+                      <p className="text-xs text-muted-foreground text-center">
+                        {t("cancellationPendingNote")}
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <Button 
+                        className="w-full" 
+                        variant="destructive" 
+                        onClick={() => setShowCancelDialog(true)}
+                      >
+                        {t("cancelBooking")}
+                      </Button>
+                      <p className="text-xs text-muted-foreground text-center">
+                        {t("cancellationNote")}
+                      </p>
+                    </>
+                  )}
+                </>
               )}
             </CardContent>
           </Card>
         </div>
       </div>
+
+      {/* Cancellation Confirmation Dialog */}
+      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("cancelBookingTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("cancelBookingConfirmation")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isRequestingCancellation}>
+              {t("cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isRequestingCancellation}
+              onClick={async () => {
+                setIsRequestingCancellation(true);
+                try {
+                  await createCancellationRequest({ 
+                    bookingId: bookingId as Id<"bookings"> 
+                  });
+                  toast({
+                    title: t("cancellationRequested"),
+                    description: t("cancellationRequestedDesc"),
+                  });
+                  setShowCancelDialog(false);
+                } catch (error) {
+                  toast({
+                    title: t("cancellationError"),
+                    description: error instanceof Error ? error.message : t("cancellationErrorDesc"),
+                    variant: "destructive",
+                  });
+                } finally {
+                  setIsRequestingCancellation(false);
+                }
+              }}
+            >
+              {isRequestingCancellation ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t("processing")}
+                </>
+              ) : (
+                t("continueCancellation")
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -87,4 +87,10 @@ export default defineSchema({
     .index("by_traveler", ["travelerId"])
     .index("by_date", ["selectedDate"])
     .index("by_stripe_session", ["stripeSessionId"]),
+
+  cancellationRequests: defineTable({
+    bookingId: v.id("bookings"),
+    requestedAt: v.number(),
+    processed: v.boolean(),
+  }).index("by_booking", ["bookingId"]),
 });

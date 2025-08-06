@@ -56,12 +56,15 @@ export default function AdminDashboard() {
   const allUsers = useQuery(api.users.getAll);
   const allExperiences = useQuery(api.experiences.getAll);
   const allBookings = useQuery(api.bookings.getAll);
+  const pendingCancellations = useQuery(api.cancellationRequests.getRequests);
+  const pendingCancellationsCount = useQuery(api.cancellationRequests.getPendingCount);
 
   // Mutations for host application management
   const updateApplicationStatus = useMutation(
     api.hostApplications.updateStatus,
   );
   const updateUserRole = useMutation(api.users.updateUserRole);
+  const markCancellationProcessed = useMutation(api.cancellationRequests.markProcessed);
 
   const handleApproveApplication = async (
     applicationId: Id<"hostApplications">,
@@ -157,9 +160,10 @@ export default function AdminDashboard() {
         onValueChange={setActiveTab}
         className="space-y-6"
       >
-        <TabsList className="grid w-full max-w-md grid-cols-3">
+        <TabsList className="grid w-full max-w-lg grid-cols-4">
           <TabsTrigger value="overview">{t("tabs.overview")}</TabsTrigger>
           <TabsTrigger value="applications">{t("tabs.applications")}</TabsTrigger>
+          <TabsTrigger value="cancellations">{t("tabs.cancellations")}</TabsTrigger>
           <TabsTrigger value="users">{t("tabs.users")}</TabsTrigger>
         </TabsList>
 
@@ -245,6 +249,29 @@ export default function AdminDashboard() {
                   onClick={() => setActiveTab("applications")}
                 >
                   {t("pendingApplications.viewApplications")}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Pending Cancellation Requests Alert */}
+          {pendingCancellationsCount && pendingCancellationsCount > 0 && (
+            <Card className="border-orange-200 bg-orange-50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <XCircle className="h-5 w-5 text-orange-600" />
+                  {t("cancellationRequests.title")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm">
+                  {t("cancellationRequests.message", { count: pendingCancellationsCount })}
+                </p>
+                <Button
+                  className="mt-4"
+                  onClick={() => setActiveTab("cancellations")}
+                >
+                  {t("cancellationRequests.viewRequests")}
                 </Button>
               </CardContent>
             </Card>
@@ -341,6 +368,120 @@ export default function AdminDashboard() {
               ) : (
                 <p className="text-muted-foreground text-center py-8">
                   {t("hostApplications.noApplications")}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="cancellations" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("cancellationRequests.title")}</CardTitle>
+              <CardDescription>
+                {t("cancellationRequests.subtitle")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {pendingCancellations && pendingCancellations.length > 0 ? (
+                <div className="space-y-4">
+                  {pendingCancellations.map((request) => (
+                    <div
+                      key={request._id}
+                      className="border rounded-lg p-4 space-y-3"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-2 flex-1">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-lg">
+                              {request.booking.traveler?.name}
+                            </h4>
+                            <Badge variant="destructive">
+                              {t("cancellationRequests.cancellationRequest")}
+                            </Badge>
+                          </div>
+                          
+                          <div className="grid gap-3 md:grid-cols-2">
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">
+                                {t("cancellationRequests.experienceDetails")}
+                              </p>
+                              <p className="text-sm">
+                                {locale === "es" ? request.booking.experience?.titleEs : request.booking.experience?.titleEn}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                {t("cancellationRequests.bookingDate")}: {format(
+                                  new Date(request.booking.selectedDate),
+                                  "dd MMM yyyy",
+                                  { locale: locale === "es" ? es : enUS },
+                                )}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                {t("cancellationRequests.bookingId")}: {request.bookingId}
+                              </p>
+                            </div>
+                            
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">
+                                {t("cancellationRequests.contactInfo")}
+                              </p>
+                              <p className="text-sm">
+                                <strong>{t("cancellationRequests.traveler")}:</strong>
+                              </p>
+                              <p className="text-sm">{request.booking.traveler?.email}</p>
+                              <p className="text-sm mt-2">
+                                <strong>{t("cancellationRequests.host")}:</strong>
+                              </p>
+                              <p className="text-sm">{request.booking.host?.name}</p>
+                              <p className="text-sm">{request.booking.host?.email}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2">
+                            <span>
+                              {t("cancellationRequests.requestedAt")}: {format(
+                                new Date(request.requestedAt),
+                                "dd MMM yyyy HH:mm",
+                                { locale: locale === "es" ? es : enUS },
+                              )}
+                            </span>
+                            {request.booking.totalAmount && (
+                              <span>
+                                {t("cancellationRequests.amount")}: ${request.booking.totalAmount} USD
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="ml-4">
+                          <Button
+                            size="sm"
+                            onClick={async () => {
+                              try {
+                                await markCancellationProcessed({ requestId: request._id });
+                                toast({
+                                  title: t("cancellationRequests.processedTitle"),
+                                  description: t("cancellationRequests.processedDesc"),
+                                });
+                              } catch (error) {
+                                toast({
+                                  title: t("toast.error"),
+                                  description: t("cancellationRequests.processError"),
+                                  variant: "destructive",
+                                });
+                              }
+                            }}
+                          >
+                            {t("cancellationRequests.markProcessed")}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-center py-8">
+                  {t("cancellationRequests.noRequests")}
                 </p>
               )}
             </CardContent>
