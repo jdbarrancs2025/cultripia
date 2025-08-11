@@ -18,7 +18,7 @@ export async function sendEmail({
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const data = await resend.emails.send({
-      from: "Cultripia <your-email@yourdomain.com>",
+      from: "Cultripia <noreply@cultripia.com>",
       to,
       subject,
       react,

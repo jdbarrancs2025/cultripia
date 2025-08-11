@@ -182,9 +182,13 @@ export default function TestDataPage() {
         });
         setSelectedUser("");
       } else {
-        throw new Error(data.error || "Failed to send test email");
+        console.error("Email send failed:", data);
+        const errorMessage = data.error || "Failed to send test email";
+        const details = data.details ? ` - ${JSON.stringify(data.details)}` : "";
+        throw new Error(errorMessage + details);
       }
     } catch (error) {
+      console.error("Error sending test email:", error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to send test email",

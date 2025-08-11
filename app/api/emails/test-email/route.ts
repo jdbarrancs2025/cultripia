@@ -57,6 +57,8 @@ export async function POST(req: NextRequest) {
       timeStyle: "medium",
     });
 
+    console.log("Attempting to send test email to:", recipientEmail);
+    
     const emailResult = await sendEmail({
       to: recipientEmail,
       subject: "Test Email from Cultripia Admin Dashboard",
@@ -67,12 +69,19 @@ export async function POST(req: NextRequest) {
       }),
     });
 
+    console.log("Email send result:", emailResult);
+
     if (!emailResult.success) {
       console.error("Failed to send test email:", emailResult.error);
+      const errorMessage = emailResult.error instanceof Error 
+        ? emailResult.error.message 
+        : JSON.stringify(emailResult.error);
+      
       return NextResponse.json(
         { 
           success: false, 
-          error: emailResult.error || "Failed to send test email" 
+          error: errorMessage || "Failed to send test email",
+          details: emailResult.error
         },
         { status: 500 }
       );
