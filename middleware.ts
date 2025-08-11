@@ -1,7 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-// Define public routes
+// Define public routes (no authentication required)
 const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
@@ -11,30 +11,27 @@ const isPublicRoute = createRouteMatcher([
   "/api/webhook(.*)",
 ]);
 
-// Define role-specific routes
-const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
-
-const isHostRoute = createRouteMatcher(["/host(.*)", "/become-a-host"]);
-
-const isAuthenticatedRoute = createRouteMatcher([
-  "/dashboard",
-  "/bookings(.*)",
-]);
-
 export default clerkMiddleware(async (auth, req) => {
   const { userId, sessionClaims } = await auth();
-
-  // Get role directly from sessionClaims (updated when we sync with Clerk)
-  const publicMetadata = sessionClaims?.publicMetadata as
-    | { role?: string }
-    | undefined;
-  const role = publicMetadata?.role || "traveler";
 
   // Allow public routes
   if (isPublicRoute(req)) return NextResponse.next();
 
-  // Handle dashboard redirect based on role
-  if (req.nextUrl.pathname === "/dashboard" && userId) {
+  // Redirect unauthenticated users to sign-in for protected routes
+  if (!userId) {
+    const signInUrl = new URL("/sign-in", req.url);
+    signInUrl.searchParams.set("redirect_url", req.url);
+    return NextResponse.redirect(signInUrl);
+  }
+
+  // Handle dashboard redirect based on role (convenience routing only)
+  // This is optional - just helps users get to their default dashboard
+  if (req.nextUrl.pathname === "/dashboard") {
+    const publicMetadata = sessionClaims?.publicMetadata as
+      | { role?: string }
+      | undefined;
+    const role = publicMetadata?.role || "traveler";
+    
     if (role === "admin") {
       return NextResponse.redirect(new URL("/admin/dashboard", req.url));
     } else if (role === "host") {
@@ -43,34 +40,8 @@ export default clerkMiddleware(async (auth, req) => {
     // Travelers stay on /dashboard (which maps to /(main)/dashboard)
   }
 
-  // Redirect unauthenticated users to sign-in
-  if (!userId) {
-    const signInUrl = new URL("/sign-in", req.url);
-    signInUrl.searchParams.set("redirect_url", req.url);
-    return NextResponse.redirect(signInUrl);
-  }
-
-  // Check admin routes
-  if (isAdminRoute(req) && role !== "admin") {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
-
-  // Check host routes
-  if (isHostRoute(req) && role !== "host" && role !== "admin") {
-    // Allow access to become-a-host for travelers
-    if (req.nextUrl.pathname === "/become-a-host" && role === "traveler") {
-      return NextResponse.next();
-    }
-    return NextResponse.redirect(new URL("/", req.url));
-  }
-
-  // Check authenticated routes (available to all logged-in users)
-  if (isAuthenticatedRoute(req) && !userId) {
-    const signInUrl = new URL("/sign-in", req.url);
-    signInUrl.searchParams.set("redirect_url", req.url);
-    return NextResponse.redirect(signInUrl);
-  }
-
+  // Allow all authenticated users to access any route
+  // Pages will handle role-based authorization themselves
   return NextResponse.next();
 });
 
