@@ -4,13 +4,22 @@ import Stripe from "stripe";
 import { api } from "@/convex/_generated/api";
 import { ConvexHttpClient } from "convex/browser";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-06-30.basil",
-});
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeKey && !stripeKey.includes("placeholder") 
+  ? new Stripe(stripeKey, { apiVersion: "2025-06-30.basil" })
+  : null;
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(req: Request) {
+  // Check if Stripe is configured
+  if (!stripe) {
+    console.warn("Stripe webhook called but STRIPE_SECRET_KEY not configured");
+    return NextResponse.json(
+      { error: "Payment processing not configured" },
+      { status: 503 },
+    );
+  }
   const body = await req.text();
   const signature = headers().get("stripe-signature")!;
 

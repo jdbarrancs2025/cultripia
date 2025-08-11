@@ -4,9 +4,17 @@ import { api } from "./_generated/api";
 import Stripe from "stripe";
 import { Id } from "./_generated/dataModel";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-06-30.basil",
-});
+// Helper function to get Stripe instance
+const getStripe = () => {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key || key.includes("placeholder")) {
+    console.warn("STRIPE_SECRET_KEY is not configured or using placeholder - payments disabled");
+    return null;
+  }
+  return new Stripe(key, {
+    apiVersion: "2025-06-30.basil",
+  });
+};
 
 export const createCheckoutSession = action({
   args: {
@@ -40,6 +48,10 @@ export const createCheckoutSession = action({
     const totalAmount = pricePerPerson * guestCount;
 
     // Create Stripe checkout session
+    const stripe = getStripe();
+    if (!stripe) {
+      throw new Error("Payment processing is temporarily unavailable");
+    }
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -90,6 +102,10 @@ export const retrieveSession = action({
     sessionId: v.string(),
   },
   handler: async (ctx, { sessionId }) => {
+    const stripe = getStripe();
+    if (!stripe) {
+      throw new Error("Payment processing is temporarily unavailable");
+    }
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     return {

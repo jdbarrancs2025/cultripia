@@ -109,7 +109,14 @@ export function BookingCard({
       // Redirect to Stripe Checkout
       const stripe = await stripePromise;
       if (!stripe) {
-        throw new Error(t("stripeError"));
+        console.warn("Stripe is not configured - payment processing disabled");
+        toast({
+          title: t("paymentUnavailable"),
+          description: "Payment processing is currently unavailable. Please try again later.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
       }
 
       const { error } = await stripe.redirectToCheckout({

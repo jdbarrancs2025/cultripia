@@ -1,7 +1,8 @@
+// Production configuration for Clerk authentication
 const authConfig = {
   providers: [
     {
-      domain: process.env.CLERK_JWT_ISSUER_DOMAIN,
+      domain: "https://clerk.cultripia.com",
       applicationID: "convex",
     },
   ],
