@@ -20,11 +20,21 @@ export function useUser() {
 
     // Sync user data with Convex
     const syncUser = async () => {
-      await createOrUpdateUser({
-        clerkId: clerkUser.id,
-        name: clerkUser.fullName || clerkUser.firstName || "User",
-        email: clerkUser.primaryEmailAddress?.emailAddress || "",
-      });
+      try {
+        await createOrUpdateUser({
+          clerkId: clerkUser.id,
+          name: clerkUser.fullName || clerkUser.firstName || "User",
+          email: clerkUser.primaryEmailAddress?.emailAddress || "",
+        });
+        console.log("User synced successfully:", clerkUser.id);
+      } catch (error) {
+        console.error("Failed to sync user to Convex:", error);
+        console.error("User details:", {
+          clerkId: clerkUser.id,
+          name: clerkUser.fullName || clerkUser.firstName || "User",
+          email: clerkUser.primaryEmailAddress?.emailAddress || "",
+        });
+      }
     };
 
     if (!convexUser) {
