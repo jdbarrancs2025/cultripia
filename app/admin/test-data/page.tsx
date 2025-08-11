@@ -11,9 +11,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import { useTranslations, useLocale } from "next-intl";
+import { Mail } from "lucide-react";
 
 const testExperiences = [
   {
@@ -101,8 +109,11 @@ export default function TestDataPage() {
   const t = useTranslations("adminTestData");
   const locale = useLocale();
   const [loading, setLoading] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<string>("");
   const createExperience = useMutation(api.experiences.createExperience);
   const experiences = useQuery(api.experiences.getAll);
+  const users = useQuery(api.users.getAll);
 
   const handleCreateTestData = async () => {
     setLoading(true);
@@ -129,7 +140,63 @@ export default function TestDataPage() {
     }
   };
 
+  const handleSendTestEmail = async () => {
+    if (!selectedUser) {
+      toast({
+        title: "Error",
+        description: "Please select a user to send the test email to",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const user = users?.find((u) => u._id === selectedUser);
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "Selected user not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSendingEmail(true);
+    try {
+      const response = await fetch("/api/emails/test-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipientEmail: user.email,
+          recipientName: user.name,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        toast({
+          title: "Success",
+          description: `Test email sent successfully to ${user.email}`,
+        });
+        setSelectedUser("");
+      } else {
+        throw new Error(data.error || "Failed to send test email");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to send test email",
+        variant: "destructive",
+      });
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   const existingCount = experiences?.length || 0;
+  const travelerUsers = users?.filter((u) => u.role === "traveler") || [];
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -162,6 +229,68 @@ export default function TestDataPage() {
           >
             {loading ? t("creating") : t("createButton")}
           </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Mail className="h-5 w-5" />
+            Test Email System
+          </CardTitle>
+          <CardDescription>
+            Send a test email to verify that the Resend email service is working correctly.
+            Select a traveler user from the dropdown to send them a test email.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              Select Traveler User
+            </label>
+            <Select value={selectedUser} onValueChange={setSelectedUser}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choose a traveler to send test email to..." />
+              </SelectTrigger>
+              <SelectContent>
+                {travelerUsers.length === 0 ? (
+                  <SelectItem value="no-users" disabled>
+                    No traveler users found
+                  </SelectItem>
+                ) : (
+                  travelerUsers.map((user) => (
+                    <SelectItem key={user._id} value={user._id}>
+                      {user.name} ({user.email})
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {selectedUser && (
+            <div className="p-3 bg-gray-50 rounded-md text-sm text-gray-600">
+              <p className="font-medium">Test email will be sent to:</p>
+              <p className="mt-1">
+                {travelerUsers.find((u) => u._id === selectedUser)?.name} -{" "}
+                {travelerUsers.find((u) => u._id === selectedUser)?.email}
+              </p>
+            </div>
+          )}
+
+          <Button
+            onClick={handleSendTestEmail}
+            disabled={sendingEmail || !selectedUser || travelerUsers.length === 0}
+            className="bg-turquesa hover:bg-turquesa/90"
+          >
+            {sendingEmail ? "Sending Test Email..." : "Send Test Email"}
+          </Button>
+
+          {travelerUsers.length === 0 && (
+            <p className="text-sm text-amber-600">
+              No traveler users found in the system. Please create a traveler account first to test the email functionality.
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>
