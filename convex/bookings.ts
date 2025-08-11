@@ -303,6 +303,87 @@ export const getBookingById = query({
   },
 });
 
+export const createBookingFromSession = mutation({
+  args: {
+    experienceId: v.id("experiences"),
+    travelerId: v.id("users"),
+    qtyPersons: v.number(),
+    selectedDate: v.string(),
+    stripeSessionId: v.string(),
+    totalAmount: v.number(),
+  },
+  handler: async (ctx, args) => {
+    // Validate inputs
+    if (args.qtyPersons <= 0) {
+      throw new Error("Number of persons must be positive");
+    }
+    if (args.totalAmount < 0) {
+      throw new Error("Total amount cannot be negative");
+    }
+
+    // Validate date format (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(args.selectedDate)) {
+      throw new Error("Invalid date format. Please use YYYY-MM-DD");
+    }
+
+    // Check if booking already exists for this session
+    const existingBooking = await ctx.db
+      .query("bookings")
+      .withIndex("by_stripe_session", (q) =>
+        q.eq("stripeSessionId", args.stripeSessionId),
+      )
+      .first();
+
+    if (existingBooking) {
+      return existingBooking._id;
+    }
+
+    const experience = await ctx.db.get(args.experienceId);
+    if (!experience) {
+      throw new Error("Experience not found");
+    }
+
+    if (args.qtyPersons > experience.maxGuests) {
+      throw new Error("Number of guests exceeds maximum capacity");
+    }
+
+    // Create the booking with paid status
+    const bookingId = await ctx.db.insert("bookings", {
+      experienceId: args.experienceId,
+      travelerId: args.travelerId,
+      qtyPersons: args.qtyPersons,
+      selectedDate: args.selectedDate,
+      stripeSessionId: args.stripeSessionId,
+      paid: true,
+      totalAmount: args.totalAmount,
+      createdAt: Date.now(),
+    });
+
+    // Update availability
+    const availability = await ctx.db
+      .query("availability")
+      .withIndex("by_experience_date", (q) =>
+        q
+          .eq("experienceId", args.experienceId)
+          .eq("date", args.selectedDate),
+      )
+      .first();
+
+    if (availability) {
+      await ctx.db.patch(availability._id, { status: "booked" });
+    } else {
+      await ctx.db.insert("availability", {
+        experienceId: args.experienceId,
+        date: args.selectedDate,
+        status: "booked",
+      });
+    }
+
+    return bookingId;
+  },
+});
+
 export const updateBookingPaymentStatus = mutation({
   args: {
     stripeSessionId: v.string(),
@@ -344,5 +425,23 @@ export const updateBookingPaymentStatus = mutation({
     }
 
     return booking._id;
+  },
+});
+
+export const deleteUnpaidBookings = mutation({
+  args: {},
+  handler: async (ctx) => {
+    // Get all unpaid bookings
+    const unpaidBookings = await ctx.db
+      .query("bookings")
+      .filter((q) => q.eq(q.field("paid"), false))
+      .collect();
+
+    // Delete each unpaid booking
+    for (const booking of unpaidBookings) {
+      await ctx.db.delete(booking._id);
+    }
+
+    return unpaidBookings.length;
   },
 });

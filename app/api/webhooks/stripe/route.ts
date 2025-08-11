@@ -50,11 +50,26 @@ export async function POST(req: Request) {
         const session = event.data.object as Stripe.Checkout.Session;
 
         // Payment successful for session
+        
+        // Extract booking details from session metadata
+        const metadata = session.metadata;
+        
+        if (!metadata || !metadata.experienceId || !metadata.travelerId) {
+          console.error("Missing required metadata in Stripe session");
+          return NextResponse.json(
+            { error: "Missing metadata" },
+            { status: 400 },
+          );
+        }
 
-        // Update booking payment status
-        await convex.mutation(api.bookings.updateBookingPaymentStatus, {
+        // Create the booking after successful payment
+        const bookingId = await convex.mutation(api.bookings.createBookingFromSession, {
+          experienceId: metadata.experienceId as any,
+          travelerId: metadata.travelerId as any,
+          qtyPersons: parseInt(metadata.guestCount || "1"),
+          selectedDate: metadata.selectedDate || "",
           stripeSessionId: session.id,
-          paid: true,
+          totalAmount: parseFloat(metadata.totalAmount || "0"),
         });
 
         // Get booking details for email
@@ -93,15 +108,8 @@ export async function POST(req: Request) {
       }
 
       case "checkout.session.expired": {
-        const session = event.data.object as Stripe.Checkout.Session;
-
-        // Session expired
-
-        // Optionally clean up unpaid bookings
-        // await convex.mutation(api.bookings.deleteUnpaidBooking, {
-        //   stripeSessionId: session.id,
-        // })
-
+        // Session expired - no booking to clean up since we don't create bookings until payment
+        console.log("Checkout session expired:", event.data.object);
         break;
       }
 

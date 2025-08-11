@@ -16,7 +16,8 @@ function BookingSuccessContent() {
   const t = useTranslations("bookingSuccess");
   const locale = useLocale();
   const sessionId = searchParams.get("session_id");
-  const [isLoading, setIsLoading] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
+  const [maxRetries] = useState(10); // Try for ~30 seconds
 
   const booking = useQuery(
     api.bookings.getBySessionId,
@@ -29,32 +30,51 @@ function BookingSuccessContent() {
     }
   }, [sessionId, router]);
 
+  // Retry logic for when webhook hasn't processed yet
   useEffect(() => {
-    if (booking !== undefined) {
-      setIsLoading(false);
+    if (booking === null && retryCount < maxRetries) {
+      const timer = setTimeout(() => {
+        setRetryCount(prev => prev + 1);
+      }, 3000); // Retry every 3 seconds
+      
+      return () => clearTimeout(timer);
     }
-  }, [booking]);
+  }, [booking, retryCount, maxRetries]);
 
-  if (isLoading) {
+  // Show loading state while waiting for webhook to process
+  if (booking === undefined || (booking === null && retryCount < maxRetries)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-turquesa border-t-transparent mx-auto mb-4" />
           <p className="text-gray-600">{t("confirmingBooking")}</p>
+          <p className="text-sm text-gray-500 mt-2">
+            {t("processingPayment") || "Processing your payment, please wait..."}
+          </p>
         </div>
       </div>
     );
   }
 
+  // If still no booking after retries, show appropriate message
   if (!booking) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Card className="max-w-md w-full">
           <CardContent className="text-center py-8">
-            <p className="text-gray-600 mb-4">{t("bookingNotFound")}</p>
-            <Button asChild>
-              <Link href="/">{t("backToHome")}</Link>
-            </Button>
+            <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold mb-2">{t("paymentSuccessful") || "Payment Successful!"}</h2>
+            <p className="text-gray-600 mb-4">
+              {t("bookingBeingProcessed") || "Your booking is being processed. You will receive a confirmation email shortly."}
+            </p>
+            <div className="space-y-3">
+              <Button asChild>
+                <Link href="/dashboard">{t("viewMyBookings")}</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/experiences">{t("exploreMoreExperiences")}</Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -2,7 +2,6 @@ import { v } from "convex/values";
 import { action, internalMutation } from "./_generated/server";
 import { api } from "./_generated/api";
 import Stripe from "stripe";
-import { Id } from "./_generated/dataModel";
 
 // Helper function to get Stripe instance
 const getStripe = () => {
@@ -32,7 +31,6 @@ export const createCheckoutSession = action({
   ): Promise<{
     sessionId: string;
     sessionUrl: string | null;
-    bookingId: Id<"bookings">;
   }> => {
     const {
       experienceId,
@@ -75,24 +73,17 @@ export const createCheckoutSession = action({
         travelerId,
         guestCount: guestCount.toString(),
         selectedDate,
+        totalAmount: totalAmount.toString(),
+        experienceTitle,
+        hostName,
       },
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/booking/cancel`,
-    });
-
-    // Create unpaid booking record
-    const bookingId = await ctx.runMutation(api.bookings.createBooking, {
-      experienceId,
-      qtyPersons: guestCount,
-      selectedDate,
-      stripeSessionId: session.id,
-      totalAmount,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/experiences`,
     });
 
     return {
       sessionId: session.id,
       sessionUrl: session.url,
-      bookingId,
     };
   },
 });
