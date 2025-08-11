@@ -42,18 +42,6 @@ export function useUser() {
     }
   }, [isAuthenticated, clerkLoaded, clerkUser, convexUser, createOrUpdateUser]);
 
-  // Sync role with Clerk if there's a mismatch
-  useEffect(() => {
-    if (
-      convexUser &&
-      clerkUser &&
-      convexUser.role !== clerkUser.publicMetadata?.role
-    ) {
-      fetch("/api/sync-role", { method: "POST" }).catch((err) =>
-        console.error("Failed to sync role:", err),
-      );
-    }
-  }, [convexUser, clerkUser]);
 
   return {
     user: convexUser,
