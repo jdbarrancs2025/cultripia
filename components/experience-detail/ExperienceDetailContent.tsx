@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useLocale } from "next-intl";
 import { Doc } from "@/convex/_generated/dataModel";
 import { ExperienceHero } from "./ExperienceHero";
 import { ExperienceInfo } from "./ExperienceInfo";
+import { ExperienceMediaGallery } from "./ExperienceMediaGallery";
 import { BookingCard } from "./BookingCard";
 import { HostInfoCard } from "./HostInfoCard";
 
@@ -32,8 +32,6 @@ export function ExperienceDetailContent({
       <ExperienceHero
         imageUrl={experience.imageUrl}
         title={title}
-        additionalImageUrls={experience.additionalImageUrls}
-        youtubeVideoId={experience.youtubeVideoId}
       />
 
       {/* Content Section */}
@@ -46,6 +44,12 @@ export function ExperienceDetailContent({
               description={description}
               location={experience.location}
               maxGuests={experience.maxGuests}
+            />
+
+            <ExperienceMediaGallery
+              title={title}
+              additionalImageUrls={experience.additionalImageUrls}
+              youtubeVideoId={experience.youtubeVideoId}
             />
 
             {experience.host && <HostInfoCard host={experience.host} />}
