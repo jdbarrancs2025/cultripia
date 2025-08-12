@@ -12,6 +12,8 @@ export const createExperience = mutation({
     maxGuests: v.number(),
     priceUsd: v.number(),
     imageUrl: v.string(),
+    additionalImageUrls: v.optional(v.array(v.string())),
+    youtubeVideoId: v.optional(v.string()),
     status: v.optional(
       v.union(v.literal("draft"), v.literal("active"), v.literal("inactive")),
     ),
@@ -39,6 +41,9 @@ export const createExperience = mutation({
     }
     if (!args.imageUrl.trim()) {
       throw new Error("Image URL is required");
+    }
+    if (args.additionalImageUrls && args.additionalImageUrls.length > 7) {
+      throw new Error("Maximum 7 additional images allowed");
     }
 
     const identity = await ctx.auth.getUserIdentity();
@@ -86,6 +91,8 @@ export const createExperience = mutation({
       maxGuests: args.maxGuests,
       priceUsd: args.priceUsd,
       imageUrl: args.imageUrl,
+      additionalImageUrls: args.additionalImageUrls,
+      youtubeVideoId: args.youtubeVideoId,
       status: args.status || "draft",
       originalLanguage: args.originalLanguage,
       createdAt: Date.now(),
@@ -230,6 +237,8 @@ export const updateExperience = mutation({
     maxGuests: v.optional(v.number()),
     priceUsd: v.optional(v.number()),
     imageUrl: v.optional(v.string()),
+    additionalImageUrls: v.optional(v.array(v.string())),
+    youtubeVideoId: v.optional(v.string()),
     status: v.optional(
       v.union(v.literal("draft"), v.literal("active"), v.literal("inactive")),
     ),
@@ -285,6 +294,9 @@ export const updateExperience = mutation({
     }
     if (updateData.imageUrl !== undefined && !updateData.imageUrl.trim()) {
       throw new Error("Image URL cannot be empty");
+    }
+    if (updateData.additionalImageUrls !== undefined && updateData.additionalImageUrls.length > 7) {
+      throw new Error("Maximum 7 additional images allowed");
     }
     if (updateData.status !== undefined) {
       if (!updateData.status || !["draft", "active", "inactive"].includes(updateData.status)) {

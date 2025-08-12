@@ -20,6 +20,7 @@ import { format } from "date-fns";
 import { es, enUS } from "date-fns/locale";
 import Image from "next/image";
 import Link from "next/link";
+import { MediaCarousel } from "@/components/ui/media-carousel";
 import { redirect } from "next/navigation";
 import { BookingWithDetails } from "@/types/booking";
 
@@ -216,13 +217,12 @@ function BookingCard({
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="relative h-48">
-        <Image
-          src={experience.imageUrl || "/placeholder.jpg"}
+      <div className="relative">
+        <MediaCarousel
+          primaryImage={experience.imageUrl || "/placeholder.jpg"}
+          additionalImages={experience.additionalImageUrls}
+          youtubeVideoId={experience.youtubeVideoId}
           alt={experience.titleEs}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         {isUpcoming && booking.paid && (
           <Badge className="absolute top-2 right-2 bg-green-600">

@@ -74,6 +74,8 @@ export function FeaturedExperiences() {
                 hostName={experience.host?.name || t("host")}
                 priceUsd={experience.priceUsd}
                 imageUrl={experience.imageUrl}
+                additionalImageUrls={experience.additionalImageUrls}
+                youtubeVideoId={experience.youtubeVideoId}
               />
             ))}
           </div>

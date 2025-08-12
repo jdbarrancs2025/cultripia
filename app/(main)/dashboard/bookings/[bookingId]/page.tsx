@@ -31,6 +31,7 @@ import { format } from "date-fns";
 import { es, enUS } from "date-fns/locale";
 import Image from "next/image";
 import Link from "next/link";
+import { MediaCarousel } from "@/components/ui/media-carousel";
 import { BookingDetailWithTraveler } from "@/types/booking";
 import {
   AlertDialog,
@@ -140,14 +141,12 @@ export default function BookingDetailPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {booking.experience?.imageUrl && (
-                <div className="relative h-64 rounded-lg overflow-hidden">
-                  <Image
-                    src={booking.experience.imageUrl}
+                <div className="rounded-lg overflow-hidden">
+                  <MediaCarousel
+                    primaryImage={booking.experience.imageUrl}
+                    additionalImages={booking.experience.additionalImageUrls}
+                    youtubeVideoId={booking.experience.youtubeVideoId}
                     alt={(locale === "es" ? booking.experience.titleEs : booking.experience.titleEn) || "Experience"}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 66vw"
-                    priority
                   />
                 </div>
               )}

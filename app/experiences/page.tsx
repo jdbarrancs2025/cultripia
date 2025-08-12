@@ -220,6 +220,8 @@ function ExperiencesContent() {
                   hostName={experience.host?.name || tHome("host")}
                   priceUsd={experience.priceUsd}
                   imageUrl={experience.imageUrl}
+                  additionalImageUrls={experience.additionalImageUrls}
+                  youtubeVideoId={experience.youtubeVideoId}
                 />
               ))}
             </div>

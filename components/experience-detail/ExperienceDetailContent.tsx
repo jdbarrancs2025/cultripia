@@ -32,6 +32,8 @@ export function ExperienceDetailContent({
       <ExperienceHero
         imageUrl={experience.imageUrl}
         title={title}
+        additionalImageUrls={experience.additionalImageUrls}
+        youtubeVideoId={experience.youtubeVideoId}
       />
 
       {/* Content Section */}

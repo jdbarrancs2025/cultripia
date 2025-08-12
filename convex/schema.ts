@@ -48,6 +48,8 @@ export default defineSchema({
     maxGuests: v.number(),
     priceUsd: v.number(),
     imageUrl: v.string(),
+    additionalImageUrls: v.optional(v.array(v.string())),
+    youtubeVideoId: v.optional(v.string()),
     status: v.union(
       v.literal("draft"),
       v.literal("active"),

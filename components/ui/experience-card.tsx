@@ -7,8 +7,8 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { MediaCarousel } from "@/components/ui/media-carousel";
 import { MapPin, Users, User } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
@@ -22,6 +22,8 @@ interface ExperienceCardProps {
   hostName: string;
   priceUsd: number;
   imageUrl: string;
+  additionalImageUrls?: string[];
+  youtubeVideoId?: string;
 }
 
 export function ExperienceCard({
@@ -34,21 +36,20 @@ export function ExperienceCard({
   hostName,
   priceUsd,
   imageUrl,
+  additionalImageUrls,
+  youtubeVideoId,
 }: ExperienceCardProps) {
   const t = useTranslations("experiences");
   const tHome = useTranslations("home");
   return (
     <Card className="overflow-hidden transition-transform hover:scale-[1.02]">
       <CardHeader className="p-0">
-        <div className="relative aspect-video w-full overflow-hidden">
-          <Image
-            src={imageUrl || "/images/placeholder-experience.svg"}
-            alt={title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        </div>
+        <MediaCarousel
+          primaryImage={imageUrl}
+          additionalImages={additionalImageUrls}
+          youtubeVideoId={youtubeVideoId}
+          alt={title}
+        />
       </CardHeader>
       <CardContent className="space-y-3 p-6">
         <h3 className="line-clamp-2 text-xl font-semibold text-gris-90">

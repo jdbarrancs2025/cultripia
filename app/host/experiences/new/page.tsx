@@ -41,6 +41,11 @@ export default function NewExperiencePage() {
   const [isUploading, setIsUploading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [additionalImages, setAdditionalImages] = useState<File[]>([]);
+  const [additionalImagePreviews, setAdditionalImagePreviews] = useState<string[]>([]);
+  const [isUploadingAdditional, setIsUploadingAdditional] = useState(false);
+  const [youtubeUrl, setYoutubeUrl] = useState<string>("");
+  const [youtubeVideoId, setYoutubeVideoId] = useState<string>("");
   const [primaryLanguage, setPrimaryLanguage] = useState<"EN" | "ES">("EN");
   const [isTranslating, setIsTranslating] = useState(false);
   const [formData, setFormData] = useState({
@@ -53,6 +58,8 @@ export default function NewExperiencePage() {
     maxGuests: 1,
     priceUsd: 0,
     imageUrl: "",
+    additionalImageUrls: [] as string[],
+    youtubeVideoId: "",
     status: "draft" as "draft" | "active",
   });
 
@@ -74,13 +81,20 @@ export default function NewExperiencePage() {
         }
       }
 
+      // Upload additional images if selected
+      let additionalImageUrls = formData.additionalImageUrls;
+      if (additionalImages.length > 0) {
+        const uploadedAdditionalUrls = await uploadAdditionalImages();
+        additionalImageUrls = uploadedAdditionalUrls;
+      }
+
       // Validate image URL
       if (!imageUrl) {
         throw new Error("Please provide an image for your experience");
       }
 
       // Prepare the data with translations
-      let finalData = { ...formData, imageUrl };
+      let finalData = { ...formData, imageUrl, additionalImageUrls, youtubeVideoId };
 
       // Get the primary language content
       const title =
@@ -204,6 +218,102 @@ export default function NewExperiencePage() {
     reader.readAsDataURL(file);
   };
 
+  const handleAdditionalImagesSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    // Check total limit (existing + new files)
+    if (additionalImages.length + files.length > 7) {
+      toast.error("Too many images", {
+        description: "You can upload a maximum of 7 additional images.",
+      });
+      return;
+    }
+
+    // Validate each file
+    for (const file of files) {
+      if (!file.type.startsWith("image/")) {
+        toast.error("Invalid file type", {
+          description: "Please select only image files.",
+        });
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("File too large", {
+          description: "Please select images smaller than 5MB.",
+        });
+        return;
+      }
+    }
+
+    // Add new files to existing ones
+    const newAdditionalImages = [...additionalImages, ...files];
+    setAdditionalImages(newAdditionalImages);
+
+    // Create previews for new files
+    const newPreviews = [...additionalImagePreviews];
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        newPreviews.push(reader.result as string);
+        setAdditionalImagePreviews([...newPreviews]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeAdditionalImage = (index: number) => {
+    const newImages = additionalImages.filter((_, i) => i !== index);
+    const newPreviews = additionalImagePreviews.filter((_, i) => i !== index);
+    setAdditionalImages(newImages);
+    setAdditionalImagePreviews(newPreviews);
+  };
+
+  const extractYouTubeVideoId = (url: string): string | null => {
+    if (!url.trim()) return null;
+    
+    const patterns = [
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+      /(?:https?:\/\/)?youtu\.be\/([a-zA-Z0-9_-]{11})/,
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/v\/([a-zA-Z0-9_-]{11})/,
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) {
+        return match[1];
+      }
+    }
+    
+    return null;
+  };
+
+  const handleYouTubeUrlChange = (url: string) => {
+    setYoutubeUrl(url);
+    
+    if (!url.trim()) {
+      setYoutubeVideoId("");
+      setFormData(prev => ({ ...prev, youtubeVideoId: "" }));
+      return;
+    }
+
+    const videoId = extractYouTubeVideoId(url);
+    if (videoId) {
+      setYoutubeVideoId(videoId);
+      setFormData(prev => ({ ...prev, youtubeVideoId: videoId }));
+    } else {
+      setYoutubeVideoId("");
+      setFormData(prev => ({ ...prev, youtubeVideoId: "" }));
+      if (url.trim()) {
+        toast.error("Invalid YouTube URL", {
+          description: "Please enter a valid YouTube video URL",
+        });
+      }
+    }
+  };
+
   const uploadImage = async () => {
     if (!selectedImage) return null;
 
@@ -240,6 +350,53 @@ export default function NewExperiencePage() {
       throw error;
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const uploadAdditionalImages = async () => {
+    if (additionalImages.length === 0) return [];
+
+    setIsUploadingAdditional(true);
+    try {
+      const uploadedUrls: string[] = [];
+
+      for (const file of additionalImages) {
+        // Get upload URL from Convex
+        const uploadUrl = await generateUploadUrl();
+
+        // Upload the file
+        const result = await fetch(uploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": file.type },
+          body: file,
+        }).catch((error) => {
+          console.error("Network error during upload:", error);
+          throw new Error(
+            "Network error: Please check your connection and try again",
+          );
+        });
+
+        if (!result.ok) {
+          throw new Error(
+            `Upload failed: ${result.statusText || "Unknown error"}`,
+          );
+        }
+
+        const { storageId } = await result.json();
+
+        // Get the public URL for the uploaded image
+        const imageUrl = await getImageUrl({ storageId });
+        if (imageUrl) {
+          uploadedUrls.push(imageUrl);
+        }
+      }
+
+      return uploadedUrls;
+    } catch (error) {
+      console.error("Error uploading additional images:", error);
+      throw error;
+    } finally {
+      setIsUploadingAdditional(false);
     }
   };
 
@@ -547,6 +704,97 @@ export default function NewExperiencePage() {
                 </div>
               </div>
             </div>
+
+            {/* Additional Images Section */}
+            <div className="space-y-2">
+              <Label>Additional Images (Optional)</Label>
+              <p className="text-sm text-muted-foreground">
+                Upload up to 7 additional images to showcase your experience
+              </p>
+              
+              {additionalImagePreviews.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                  {additionalImagePreviews.map((preview, index) => (
+                    <div key={index} className="relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={preview}
+                        alt={`Additional image ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-lg"
+                      />
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        className="absolute top-1 right-1"
+                        onClick={() => removeAdditionalImage(index)}
+                      >
+                        ×
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex items-center gap-4">
+                <input
+                  id="additional-images-upload"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="sr-only"
+                  onChange={handleAdditionalImagesSelect}
+                  disabled={isUploadingAdditional || additionalImages.length >= 7}
+                />
+                <label htmlFor="additional-images-upload">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isUploadingAdditional || additionalImages.length >= 7}
+                    asChild
+                  >
+                    <span>
+                      <Upload className="h-4 w-4 mr-2" />
+                      {isUploadingAdditional ? "Uploading..." : "Add Images"}
+                    </span>
+                  </Button>
+                </label>
+                <span className="text-sm text-muted-foreground">
+                  {additionalImages.length}/7 images selected
+                </span>
+              </div>
+            </div>
+
+            {/* YouTube Video Section */}
+            <div className="space-y-2">
+              <Label htmlFor="youtube-url">YouTube Video (Optional)</Label>
+              <p className="text-sm text-muted-foreground">
+                Add a YouTube video to showcase your experience
+              </p>
+              
+              <Input
+                id="youtube-url"
+                type="url"
+                placeholder="https://www.youtube.com/watch?v=..."
+                value={youtubeUrl}
+                onChange={(e) => handleYouTubeUrlChange(e.target.value)}
+              />
+              
+              {youtubeVideoId && (
+                <div className="mt-4">
+                  <p className="text-sm font-medium mb-2">Video Preview:</p>
+                  <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${youtubeVideoId}`}
+                      title="YouTube video preview"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -562,7 +810,7 @@ export default function NewExperiencePage() {
 
           <Button
             type="submit"
-            disabled={isSubmitting || isUploading || isTranslating}
+            disabled={isSubmitting || isUploading || isUploadingAdditional || isTranslating}
             className="md:w-auto w-full"
           >
             {isTranslating
@@ -579,7 +827,7 @@ export default function NewExperiencePage() {
               const form = document.querySelector("form") as HTMLFormElement;
               form?.requestSubmit();
             }}
-            disabled={isSubmitting || isUploading || isTranslating}
+            disabled={isSubmitting || isUploading || isUploadingAdditional || isTranslating}
             className="bg-turquesa hover:bg-turquesa/90 md:w-auto w-full"
           >
             {isTranslating
