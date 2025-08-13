@@ -52,9 +52,11 @@ export function ExperienceCard({
         />
       </CardHeader>
       <CardContent className="space-y-3 p-6">
-        <h3 className="line-clamp-2 text-xl font-semibold text-gris-90">
-          {title}
-        </h3>
+        <Link href={`/experiences/${id}`}>
+          <h3 className="line-clamp-2 text-xl font-semibold text-gris-90 hover:text-turquesa transition-colors cursor-pointer">
+            {title}
+          </h3>
+        </Link>
         <p className="line-clamp-3 text-sm text-gris-80">{description}</p>
 
         <div className="space-y-2">

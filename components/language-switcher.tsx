@@ -31,8 +31,8 @@ export function LanguageSwitcher() {
       });
       
       if (response.ok) {
-        // Refresh the router to get new server-side props
-        router.refresh();
+        // Reload the page to ensure server-side locale detection picks up the new cookie
+        window.location.reload();
       }
     } catch (error) {
       console.error("Failed to change locale:", error);
