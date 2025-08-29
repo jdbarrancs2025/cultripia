@@ -407,6 +407,28 @@
     "privacyPolicy": "Política de privacidad",
     "termsOfUse": "Condiciones de uso"
   },
+  "support": {
+    "modalTitle": "Contactar Soporte",
+    "modalDescription": "¡Estamos aquí para ayudarte! Envíanos un mensaje y te responderemos lo antes posible.",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "nameRequired": "El nombre es requerido",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu@correo.com",
+    "emailRequired": "El correo electrónico es requerido",
+    "emailInvalid": "Por favor ingresa un correo electrónico válido",
+    "messageLabel": "Mensaje",
+    "messagePlaceholder": "¿Cómo podemos ayudarte?",
+    "messageRequired": "El mensaje es requerido",
+    "messageTooShort": "El mensaje debe tener al menos 10 caracteres",
+    "submitButton": "Enviar Mensaje",
+    "submittingButton": "Enviando...",
+    "cancelButton": "Cancelar",
+    "successTitle": "¡Mensaje Enviado!",
+    "successMessage": "Hemos recibido tu mensaje y responderemos pronto.",
+    "errorTitle": "Error",
+    "errorDescription": "Error al enviar el mensaje. Por favor intenta de nuevo."
+  },
   "notFound": {
     "title": "Página no encontrada",
     "description": "La página que buscas no existe o ha sido movida.",

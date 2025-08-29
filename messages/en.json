@@ -407,6 +407,28 @@
     "privacyPolicy": "Privacy policy",
     "termsOfUse": "Terms of use"
   },
+  "support": {
+    "modalTitle": "Contact Support",
+    "modalDescription": "We're here to help! Send us a message and we'll get back to you as soon as possible.",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "nameRequired": "Name is required",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email address",
+    "messageLabel": "Message",
+    "messagePlaceholder": "How can we help you?",
+    "messageRequired": "Message is required",
+    "messageTooShort": "Message must be at least 10 characters",
+    "submitButton": "Send Message",
+    "submittingButton": "Sending...",
+    "cancelButton": "Cancel",
+    "successTitle": "Message Sent!",
+    "successMessage": "We've received your message and will respond shortly.",
+    "errorTitle": "Error",
+    "errorDescription": "Failed to send message. Please try again."
+  },
   "notFound": {
     "title": "Page Not Found",
     "description": "The page you're looking for doesn't exist or has been moved.",

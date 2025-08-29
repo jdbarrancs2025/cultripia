@@ -95,4 +95,15 @@ export default defineSchema({
     requestedAt: v.number(),
     processed: v.boolean(),
   }).index("by_booking", ["bookingId"]),
+
+  supportRequests: defineTable({
+    name: v.string(),
+    email: v.string(),
+    message: v.string(),
+    status: v.union(v.literal("pending"), v.literal("resolved")),
+    createdAt: v.number(),
+    resolvedAt: v.optional(v.number()),
+  })
+    .index("by_status", ["status"])
+    .index("by_created", ["createdAt"]),
 });

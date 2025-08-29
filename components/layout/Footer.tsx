@@ -1,13 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { SupportModal } from "@/components/SupportModal";
 
 export function Footer() {
   const t = useTranslations("footer");
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
+
   return (
+    <>
     <footer className="bg-gray-100 text-gris-80">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
@@ -52,7 +57,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/experiences"
                   className="text-sm hover:text-turquesa transition-colors"
                 >
                   {t("cultureAndLegacy")}
@@ -99,12 +104,12 @@ export function Footer() {
             <h3 className="mb-4 text-lg font-semibold text-gris-90">{t("support")}</h3>
             <ul className="space-y-2">
               <li>
-                <Link
-                  href="#"
-                  className="text-sm hover:text-turquesa transition-colors"
+                <button
+                  onClick={() => setIsSupportModalOpen(true)}
+                  className="text-sm hover:text-turquesa transition-colors text-left"
                 >
                   {t("contactUs")}
-                </Link>
+                </button>
               </li>
               <li>
                 <Link
@@ -150,5 +155,10 @@ export function Footer() {
         </div>
       </div>
     </footer>
+    <SupportModal 
+      isOpen={isSupportModalOpen} 
+      onClose={() => setIsSupportModalOpen(false)} 
+    />
+    </>
   );
 }

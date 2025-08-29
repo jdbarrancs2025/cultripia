@@ -9,6 +9,7 @@ import {
   FileText,
   Settings,
   TestTube,
+  MessageSquare,
 } from "lucide-react";
 
 export default async function AdminLayout({
@@ -76,6 +77,15 @@ export default async function AdminLayout({
             >
               <Calendar className="mr-3 h-4 w-4" />
               Experiences
+            </Button>
+          </Link>
+          <Link href="/admin/support">
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-gray-700 hover:text-gray-900"
+            >
+              <MessageSquare className="mr-3 h-4 w-4" />
+              Support
             </Button>
           </Link>
           <Link href="/admin/settings">
