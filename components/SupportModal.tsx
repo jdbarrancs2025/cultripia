@@ -1,5 +1,6 @@
 "use client";
 
+// Support modal component for user inquiries
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useMutation } from "convex/react";
