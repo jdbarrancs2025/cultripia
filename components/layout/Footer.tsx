@@ -112,16 +112,16 @@ export function Footer() {
                 </button>
               </li>
               <li>
-                <Link
-                  href="/help"
-                  className="text-sm hover:text-turquesa transition-colors"
+                <button
+                  onClick={() => setIsSupportModalOpen(true)}
+                  className="text-sm hover:text-turquesa transition-colors text-left"
                 >
                   {t("helpCenter")}
-                </Link>
+                </button>
               </li>
               <li>
                 <Link
-                  href="/guide"
+                  href="/"
                   className="text-sm hover:text-turquesa transition-colors"
                 >
                   {t("travelersGuide")}
