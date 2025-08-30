@@ -51,10 +51,12 @@
       "searchTitle": "Encuentra tu próxima aventura",
       "whereLabel": "¿Dónde?",
       "whenLabel": "¿Cuándo?",
-      "whoLabel": "¿Quién?",
+      "howManyLabel": "¿Cuántos?",
       "wherePlaceholder": "Explora destinos",
       "numberOfGuests": "Número de huéspedes",
-      "search": "Buscar"
+      "search": "Buscar",
+      "loading": "Cargando...",
+      "noDestinations": "No hay destinos disponibles"
     }
   },
   "experiences": {

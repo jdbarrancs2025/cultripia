@@ -12,10 +12,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { CalendarIcon, Minus, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { es, enUS } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 
 export function HeroSection() {
@@ -23,8 +32,12 @@ export function HeroSection() {
   const t = useTranslations("home.hero");
   const locale = useLocale();
   const [location, setLocation] = useState("");
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<Date>(new Date());
   const [guests, setGuests] = useState(1);
+  
+  const availableCountries = useQuery(api.experiences.getAvailableCountries);
+  const isLoadingCountries = availableCountries === undefined;
+  const hasCountries = availableCountries && availableCountries.length > 0;
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -97,13 +110,28 @@ export function HeroSection() {
               <label className="text-sm font-medium text-gray-700">
                 {t("whereLabel")}
               </label>
-              <Input
-                type="text"
-                placeholder={t("wherePlaceholder")}
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="w-full"
-              />
+              <Select value={location} onValueChange={setLocation} disabled={isLoadingCountries || !hasCountries}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={
+                    isLoadingCountries ? t("loading") : 
+                    !hasCountries ? t("noDestinations") : 
+                    t("wherePlaceholder")
+                  } />
+                </SelectTrigger>
+                <SelectContent>
+                  {hasCountries ? (
+                    availableCountries.map((country) => (
+                      <SelectItem key={country} value={country}>
+                        {country}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="" disabled>
+                      {t("noDestinations")}
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
@@ -120,16 +148,20 @@ export function HeroSection() {
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "dd/MM/yyyy") : "20/07/2025"}
+                    {date ? format(date, "dd/MM/yyyy") : format(new Date(), "dd/MM/yyyy")}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={date}
-                    onSelect={setDate}
+                    onSelect={(newDate) => newDate && setDate(newDate)}
                     locale={locale === "es" ? es : enUS}
-                    disabled={(date) => date < new Date()}
+                    disabled={(date) => {
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      return date < today;
+                    }}
                     initialFocus
                   />
                 </PopoverContent>
@@ -137,7 +169,7 @@ export function HeroSection() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">{t("whoLabel")}</label>
+              <label className="text-sm font-medium text-gray-700">{t("howManyLabel")}</label>
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
@@ -145,6 +177,7 @@ export function HeroSection() {
                   className="h-10 w-10"
                   onClick={decrementGuests}
                   disabled={guests <= 1}
+                  aria-label="Decrease number of guests"
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
@@ -158,6 +191,7 @@ export function HeroSection() {
                   }
                   className="text-center"
                   placeholder={t("numberOfGuests")}
+                  aria-label="Number of guests"
                   min={1}
                   max={20}
                 />
@@ -167,6 +201,7 @@ export function HeroSection() {
                   className="h-10 w-10"
                   onClick={incrementGuests}
                   disabled={guests >= 20}
+                  aria-label="Increase number of guests"
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -177,7 +212,7 @@ export function HeroSection() {
               <Button
                 className="w-full bg-turquesa hover:bg-turquesa/90"
                 onClick={handleSearch}
-                disabled={!location}
+                disabled={!location || isLoadingCountries || !hasCountries}
               >
                 {t("search")}
               </Button>

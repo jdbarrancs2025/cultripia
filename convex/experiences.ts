@@ -340,3 +340,27 @@ export const getExperience = query({
     };
   },
 });
+
+export const getAvailableCountries = query({
+  args: {},
+  handler: async (ctx) => {
+    // Fetch all active experiences
+    const experiences = await ctx.db
+      .query("experiences")
+      .withIndex("by_status", (q) => q.eq("status", "active"))
+      .collect();
+
+    // Extract unique countries
+    const countriesSet = new Set<string>();
+    experiences.forEach((exp) => {
+      if (exp.country) {
+        countriesSet.add(exp.country);
+      }
+    });
+
+    // Convert to array and sort alphabetically
+    const countries = Array.from(countriesSet).sort();
+    
+    return countries;
+  },
+});
