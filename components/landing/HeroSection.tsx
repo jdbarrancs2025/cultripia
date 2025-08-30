@@ -35,9 +35,10 @@ export function HeroSection() {
   const [date, setDate] = useState<Date>(new Date());
   const [guests, setGuests] = useState(1);
   
-  const availableCountries = useQuery(api.experiences.getAvailableCountries);
-  const isLoadingCountries = availableCountries === undefined;
-  const hasCountries = availableCountries && availableCountries.length > 0;
+  const availableLocations = useQuery(api.experiences.getAvailableLocations);
+  const filteredLocations = availableLocations?.filter(loc => loc && loc.trim() !== "") || [];
+  const isLoadingLocations = availableLocations === undefined;
+  const hasLocations = filteredLocations.length > 0;
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -110,26 +111,20 @@ export function HeroSection() {
               <label className="text-sm font-medium text-gray-700">
                 {t("whereLabel")}
               </label>
-              <Select value={location} onValueChange={setLocation} disabled={isLoadingCountries || !hasCountries}>
+              <Select value={location} onValueChange={setLocation} disabled={isLoadingLocations || !hasLocations}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder={
-                    isLoadingCountries ? t("loading") : 
-                    !hasCountries ? t("noDestinations") : 
+                    isLoadingLocations ? t("loading") : 
+                    !hasLocations ? t("noDestinations") : 
                     t("wherePlaceholder")
                   } />
                 </SelectTrigger>
                 <SelectContent>
-                  {hasCountries ? (
-                    availableCountries.map((country) => (
-                      <SelectItem key={country} value={country}>
-                        {country}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="" disabled>
-                      {t("noDestinations")}
+                  {filteredLocations.map((location) => (
+                    <SelectItem key={location} value={location}>
+                      {location}
                     </SelectItem>
-                  )}
+                  ))}
                 </SelectContent>
               </Select>
             </div>

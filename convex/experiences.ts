@@ -341,7 +341,7 @@ export const getExperience = query({
   },
 });
 
-export const getAvailableCountries = query({
+export const getAvailableLocations = query({
   args: {},
   handler: async (ctx) => {
     // Fetch all active experiences
@@ -350,17 +350,17 @@ export const getAvailableCountries = query({
       .withIndex("by_status", (q) => q.eq("status", "active"))
       .collect();
 
-    // Extract unique countries
-    const countriesSet = new Set<string>();
+    // Extract unique locations
+    const locationsSet = new Set<string>();
     experiences.forEach((exp) => {
-      if (exp.country && exp.country.trim() !== "") {
-        countriesSet.add(exp.country);
+      if (exp.location && exp.location.trim() !== "") {
+        locationsSet.add(exp.location);
       }
     });
 
     // Convert to array and sort alphabetically
-    const countries = Array.from(countriesSet).sort();
+    const locations = Array.from(locationsSet).sort();
     
-    return countries;
+    return locations;
   },
 });
