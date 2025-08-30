@@ -353,7 +353,7 @@ export const getAvailableCountries = query({
     // Extract unique countries
     const countriesSet = new Set<string>();
     experiences.forEach((exp) => {
-      if (exp.country) {
+      if (exp.country && exp.country.trim() !== "") {
         countriesSet.add(exp.country);
       }
     });
