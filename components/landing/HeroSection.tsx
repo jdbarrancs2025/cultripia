@@ -31,7 +31,7 @@ export function HeroSection() {
   const router = useRouter();
   const t = useTranslations("home.hero");
   const locale = useLocale();
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState<string | undefined>(undefined);
   const [date, setDate] = useState<Date>(new Date());
   const [guests, setGuests] = useState(1);
   
@@ -111,7 +111,7 @@ export function HeroSection() {
               <label className="text-sm font-medium text-gray-700">
                 {t("whereLabel")}
               </label>
-              <Select value={location} onValueChange={setLocation} disabled={isLoadingLocations || !hasLocations}>
+              <Select value={location || undefined} onValueChange={setLocation} disabled={isLoadingLocations || !hasLocations}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder={
                     isLoadingLocations ? t("loading") : 
