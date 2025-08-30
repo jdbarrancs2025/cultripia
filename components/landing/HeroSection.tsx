@@ -207,7 +207,7 @@ export function HeroSection() {
               <Button
                 className="w-full bg-turquesa hover:bg-turquesa/90"
                 onClick={handleSearch}
-                disabled={!location || isLoadingCountries || !hasCountries}
+                disabled={!location || isLoadingLocations || !hasLocations}
               >
                 {t("search")}
               </Button>
