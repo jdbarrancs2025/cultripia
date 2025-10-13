@@ -9,6 +9,7 @@ const isPublicRoute = createRouteMatcher([
   "/experiences",
   "/experiences/(.*)",
   "/api/webhook(.*)",
+  "/api/emails(.*)",
   "/api/locale",
 ]);
 
