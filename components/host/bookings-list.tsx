@@ -25,9 +25,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
 import { Calendar, Users, Mail } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
+import { ContactTravelerModal } from "./contact-traveler-modal";
 
 interface BookingsListProps {
   bookings: Array<
@@ -40,8 +42,26 @@ interface BookingsListProps {
 
 export function BookingsList({ bookings }: BookingsListProps) {
   const [filter, setFilter] = useState<"all" | "upcoming" | "past">("all");
+  const [selectedBooking, setSelectedBooking] = useState<
+    | (Doc<"bookings"> & {
+        experience: Doc<"experiences"> | null;
+        traveler: Doc<"users"> | null;
+      })
+    | null
+  >(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const t = useTranslations("host");
   const locale = useLocale();
+
+  const handleContactClick = (
+    booking: Doc<"bookings"> & {
+      experience: Doc<"experiences"> | null;
+      traveler: Doc<"users"> | null;
+    }
+  ) => {
+    setSelectedBooking(booking);
+    setIsModalOpen(true);
+  };
 
   const filteredBookings = bookings.filter((booking) => {
     const bookingDate = new Date(booking.selectedDate);
@@ -150,21 +170,18 @@ export function BookingsList({ bookings }: BookingsListProps) {
                 </TableCell>
                 <TableCell>
                   {booking.traveler?.email ? (
-                    <a
-                      href={`mailto:${booking.traveler.email}`}
-                      className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[#009D9B]/10 text-[#009D9B] hover:bg-[#009D9B]/20 hover:text-[#008C8A] transition-all cursor-pointer border border-[#009D9B]/20 hover:border-[#009D9B]/40"
-                      title={`Email ${booking.traveler.name}`}
-                      onClick={(e) => {
-                        // Ensure the mailto link works
-                        if (booking.traveler?.email) {
-                          window.location.href = `mailto:${booking.traveler.email}`;
-                        }
-                        e.preventDefault();
-                      }}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleContactClick(booking)}
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[#009D9B]/10 text-[#009D9B] hover:bg-[#009D9B]/20 hover:text-[#008C8A] transition-all border border-[#009D9B]/20 hover:border-[#009D9B]/40"
+                      title={`Contact ${booking.traveler.name}`}
                     >
                       <Mail className="h-4 w-4 flex-shrink-0" />
-                      <span className="text-sm font-medium">{booking.traveler.email}</span>
-                    </a>
+                      <span className="text-sm font-medium">
+                        {t("contactTraveler")}
+                      </span>
+                    </Button>
                   ) : (
                     <span className="text-gray-400 text-sm">N/A</span>
                   )}
@@ -174,6 +191,13 @@ export function BookingsList({ bookings }: BookingsListProps) {
           </TableBody>
         </Table>
       </CardContent>
+      {selectedBooking && (
+        <ContactTravelerModal
+          booking={selectedBooking}
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+        />
+      )}
     </Card>
   );
 }

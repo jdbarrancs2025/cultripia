@@ -119,7 +119,13 @@
     "persons": "Personas",
     "total": "Total",
     "status": "Estado",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "contactTraveler": "Contactar Viajero",
+    "sendMessage": "Enviar Mensaje",
+    "messagePlaceholder": "Escribe tu mensaje al viajero...",
+    "messageSent": "Mensaje enviado exitosamente",
+    "messageError": "Error al enviar mensaje",
+    "closeModal": "Cerrar"
   },
   "booking": {
     "selectDate": "Selecciona una fecha",

@@ -119,7 +119,13 @@
     "persons": "Persons",
     "total": "Total",
     "status": "Status",
-    "contact": "Contact"
+    "contact": "Contact",
+    "contactTraveler": "Contact Traveler",
+    "sendMessage": "Send Message",
+    "messagePlaceholder": "Write your message to the traveler...",
+    "messageSent": "Message sent successfully",
+    "messageError": "Failed to send message",
+    "closeModal": "Close"
   },
   "booking": {
     "selectDate": "Select a date",

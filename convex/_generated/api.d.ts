@@ -19,6 +19,7 @@ import type * as cancellationRequests from "../cancellationRequests.js";
 import type * as experiences from "../experiences.js";
 import type * as files from "../files.js";
 import type * as hostApplications from "../hostApplications.js";
+import type * as hostMessages from "../hostMessages.js";
 import type * as hosts from "../hosts.js";
 import type * as migrations from "../migrations.js";
 import type * as stripe from "../stripe.js";
@@ -41,6 +42,7 @@ declare const fullApi: ApiFromModules<{
   experiences: typeof experiences;
   files: typeof files;
   hostApplications: typeof hostApplications;
+  hostMessages: typeof hostMessages;
   hosts: typeof hosts;
   migrations: typeof migrations;
   stripe: typeof stripe;
