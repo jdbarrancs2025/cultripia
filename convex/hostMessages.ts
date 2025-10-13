@@ -80,7 +80,7 @@ export const sendHostMessage = action({
     // Call the email API endpoint
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/emails/host-message`,
+        `${process.env.APP_URL}/api/emails/host-message`,
         {
           method: "POST",
           headers: {
