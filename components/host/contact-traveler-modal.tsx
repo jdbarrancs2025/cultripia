@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "convex/react";
+import { useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import {
@@ -34,7 +34,7 @@ export function ContactTravelerModal({
 }: ContactTravelerModalProps) {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const sendHostMessage = useMutation(api.hostMessages.sendHostMessage);
+  const sendHostMessage = useAction(api.hostMessages.sendHostMessage);
   const { toast } = useToast();
   const t = useTranslations("host");
   const locale = useLocale();

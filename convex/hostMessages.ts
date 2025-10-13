@@ -1,17 +1,13 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { action, internalQuery } from "./_generated/server";
+import { internal } from "./_generated/api";
 
-export const sendHostMessage = mutation({
+// Internal query to validate and get booking details for sending message
+export const getBookingDetailsForMessage = internalQuery({
   args: {
     bookingId: v.id("bookings"),
-    message: v.string(),
   },
   handler: async (ctx, args) => {
-    // Validate message
-    if (!args.message || args.message.trim().length === 0) {
-      throw new Error("Message cannot be empty");
-    }
-
     // Get authenticated user
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -51,6 +47,36 @@ export const sendHostMessage = mutation({
       throw new Error("Traveler not found");
     }
 
+    return {
+      booking,
+      experience,
+      traveler,
+      host: user,
+    };
+  },
+});
+
+export const sendHostMessage = action({
+  args: {
+    bookingId: v.id("bookings"),
+    message: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Validate message
+    if (!args.message || args.message.trim().length === 0) {
+      throw new Error("Message cannot be empty");
+    }
+
+    // Get booking details and validate permissions
+    const details = await ctx.runQuery(
+      internal.hostMessages.getBookingDetailsForMessage,
+      {
+        bookingId: args.bookingId,
+      }
+    );
+
+    const { booking, experience, traveler, host } = details;
+
     // Call the email API endpoint
     try {
       const response = await fetch(
@@ -64,7 +90,7 @@ export const sendHostMessage = mutation({
             booking,
             experience,
             traveler,
-            host: user,
+            host,
             message: args.message,
           }),
         }
