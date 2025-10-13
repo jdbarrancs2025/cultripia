@@ -149,16 +149,17 @@ export function BookingsList({ bookings }: BookingsListProps) {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {booking.traveler?.email && (
-                    <div className="flex items-center gap-3">
-                      <a
-                        href={`mailto:${booking.traveler.email}`}
-                        className="text-[#009D9B] hover:text-[#008C8A]"
-                        title={booking.traveler.email}
-                      >
-                        <Mail className="h-4 w-4" />
-                      </a>
-                    </div>
+                  {booking.traveler?.email ? (
+                    <a
+                      href={`mailto:${booking.traveler.email}`}
+                      className="flex items-center gap-2 text-[#009D9B] hover:text-[#008C8A] hover:underline transition-colors"
+                      title={`Email ${booking.traveler.name}`}
+                    >
+                      <Mail className="h-4 w-4 flex-shrink-0" />
+                      <span className="text-sm">{booking.traveler.email}</span>
+                    </a>
+                  ) : (
+                    <span className="text-gray-400 text-sm">N/A</span>
                   )}
                 </TableCell>
               </TableRow>
