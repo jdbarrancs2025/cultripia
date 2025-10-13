@@ -152,11 +152,18 @@ export function BookingsList({ bookings }: BookingsListProps) {
                   {booking.traveler?.email ? (
                     <a
                       href={`mailto:${booking.traveler.email}`}
-                      className="flex items-center gap-2 text-[#009D9B] hover:text-[#008C8A] hover:underline transition-colors"
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[#009D9B]/10 text-[#009D9B] hover:bg-[#009D9B]/20 hover:text-[#008C8A] transition-all cursor-pointer border border-[#009D9B]/20 hover:border-[#009D9B]/40"
                       title={`Email ${booking.traveler.name}`}
+                      onClick={(e) => {
+                        // Ensure the mailto link works
+                        if (booking.traveler?.email) {
+                          window.location.href = `mailto:${booking.traveler.email}`;
+                        }
+                        e.preventDefault();
+                      }}
                     >
                       <Mail className="h-4 w-4 flex-shrink-0" />
-                      <span className="text-sm">{booking.traveler.email}</span>
+                      <span className="text-sm font-medium">{booking.traveler.email}</span>
                     </a>
                   ) : (
                     <span className="text-gray-400 text-sm">N/A</span>
