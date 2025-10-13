@@ -41,6 +41,7 @@ export function Navigation() {
       items.push(
         { label: t("hostDashboard"), href: "/host/dashboard", show: true },
         { label: t("myExperiences"), href: "/host/experiences", show: true },
+        { label: t("hostBookings"), href: "/host/bookings", show: true },
         { label: t("myBookings"), href: "/dashboard", show: true },
       );
     }
@@ -51,6 +52,7 @@ export function Navigation() {
         { label: t("adminDashboard"), href: "/admin/dashboard", show: true },
         { label: t("hostDashboard"), href: "/host/dashboard", show: true },
         { label: t("myExperiences"), href: "/host/experiences", show: true },
+        { label: t("hostBookings"), href: "/host/bookings", show: true },
       );
     }
 

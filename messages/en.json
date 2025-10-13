@@ -29,6 +29,7 @@
     "dashboard": "Dashboard",
     "hostDashboard": "Host Dashboard",
     "myExperiences": "My Experiences",
+    "hostBookings": "Bookings",
     "calendar": "Calendar",
     "adminDashboard": "Admin Dashboard"
   },
@@ -102,7 +103,23 @@
     "noRecentActivity": "No recent activity",
     "paid": "Paid",
     "pending": "Pending",
-    "noPermission": "You don't have permission to view this page."
+    "noPermission": "You don't have permission to view this page.",
+    "viewManageBookings": "View and manage all your experience bookings",
+    "loadingBookings": "Loading bookings...",
+    "noBookingsYet": "You don't have any bookings yet.",
+    "bookingsTitle": "Bookings",
+    "manageBookings": "Manage your experience bookings",
+    "filterBookings": "Filter bookings",
+    "allBookings": "All",
+    "upcomingBookings": "Upcoming",
+    "pastBookings": "Past",
+    "experience": "Experience",
+    "date": "Date",
+    "traveler": "Traveler",
+    "persons": "Persons",
+    "total": "Total",
+    "status": "Status",
+    "contact": "Contact"
   },
   "booking": {
     "selectDate": "Select a date",

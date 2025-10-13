@@ -26,7 +26,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/utils";
-import { Calendar, Users, Mail, Phone } from "lucide-react";
+import { Calendar, Users, Mail } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 
 interface BookingsListProps {
   bookings: Array<
@@ -39,6 +40,8 @@ interface BookingsListProps {
 
 export function BookingsList({ bookings }: BookingsListProps) {
   const [filter, setFilter] = useState<"all" | "upcoming" | "past">("all");
+  const t = useTranslations("host");
+  const locale = useLocale();
 
   const filteredBookings = bookings.filter((booking) => {
     const bookingDate = new Date(booking.selectedDate);
@@ -57,7 +60,7 @@ export function BookingsList({ bookings }: BookingsListProps) {
     return (
       <Card>
         <CardContent className="p-8 text-center">
-          <p className="text-gray-500">No tienes reservas aún.</p>
+          <p className="text-gray-500">{t("noBookingsYet")}</p>
         </CardContent>
       </Card>
     );
@@ -68,22 +71,20 @@ export function BookingsList({ bookings }: BookingsListProps) {
       <CardHeader>
         <div className="flex justify-between items-center">
           <div>
-            <CardTitle>Reservas</CardTitle>
-            <CardDescription>
-              Gestiona las reservas de tus experiencias
-            </CardDescription>
+            <CardTitle>{t("bookingsTitle")}</CardTitle>
+            <CardDescription>{t("manageBookings")}</CardDescription>
           </div>
           <Select
             value={filter}
             onValueChange={(value: any) => setFilter(value)}
           >
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filtrar reservas" />
+              <SelectValue placeholder={t("filterBookings")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todas</SelectItem>
-              <SelectItem value="upcoming">Próximas</SelectItem>
-              <SelectItem value="past">Pasadas</SelectItem>
+              <SelectItem value="all">{t("allBookings")}</SelectItem>
+              <SelectItem value="upcoming">{t("upcomingBookings")}</SelectItem>
+              <SelectItem value="past">{t("pastBookings")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -92,28 +93,32 @@ export function BookingsList({ bookings }: BookingsListProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Experiencia</TableHead>
-              <TableHead>Fecha</TableHead>
-              <TableHead>Viajero</TableHead>
-              <TableHead>Personas</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Estado</TableHead>
-              <TableHead>Contacto</TableHead>
+              <TableHead>{t("experience")}</TableHead>
+              <TableHead>{t("date")}</TableHead>
+              <TableHead>{t("traveler")}</TableHead>
+              <TableHead>{t("persons")}</TableHead>
+              <TableHead>{t("total")}</TableHead>
+              <TableHead>{t("status")}</TableHead>
+              <TableHead>{t("contact")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredBookings.map((booking) => (
               <TableRow key={booking._id}>
                 <TableCell className="font-medium">
-                  {booking.experience?.titleEs ||
-                    booking.experience?.titleEn ||
-                    "N/A"}
+                  {locale === "en"
+                    ? booking.experience?.titleEn ||
+                      booking.experience?.titleEs ||
+                      "N/A"
+                    : booking.experience?.titleEs ||
+                      booking.experience?.titleEn ||
+                      "N/A"}
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-gray-400" />
                     {new Date(booking.selectedDate).toLocaleDateString(
-                      "es-ES",
+                      locale === "en" ? "en-US" : "es-ES",
                       {
                         weekday: "long",
                         year: "numeric",
@@ -140,7 +145,7 @@ export function BookingsList({ bookings }: BookingsListProps) {
                         : "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
                     }
                   >
-                    {booking.paid ? "Pagado" : "Pendiente"}
+                    {booking.paid ? t("paid") : t("pending")}
                   </Badge>
                 </TableCell>
                 <TableCell>

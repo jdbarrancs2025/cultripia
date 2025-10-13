@@ -29,6 +29,7 @@
     "dashboard": "Panel de Control",
     "hostDashboard": "Panel de Anfitrión",
     "myExperiences": "Mis Experiencias",
+    "hostBookings": "Reservas",
     "calendar": "Calendario",
     "adminDashboard": "Admin Dashboard"
   },
@@ -102,7 +103,23 @@
     "noRecentActivity": "No hay actividad reciente",
     "paid": "Pagado",
     "pending": "Pendiente",
-    "noPermission": "No tienes permisos para ver esta página."
+    "noPermission": "No tienes permisos para ver esta página.",
+    "viewManageBookings": "Ver y gestionar todas las reservas de tus experiencias",
+    "loadingBookings": "Cargando reservas...",
+    "noBookingsYet": "No tienes reservas aún.",
+    "bookingsTitle": "Reservas",
+    "manageBookings": "Gestiona las reservas de tus experiencias",
+    "filterBookings": "Filtrar reservas",
+    "allBookings": "Todas",
+    "upcomingBookings": "Próximas",
+    "pastBookings": "Pasadas",
+    "experience": "Experiencia",
+    "date": "Fecha",
+    "traveler": "Viajero",
+    "persons": "Personas",
+    "total": "Total",
+    "status": "Estado",
+    "contact": "Contacto"
   },
   "booking": {
     "selectDate": "Selecciona una fecha",
