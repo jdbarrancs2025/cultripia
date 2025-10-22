@@ -92,16 +92,31 @@ export async function POST(req: Request) {
                 headers: {
                   "Content-Type": "application/json",
                 },
-                body: JSON.stringify(bookingDetails),
+                body: JSON.stringify({
+                  booking: bookingDetails,
+                  experience: bookingDetails.experience,
+                  traveler: bookingDetails.traveler,
+                  host: bookingDetails.host,
+                }),
               },
             );
 
             if (!emailResponse.ok) {
-              console.error("Failed to send booking confirmation emails");
+              const errorText = await emailResponse.text();
+              console.error("Failed to send booking confirmation emails:", emailResponse.status, errorText);
+            } else {
+              console.log("Booking confirmation emails sent successfully for session:", session.id);
             }
           } catch (error) {
             console.error("Error calling email API:", error);
           }
+        } else {
+          console.warn("Incomplete booking details, cannot send emails:", {
+            hasBooking: !!bookingDetails,
+            hasExperience: !!bookingDetails?.experience,
+            hasTraveler: !!bookingDetails?.traveler,
+            hasHost: !!bookingDetails?.host,
+          });
         }
 
         break;

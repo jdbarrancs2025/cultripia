@@ -9,6 +9,41 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { booking, experience, traveler, host } = body;
 
+    // Validate required data
+    if (!booking || !experience || !traveler || !host) {
+      console.error("Missing required data for booking confirmation email:", {
+        hasBooking: !!booking,
+        hasExperience: !!experience,
+        hasTraveler: !!traveler,
+        hasHost: !!host,
+      });
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Missing required booking data",
+          details: {
+            hasBooking: !!booking,
+            hasExperience: !!experience,
+            hasTraveler: !!traveler,
+            hasHost: !!host,
+          }
+        },
+        { status: 400 },
+      );
+    }
+
+    // Validate email addresses
+    if (!traveler.email || !host.email) {
+      console.error("Missing email addresses:", {
+        travelerEmail: traveler.email,
+        hostEmail: host.email,
+      });
+      return NextResponse.json(
+        { success: false, error: "Missing email addresses" },
+        { status: 400 },
+      );
+    }
+
     // Format date
     const bookingDate = new Date(booking.selectedDate);
     const formattedDate = bookingDate.toLocaleDateString("en-US", {
@@ -19,6 +54,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Send confirmation email to traveler
+    console.log("Sending booking confirmation email to traveler:", traveler.email);
     const confirmationEmailResult = await sendEmail({
       to: traveler.email,
       subject: `Booking Confirmed: ${experience.titleEn}`,
@@ -39,12 +75,17 @@ export async function POST(req: NextRequest) {
 
     if (!confirmationEmailResult.success) {
       console.error(
-        "Failed to send confirmation email:",
+        "Failed to send confirmation email to traveler:",
+        traveler.email,
+        "Error:",
         confirmationEmailResult.error,
       );
+    } else {
+      console.log("Successfully sent confirmation email to traveler:", traveler.email);
     }
 
     // Send notification email to host
+    console.log("Sending booking notification email to host:", host.email);
     const hostNotificationResult = await sendEmail({
       to: host.email,
       subject: `New Booking: ${experience.titleEn}`,
@@ -62,10 +103,19 @@ export async function POST(req: NextRequest) {
 
     if (!hostNotificationResult.success) {
       console.error(
-        "Failed to send host notification:",
+        "Failed to send host notification to:",
+        host.email,
+        "Error:",
         hostNotificationResult.error,
       );
+    } else {
+      console.log("Successfully sent notification email to host:", host.email);
     }
+
+    console.log("Booking confirmation emails completed:", {
+      confirmationSent: confirmationEmailResult.success,
+      hostNotificationSent: hostNotificationResult.success,
+    });
 
     return NextResponse.json({
       success: true,
@@ -75,7 +125,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Error sending booking emails:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to send emails" },
+      { success: false, error: "Failed to send emails", details: String(error) },
       { status: 500 },
     );
   }
