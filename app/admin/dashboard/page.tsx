@@ -29,6 +29,7 @@ import {
 import { Id } from "@/convex/_generated/dataModel";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslations, useLocale } from "next-intl";
+import { parseBookingDate } from "@/lib/utils";
 
 export default function AdminDashboard() {
   const { user } = useUser();
@@ -411,7 +412,7 @@ export default function AdminDashboard() {
                               </p>
                               <p className="text-sm text-muted-foreground">
                                 {t("cancellationRequests.bookingDate")}: {format(
-                                  new Date(request.booking.selectedDate),
+                                  parseBookingDate(request.booking.selectedDate),
                                   "dd MMM yyyy",
                                   { locale: locale === "es" ? es : enUS },
                                 )}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email";
+import { parseBookingDate } from "@/lib/utils";
 import HostMessageEmail from "@/emails/host-message";
 import React from "react";
 
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Format date
-    const bookingDate = new Date(booking.selectedDate);
+    const bookingDate = parseBookingDate(booking.selectedDate);
     const formattedDate = bookingDate.toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",

@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, parseBookingDate } from "@/lib/utils";
 import { Calendar, Users, Mail } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { ContactTravelerModal } from "./contact-traveler-modal";
@@ -64,7 +64,7 @@ export function BookingsList({ bookings }: BookingsListProps) {
   };
 
   const filteredBookings = bookings.filter((booking) => {
-    const bookingDate = new Date(booking.selectedDate);
+    const bookingDate = parseBookingDate(booking.selectedDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -137,7 +137,7 @@ export function BookingsList({ bookings }: BookingsListProps) {
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-gray-400" />
-                    {new Date(booking.selectedDate).toLocaleDateString(
+                    {parseBookingDate(booking.selectedDate).toLocaleDateString(
                       locale === "en" ? "en-US" : "es-ES",
                       {
                         weekday: "long",

@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslations, useLocale } from "next-intl";
 import { Calendar, Users, Mail, Loader2 } from "lucide-react";
+import { parseBookingDate } from "@/lib/utils";
 
 interface ContactTravelerModalProps {
   booking: Doc<"bookings"> & {
@@ -82,7 +83,7 @@ export function ContactTravelerModal({
       ? booking.experience?.titleEn || booking.experience?.titleEs || "N/A"
       : booking.experience?.titleEs || booking.experience?.titleEn || "N/A";
 
-  const formattedDate = new Date(booking.selectedDate).toLocaleDateString(
+  const formattedDate = parseBookingDate(booking.selectedDate).toLocaleDateString(
     locale === "en" ? "en-US" : "es-ES",
     {
       weekday: "long",

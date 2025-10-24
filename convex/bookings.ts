@@ -1,6 +1,14 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
+/**
+ * Parse a booking date string (YYYY-MM-DD) as local midnight
+ * to avoid timezone conversion issues.
+ */
+function parseBookingDate(dateString: string): Date {
+  return new Date(dateString + "T00:00:00");
+}
+
 export const createBooking = mutation({
   args: {
     experienceId: v.id("experiences"),
@@ -25,7 +33,7 @@ export const createBooking = mutation({
     }
 
     // Validate date is not in the past
-    const selectedDate = new Date(args.selectedDate);
+    const selectedDate = parseBookingDate(args.selectedDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (selectedDate < today) {
@@ -252,8 +260,8 @@ export const getTravelerBookings = query({
 
     // Sort by date (newest first)
     return bookingsWithDetails.sort((a, b) => {
-      const dateA = new Date(a.selectedDate).getTime();
-      const dateB = new Date(b.selectedDate).getTime();
+      const dateA = parseBookingDate(a.selectedDate).getTime();
+      const dateB = parseBookingDate(b.selectedDate).getTime();
       return dateB - dateA;
     });
   },

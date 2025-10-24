@@ -33,6 +33,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MediaCarousel } from "@/components/ui/media-carousel";
 import { BookingDetailWithTraveler } from "@/types/booking";
+import { parseBookingDate } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -109,7 +110,7 @@ export default function BookingDetailPage() {
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const bookingDate = new Date(booking.selectedDate);
+  const bookingDate = parseBookingDate(booking.selectedDate);
   bookingDate.setHours(0, 0, 0, 0);
   const isUpcoming = bookingDate >= today;
 
@@ -168,7 +169,7 @@ export default function BookingDetailPage() {
                   />
                   <span>
                     {format(
-                      new Date(booking.selectedDate),
+                      parseBookingDate(booking.selectedDate),
                       locale === "es" ? "EEEE, d 'de' MMMM 'de' yyyy" : "EEEE, MMMM d, yyyy",
                       { locale: locale === "es" ? es : enUS },
                     )}

@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Calendar, DollarSign, CalendarCheck, Package } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, parseBookingDate } from "@/lib/utils";
 
 export default function HostDashboardPage() {
   const { user, role } = useUser();
@@ -49,7 +49,7 @@ export default function HostDashboardPage() {
   }
 
   const upcomingBookings =
-    bookings?.filter((booking) => new Date(booking.selectedDate) >= new Date())
+    bookings?.filter((booking) => parseBookingDate(booking.selectedDate) >= new Date())
       .length || 0;
 
   const totalRevenue =
@@ -178,7 +178,7 @@ export default function HostDashboardPage() {
                             {locale === 'en' ? booking.experience?.titleEn : booking.experience?.titleEs}
                           </p>
                           <p className="text-sm text-gray-500">
-                            {new Date(booking.selectedDate).toLocaleDateString(
+                            {parseBookingDate(booking.selectedDate).toLocaleDateString(
                               locale === 'en' ? 'en-US' : 'es-ES',
                             )}{" "}
                             - {booking.qtyPersons} {booking.qtyPersons === 1 ? tDashboard("person") : tDashboard("people")}

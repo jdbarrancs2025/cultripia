@@ -23,6 +23,7 @@ import Link from "next/link";
 import { MediaCarousel } from "@/components/ui/media-carousel";
 import { redirect } from "next/navigation";
 import { BookingWithDetails } from "@/types/booking";
+import { parseBookingDate } from "@/lib/utils";
 
 export default function TravelerDashboard() {
   const { user, isLoaded } = useUser();
@@ -55,7 +56,7 @@ export default function TravelerDashboard() {
     const past: BookingWithDetails[] = [];
 
     bookings.forEach((booking) => {
-      const bookingDate = new Date(booking.selectedDate);
+      const bookingDate = parseBookingDate(booking.selectedDate);
       if (bookingDate >= today) {
         upcoming.push(booking);
       } else {
@@ -66,11 +67,11 @@ export default function TravelerDashboard() {
     // Sort by date
     upcoming.sort(
       (a, b) =>
-        new Date(a.selectedDate).getTime() - new Date(b.selectedDate).getTime(),
+        parseBookingDate(a.selectedDate).getTime() - parseBookingDate(b.selectedDate).getTime(),
     );
     past.sort(
       (a, b) =>
-        new Date(b.selectedDate).getTime() - new Date(a.selectedDate).getTime(),
+        parseBookingDate(b.selectedDate).getTime() - parseBookingDate(a.selectedDate).getTime(),
     );
 
     return { upcomingBookings: upcoming, pastBookings: past };
@@ -247,7 +248,7 @@ function BookingCard({
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Calendar className="h-4 w-4" aria-hidden="true" />
           <span>
-            {format(new Date(booking.selectedDate), "dd MMM yyyy", {
+            {format(parseBookingDate(booking.selectedDate), "dd MMM yyyy", {
               locale: locale === "es" ? es : enUS,
             })}
           </span>
