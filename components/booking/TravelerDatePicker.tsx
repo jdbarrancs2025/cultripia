@@ -34,11 +34,19 @@ export function TravelerDatePicker({
   });
 
   // Create a set of available dates for quick lookup
+  // A date is available if it has remaining capacity and is not blocked
   const availableDates = new Set<string>();
+  const dateCapacityMap = new Map<string, { remaining: number; booked: number; max: number }>();
+
   monthAvailability?.dates.forEach((dateInfo) => {
-    if (dateInfo.status === "available") {
+    if (dateInfo.status !== "blocked" && dateInfo.remainingCapacity > 0) {
       availableDates.add(dateInfo.date);
     }
+    dateCapacityMap.set(dateInfo.date, {
+      remaining: dateInfo.remainingCapacity,
+      booked: dateInfo.bookedGuests,
+      max: dateInfo.maxGuests,
+    });
   });
 
   const isDateAvailable = (date: Date) => {
@@ -62,12 +70,20 @@ export function TravelerDatePicker({
       today.setHours(0, 0, 0, 0);
       return date >= today && isDateAvailable(date);
     },
+    lowCapacity: (date: Date) => {
+      const dateStr = date.toISOString().split("T")[0];
+      const capacity = dateCapacityMap.get(dateStr);
+      if (!capacity) return false;
+      const percentRemaining = (capacity.remaining / capacity.max) * 100;
+      return percentRemaining > 0 && percentRemaining <= 30;
+    },
     unavailable: (date: Date) => {
       const dateStr = date.toISOString().split("T")[0];
       const dateInfo = monthAvailability?.dates.find((d) => d.date === dateStr);
+      const capacity = dateCapacityMap.get(dateStr);
       return !!(
         dateInfo &&
-        (dateInfo.status === "blocked" || dateInfo.status === "booked")
+        (dateInfo.status === "blocked" || (capacity && capacity.remaining <= 0))
       );
     },
     past: (date: Date) => {
@@ -80,6 +96,8 @@ export function TravelerDatePicker({
   const modifiersClassNames = {
     available:
       "bg-turquesa/10 hover:bg-turquesa/20 text-turquesa-dark cursor-pointer",
+    lowCapacity:
+      "bg-yellow-50 hover:bg-yellow-100 text-yellow-900 cursor-pointer border border-yellow-300",
     unavailable: "bg-gray-100 text-gray-400 cursor-not-allowed line-through",
     past: "opacity-50 cursor-not-allowed",
     selected: "bg-turquesa text-white hover:bg-turquesa/90",
@@ -99,6 +117,10 @@ export function TravelerDatePicker({
           <div className="flex items-center gap-2">
             <div className="h-4 w-4 rounded bg-turquesa/10 border border-turquesa/20" />
             <span>Disponible</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-4 rounded bg-yellow-50 border border-yellow-300" />
+            <span>Pocos espacios</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="h-4 w-4 rounded bg-gray-100" />
@@ -125,27 +147,35 @@ export function TravelerDatePicker({
                   day.date >= new Date(new Date().setHours(0, 0, 0, 0)) &&
                   isDateAvailable(day.date);
                 const dateStr = day.date.toISOString().split("T")[0];
+                const capacity = dateCapacityMap.get(dateStr);
                 const dateInfo = monthAvailability?.dates.find(
                   (d) => d.date === dateStr,
                 );
-                const isBooked = dateInfo?.status === "booked";
+                const isFull = capacity && capacity.remaining <= 0;
                 const isBlocked = dateInfo?.status === "blocked";
+                const isLowCapacity =
+                  capacity && capacity.remaining > 0 && capacity.remaining <= Math.max(3, capacity.max * 0.3);
 
                 return (
                   <Button
                     {...props}
                     variant="ghost"
                     size="icon"
-                    disabled={!isAvailable || isBooked || isBlocked}
+                    disabled={!isAvailable || isFull || isBlocked}
                     className={cn(
                       "h-9 w-9 p-0 font-normal aria-selected:opacity-100 relative",
                       className,
                     )}
                   >
                     <span>{day.date.getDate()}</span>
-                    {isBooked && (
+                    {isFull && (
                       <span className="absolute bottom-0 text-[10px] text-gray-400">
                         ×
+                      </span>
+                    )}
+                    {isLowCapacity && capacity && (
+                      <span className="absolute bottom-0 text-[10px] text-yellow-700 font-semibold">
+                        {capacity.remaining}
                       </span>
                     )}
                   </Button>

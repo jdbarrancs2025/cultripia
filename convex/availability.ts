@@ -255,6 +255,12 @@ export const getAvailabilityForMonth = query({
     month: v.number(), // 1-12
   },
   handler: async (ctx, args) => {
+    // Get experience details for max capacity
+    const experience = await ctx.db.get(args.experienceId);
+    if (!experience) {
+      throw new Error("Experience not found");
+    }
+
     // Calculate start and end dates for the month
     const startDate = new Date(args.year, args.month - 1, 1);
     const endDate = new Date(args.year, args.month, 0); // Last day of month
@@ -275,24 +281,41 @@ export const getAvailabilityForMonth = query({
       (record) => record.date >= startDateStr && record.date <= endDateStr,
     );
 
-    // Create a map of date to status
-    const availabilityMap: Record<string, "available" | "blocked" | "booked"> =
-      {};
+    // Create a map of date to availability info
+    const availabilityMap: Record<
+      string,
+      { status: "available" | "blocked" | "booked"; bookedGuests: number }
+    > = {};
     monthRecords.forEach((record) => {
-      availabilityMap[record.date] = record.status;
+      availabilityMap[record.date] = {
+        status: record.status,
+        bookedGuests: record.bookedGuests ?? 0,
+      };
     });
 
-    // Generate all dates in the month with their status
+    // Generate all dates in the month with their status and capacity
     const dates = [];
     const currentDate = new Date(startDate);
 
     while (currentDate <= endDate) {
       const dateStr = currentDate.toISOString().split("T")[0];
+      const availInfo = availabilityMap[dateStr] || {
+        status: "available" as const,
+        bookedGuests: 0,
+      };
+
+      const bookedGuests = availInfo.bookedGuests;
+      const remainingCapacity = experience.maxGuests - bookedGuests;
+
       dates.push({
         date: dateStr,
-        status: availabilityMap[dateStr] || "available",
+        status: availInfo.status,
         dayOfWeek: currentDate.getDay(),
         dayOfMonth: currentDate.getDate(),
+        bookedGuests,
+        remainingCapacity,
+        maxGuests: experience.maxGuests,
+        isFull: bookedGuests >= experience.maxGuests,
       });
       currentDate.setDate(currentDate.getDate() + 1);
     }
@@ -300,7 +323,112 @@ export const getAvailabilityForMonth = query({
     return {
       year: args.year,
       month: args.month,
+      maxGuests: experience.maxGuests,
       dates,
+    };
+  },
+});
+
+/**
+ * Get remaining capacity for a specific date
+ */
+export const getDateCapacity = query({
+  args: {
+    experienceId: v.id("experiences"),
+    date: v.string(), // YYYY-MM-DD format
+  },
+  handler: async (ctx, args) => {
+    const experience = await ctx.db.get(args.experienceId);
+    if (!experience) {
+      throw new Error("Experience not found");
+    }
+
+    const availability = await ctx.db
+      .query("availability")
+      .withIndex("by_experience_date", (q) =>
+        q.eq("experienceId", args.experienceId).eq("date", args.date),
+      )
+      .first();
+
+    const bookedGuests = availability?.bookedGuests ?? 0;
+    const remainingCapacity = experience.maxGuests - bookedGuests;
+
+    return {
+      experienceId: args.experienceId,
+      date: args.date,
+      maxGuests: experience.maxGuests,
+      bookedGuests,
+      remainingCapacity,
+      status: availability?.status ?? "available",
+      isFull: bookedGuests >= experience.maxGuests,
+    };
+  },
+});
+
+/**
+ * Get all bookings for a specific experience and date
+ * Useful for hosts to see who booked their experience on a particular day
+ */
+export const getBookingsForDate = query({
+  args: {
+    experienceId: v.id("experiences"),
+    date: v.string(), // YYYY-MM-DD format
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized: User not authenticated");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const experience = await ctx.db.get(args.experienceId);
+    if (!experience) {
+      throw new Error("Experience not found");
+    }
+
+    // Only host or admin can view bookings
+    if (experience.hostId !== user._id && user.role !== "admin") {
+      throw new Error("Unauthorized: Only the host can view these bookings");
+    }
+
+    // Get all bookings for this date
+    const allBookings = await ctx.db.query("bookings").collect();
+    const dateBookings = allBookings.filter(
+      (booking) =>
+        booking.experienceId === args.experienceId &&
+        booking.selectedDate === args.date &&
+        booking.paid === true
+    );
+
+    // Add traveler details
+    const bookingsWithTravelers = await Promise.all(
+      dateBookings.map(async (booking) => {
+        const traveler = await ctx.db.get(booking.travelerId);
+        return {
+          ...booking,
+          traveler,
+        };
+      })
+    );
+
+    const totalGuests = dateBookings.reduce(
+      (sum, booking) => sum + booking.qtyPersons,
+      0
+    );
+
+    return {
+      bookings: bookingsWithTravelers,
+      totalGuests,
+      maxGuests: experience.maxGuests,
+      remainingCapacity: experience.maxGuests - totalGuests,
     };
   },
 });

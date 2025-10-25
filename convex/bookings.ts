@@ -356,6 +356,25 @@ export const createBookingFromSession = mutation({
       throw new Error("Number of guests exceeds maximum capacity");
     }
 
+    // Check remaining capacity for this date
+    const availability = await ctx.db
+      .query("availability")
+      .withIndex("by_experience_date", (q) =>
+        q
+          .eq("experienceId", args.experienceId)
+          .eq("date", args.selectedDate),
+      )
+      .first();
+
+    const currentBookedGuests = availability?.bookedGuests ?? 0;
+    const remainingCapacity = experience.maxGuests - currentBookedGuests;
+
+    if (args.qtyPersons > remainingCapacity) {
+      throw new Error(
+        `Only ${remainingCapacity} spots remaining for this date. Cannot book ${args.qtyPersons} guests.`
+      );
+    }
+
     // Create the booking with paid status
     const bookingId = await ctx.db.insert("bookings", {
       experienceId: args.experienceId,
@@ -368,23 +387,21 @@ export const createBookingFromSession = mutation({
       createdAt: Date.now(),
     });
 
-    // Update availability
-    const availability = await ctx.db
-      .query("availability")
-      .withIndex("by_experience_date", (q) =>
-        q
-          .eq("experienceId", args.experienceId)
-          .eq("date", args.selectedDate),
-      )
-      .first();
+    // Update availability capacity tracking
+    const newBookedGuests = currentBookedGuests + args.qtyPersons;
+    const newStatus = newBookedGuests >= experience.maxGuests ? "booked" : "available";
 
     if (availability) {
-      await ctx.db.patch(availability._id, { status: "booked" });
+      await ctx.db.patch(availability._id, {
+        bookedGuests: newBookedGuests,
+        status: newStatus,
+      });
     } else {
       await ctx.db.insert("availability", {
         experienceId: args.experienceId,
         date: args.selectedDate,
-        status: "booked",
+        bookedGuests: newBookedGuests,
+        status: newStatus,
       });
     }
 
@@ -412,6 +429,12 @@ export const updateBookingPaymentStatus = mutation({
     await ctx.db.patch(booking._id, { paid: args.paid });
 
     if (args.paid) {
+      // Get experience to check max capacity
+      const experience = await ctx.db.get(booking.experienceId);
+      if (!experience) {
+        throw new Error("Experience not found");
+      }
+
       const availability = await ctx.db
         .query("availability")
         .withIndex("by_experience_date", (q) =>
@@ -421,13 +444,21 @@ export const updateBookingPaymentStatus = mutation({
         )
         .first();
 
+      const currentBookedGuests = availability?.bookedGuests ?? 0;
+      const newBookedGuests = currentBookedGuests + booking.qtyPersons;
+      const newStatus = newBookedGuests >= experience.maxGuests ? "booked" : "available";
+
       if (availability) {
-        await ctx.db.patch(availability._id, { status: "booked" });
+        await ctx.db.patch(availability._id, {
+          bookedGuests: newBookedGuests,
+          status: newStatus,
+        });
       } else {
         await ctx.db.insert("availability", {
           experienceId: booking.experienceId,
           date: booking.selectedDate,
-          status: "booked",
+          bookedGuests: newBookedGuests,
+          status: newStatus,
         });
       }
     }

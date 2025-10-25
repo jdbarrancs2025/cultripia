@@ -70,6 +70,7 @@ export default defineSchema({
       v.literal("blocked"),
       v.literal("booked"),
     ),
+    bookedGuests: v.optional(v.number()), // Track cumulative guests booked for capacity management
   })
     .index("by_experience", ["experienceId"])
     .index("by_date", ["date"])
