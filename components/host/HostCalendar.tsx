@@ -37,19 +37,33 @@ export function HostCalendar({ experienceId }: HostCalendarProps) {
     api.availability.bulkUpdateAvailability,
   );
 
-  // Create a map of date status for quick lookup
-  const availabilityMap = new Map<string, "available" | "blocked" | "booked">();
+  // Create a map of date status and capacity for quick lookup
+  const availabilityMap = new Map<
+    string,
+    {
+      status: "available" | "blocked" | "booked";
+      bookedGuests: number;
+      remainingCapacity: number;
+      maxGuests: number;
+    }
+  >();
   monthAvailability?.dates.forEach((dateInfo) => {
-    availabilityMap.set(dateInfo.date, dateInfo.status);
+    availabilityMap.set(dateInfo.date, {
+      status: dateInfo.status,
+      bookedGuests: dateInfo.bookedGuests,
+      remainingCapacity: dateInfo.remainingCapacity,
+      maxGuests: dateInfo.maxGuests,
+    });
   });
 
   const handleDateClick = async (date: Date) => {
     const dateStr = date.toISOString().split("T")[0];
-    const currentStatus = availabilityMap.get(dateStr) || "available";
+    const dateInfo = availabilityMap.get(dateStr);
+    const currentStatus = dateInfo?.status || "available";
 
-    // Don't allow changing booked dates
-    if (currentStatus === "booked") {
-      toast.error("No puedes modificar fechas reservadas");
+    // Don't allow changing dates with bookings
+    if (dateInfo && dateInfo.bookedGuests > 0) {
+      toast.error(`No puedes modificar esta fecha. Tiene ${dateInfo.bookedGuests} reservas activas.`);
       return;
     }
 
@@ -157,16 +171,23 @@ export function HostCalendar({ experienceId }: HostCalendarProps) {
   const modifiers = {
     available: (date: Date) => {
       const dateStr = date.toISOString().split("T")[0];
-      const status = availabilityMap.get(dateStr);
-      return status === undefined || status === "available";
+      const dateInfo = availabilityMap.get(dateStr);
+      return dateInfo === undefined || (dateInfo.status === "available" && dateInfo.bookedGuests === 0);
+    },
+    partiallyBooked: (date: Date) => {
+      const dateStr = date.toISOString().split("T")[0];
+      const dateInfo = availabilityMap.get(dateStr);
+      return dateInfo !== undefined && dateInfo.bookedGuests > 0 && dateInfo.remainingCapacity > 0;
     },
     blocked: (date: Date) => {
       const dateStr = date.toISOString().split("T")[0];
-      return availabilityMap.get(dateStr) === "blocked";
+      const dateInfo = availabilityMap.get(dateStr);
+      return dateInfo?.status === "blocked";
     },
     booked: (date: Date) => {
       const dateStr = date.toISOString().split("T")[0];
-      return availabilityMap.get(dateStr) === "booked";
+      const dateInfo = availabilityMap.get(dateStr);
+      return dateInfo !== undefined && dateInfo.remainingCapacity <= 0;
     },
     selected: selectedDates,
     past: (date: Date) => {
@@ -178,6 +199,7 @@ export function HostCalendar({ experienceId }: HostCalendarProps) {
 
   const modifiersClassNames = {
     available: "hover:bg-turquesa/10 cursor-pointer",
+    partiallyBooked: "bg-yellow-50 text-yellow-900 border border-yellow-300",
     blocked: "bg-gray-100 text-gray-500 hover:bg-gray-200",
     booked: "bg-red-100 text-red-700 cursor-not-allowed",
     selected: "ring-2 ring-turquesa",
@@ -224,8 +246,8 @@ export function HostCalendar({ experienceId }: HostCalendarProps) {
             components={{
               DayButton: ({ className, day, modifiers, ...props }) => {
                 const dateStr = day.date.toISOString().split("T")[0];
-                const status = availabilityMap.get(dateStr) || "available";
-                const isBooked = status === "booked";
+                const dateInfo = availabilityMap.get(dateStr);
+                const hasBookings = dateInfo && dateInfo.bookedGuests > 0;
                 const isPast =
                   day.date < new Date(new Date().setHours(0, 0, 0, 0));
 
@@ -234,19 +256,19 @@ export function HostCalendar({ experienceId }: HostCalendarProps) {
                     {...props}
                     variant="ghost"
                     size="icon"
-                    disabled={isBooked || isPast}
+                    disabled={hasBookings || isPast}
                     onClick={() =>
-                      !isBooked && !isPast && handleDateClick(day.date)
+                      !hasBookings && !isPast && handleDateClick(day.date)
                     }
                     className={cn(
-                      "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
+                      "h-9 w-9 p-0 font-normal aria-selected:opacity-100 relative",
                       className,
                     )}
                   >
                     <span>{day.date.getDate()}</span>
-                    {isBooked && (
-                      <span className="absolute bottom-0 text-[10px] text-red-600">
-                        R
+                    {dateInfo && dateInfo.bookedGuests > 0 && (
+                      <span className="absolute bottom-0 text-[9px] text-gray-600 font-semibold">
+                        {dateInfo.bookedGuests}/{dateInfo.maxGuests}
                       </span>
                     )}
                   </Button>
