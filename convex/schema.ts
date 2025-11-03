@@ -107,4 +107,39 @@ export default defineSchema({
   })
     .index("by_status", ["status"])
     .index("by_created", ["createdAt"]),
+
+  blogPosts: defineTable({
+    // Content (both languages required)
+    titleEn: v.string(),
+    titleEs: v.string(),
+    contentEn: v.string(), // Markdown
+    contentEs: v.string(), // Markdown
+    excerptEn: v.string(), // Plain text, max 200 chars
+    excerptEs: v.string(),
+
+    // URLs
+    slugEn: v.string(),
+    slugEs: v.string(),
+
+    // Media
+    featuredImageStorageId: v.optional(v.id("_storage")),
+    featuredImageUrl: v.optional(v.string()),
+
+    // Publishing
+    status: v.union(
+      v.literal("draft"),
+      v.literal("published"),
+      v.literal("archived")
+    ),
+    publishedAt: v.optional(v.number()),
+
+    // Metadata
+    authorId: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_slug_en", ["slugEn"])
+    .index("by_slug_es", ["slugEs"])
+    .index("by_status", ["status"])
+    .index("by_published", ["status", "publishedAt"]),
 });

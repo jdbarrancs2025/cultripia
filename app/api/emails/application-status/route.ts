@@ -7,19 +7,20 @@ import ApplicationApprovedEmail from "@/emails/application-approved";
 import ApplicationRejectedEmail from "@/emails/application-rejected";
 import React from "react";
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
-
 export async function POST(req: NextRequest) {
   try {
     // Authentication check
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
+
+    // Create Convex client inside the handler to avoid build-time errors
+    const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
     // Get user from Convex and check admin role
     const convexUser = await convex.query(api.users.getUserByClerkId, {

@@ -3,8 +3,6 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { api } from "@/convex/_generated/api";
 import { ConvexHttpClient } from "convex/browser";
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
-
 export async function POST() {
   try {
     const { userId } = await auth();
@@ -12,6 +10,9 @@ export async function POST() {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Create Convex client inside the handler to avoid build-time errors
+    const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
     // Get user from Convex
     const convexUser = await convex.query(api.users.getUserByClerkId, {
