@@ -24,6 +24,7 @@
   },
   "navigation": {
     "explore": "Explore",
+    "blog": "Blog",
     "myBookings": "My Bookings",
     "becomeHost": "Become a Host",
     "dashboard": "Dashboard",
@@ -420,6 +421,7 @@
     "discoverExperiences": "Discover experiences",
     "destinations": "Destinations",
     "cultureAndLegacy": "Culture and legacy",
+    "blog": "Blog",
     "community": "Community",
     "becomeHost": "Become a host",
     "supportLocal": "Support local",

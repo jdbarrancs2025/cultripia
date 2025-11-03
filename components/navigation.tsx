@@ -22,7 +22,10 @@ export function Navigation() {
   const tCommon = useTranslations("common");
 
   const getNavigationItems = () => {
-    const items = [{ label: t("explore"), href: "/experiences", show: true }];
+    const items = [
+      { label: t("explore"), href: "/experiences", show: true },
+      { label: t("blog"), href: "/blog", show: true },
+    ];
 
     if (!isSignedIn) {
       return items;

@@ -63,6 +63,14 @@ export function Footer() {
                   {t("cultureAndLegacy")}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/blog"
+                  className="text-sm hover:text-turquesa transition-colors"
+                >
+                  {t("blog")}
+                </Link>
+              </li>
             </ul>
           </div>
 

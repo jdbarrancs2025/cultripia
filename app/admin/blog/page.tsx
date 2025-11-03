@@ -110,7 +110,7 @@ export default function AdminBlogPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => router.push(`/en/blog/${post.slugEn}`)}
+                          onClick={() => router.push(`/blog/${post.slugEn}`)}
                           title="View post"
                         >
                           <Eye className="h-4 w-4" />

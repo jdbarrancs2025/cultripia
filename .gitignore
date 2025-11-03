@@ -46,4 +46,4 @@ convex.log
 nextjs.log
 
 # claude
-.claude/
+.claude/.worktrees

@@ -24,6 +24,7 @@
   },
   "navigation": {
     "explore": "Explorar",
+    "blog": "Blog",
     "myBookings": "Mis Reservas",
     "becomeHost": "Ser Anfitrión",
     "dashboard": "Panel de Control",
@@ -420,6 +421,7 @@
     "discoverExperiences": "Descubre experiencias",
     "destinations": "Destinos",
     "cultureAndLegacy": "Cultura y legado",
+    "blog": "Blog",
     "community": "Comunidad",
     "becomeHost": "Sé un anfitrión",
     "supportLocal": "Apoya lo local",
