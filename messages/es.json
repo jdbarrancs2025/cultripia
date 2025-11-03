@@ -691,5 +691,12 @@
     "title": "Blog",
     "description": "Descubre historias, ideas y consejos sobre experiencias culturales, viajes y comunidades locales.",
     "noPosts": "Aún no hay artículos disponibles. ¡Vuelve pronto!"
+  },
+  "legal": {
+    "privacyTitle": "Política de Privacidad",
+    "privacyDescription": "Tu privacidad es importante para nosotros. Esta página describe cómo recopilamos, usamos y protegemos tu información personal.",
+    "termsTitle": "Términos de Uso",
+    "termsDescription": "Por favor lee estos términos y condiciones cuidadosamente antes de usar nuestra plataforma.",
+    "comingSoon": "Esta página está en construcción. Documentación legal completa próximamente."
   }
 }

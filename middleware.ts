@@ -1,5 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import createMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
+
+// Create next-intl middleware
+const intlMiddleware = createMiddleware(routing);
 
 // Define public routes (no authentication required)
 const isPublicRoute = createRouteMatcher([
@@ -8,6 +13,10 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
   "/experiences",
   "/experiences/(.*)",
+  "/blog",
+  "/blog/(.*)",
+  "/privacy",
+  "/terms",
   "/api/webhook(.*)",
   "/api/emails(.*)",
   "/api/locale",
@@ -17,7 +26,9 @@ export default clerkMiddleware(async (auth, req) => {
   const { userId, sessionClaims } = await auth();
 
   // Allow public routes
-  if (isPublicRoute(req)) return NextResponse.next();
+  if (isPublicRoute(req)) {
+    return NextResponse.next();
+  }
 
   // Redirect unauthenticated users to sign-in for protected routes
   if (!userId) {
@@ -33,7 +44,7 @@ export default clerkMiddleware(async (auth, req) => {
       | { role?: string }
       | undefined;
     const role = publicMetadata?.role || "traveler";
-    
+
     if (role === "admin") {
       return NextResponse.redirect(new URL("/admin/dashboard", req.url));
     } else if (role === "host") {

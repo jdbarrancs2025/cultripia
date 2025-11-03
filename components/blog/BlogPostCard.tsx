@@ -26,7 +26,7 @@ export function BlogPostCard({
   locale,
 }: BlogPostCardProps) {
   return (
-    <Link href={`/${locale}/blog/${slug}`}>
+    <Link href={`/blog/${slug}`}>
       <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
         {featuredImageUrl && (
           <div className="relative h-48 w-full">
