@@ -684,5 +684,10 @@
     "toastSuccess": "Test data created",
     "toastSuccessDesc": "Created {count} test experiences",
     "toastError": "Error creating test data"
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Discover stories, insights, and tips about cultural experiences, travel, and local communities.",
+    "noPosts": "No blog posts available yet. Check back soon!"
   }
 }

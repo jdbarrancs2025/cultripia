@@ -10,6 +10,7 @@ import {
   Settings,
   TestTube,
   MessageSquare,
+  BookOpen,
 } from "lucide-react";
 
 export default async function AdminLayout({
@@ -77,6 +78,15 @@ export default async function AdminLayout({
             >
               <Calendar className="mr-3 h-4 w-4" />
               Experiences
+            </Button>
+          </Link>
+          <Link href="/admin/blog">
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-gray-700 hover:text-gray-900"
+            >
+              <BookOpen className="mr-3 h-4 w-4" />
+              Blog
             </Button>
           </Link>
           <Link href="/admin/support">

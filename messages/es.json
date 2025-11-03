@@ -684,5 +684,10 @@
     "toastSuccess": "Datos de prueba creados",
     "toastSuccessDesc": "Se crearon {count} experiencias de prueba",
     "toastError": "Error al crear datos de prueba"
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Descubre historias, ideas y consejos sobre experiencias culturales, viajes y comunidades locales.",
+    "noPosts": "Aún no hay artículos disponibles. ¡Vuelve pronto!"
   }
 }
