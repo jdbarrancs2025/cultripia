@@ -299,13 +299,19 @@ export const getBlogPostBySlug = query({
     locale: v.union(v.literal("en"), v.literal("es")),
   },
   handler: async (ctx, args) => {
-    const indexName = args.locale === "en" ? "by_slug_en" : "by_slug_es";
-    const slugField = args.locale === "en" ? "slugEn" : "slugEs";
-
-    const post = await ctx.db
+    // Try to find post by English slug first
+    let post = await ctx.db
       .query("blogPosts")
-      .withIndex(indexName, (q) => q.eq(slugField as any, args.slug))
+      .withIndex("by_slug_en", (q) => q.eq("slugEn", args.slug))
       .first();
+
+    // If not found, try Spanish slug
+    if (!post) {
+      post = await ctx.db
+        .query("blogPosts")
+        .withIndex("by_slug_es", (q) => q.eq("slugEs", args.slug))
+        .first();
+    }
 
     if (!post) {
       return null;
